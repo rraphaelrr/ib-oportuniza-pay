@@ -1,0 +1,44 @@
+:root {
+  --op-blue: #003399;
+  --op-blue-dark: #002266;
+  --op-orange: #ff6b00;
+  --op-bg-light: #0f1f3d;
+  --op-bg-dark: #090d16;
+  --op-card-light: #ffffff;
+  --op-card-dark: #111827;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--op-bg-light);
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Barra de rolagem discreta em telas maiores */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+}

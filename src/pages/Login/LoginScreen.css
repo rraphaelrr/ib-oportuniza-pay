@@ -1,0 +1,622 @@
+.op-root {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--op-bg-light);
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease;
+}
+
+.op-root--dark {
+  background: var(--op-bg-dark);
+}
+
+/* ── Toggle de tema ─────────────────────────────────────────────────────── */
+
+.op-theme-toggle-wrapper {
+  padding: 20px 20px 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.op-theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.op-switch {
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  position: relative;
+  cursor: pointer;
+  padding: 2px;
+  transition: background-color 0.2s ease;
+}
+
+.op-switch--on {
+  background: rgba(255, 107, 0, 0.5);
+}
+
+.op-switch-thumb {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s ease;
+}
+
+.op-switch--on .op-switch-thumb {
+  transform: translateX(18px);
+  background: var(--op-blue);
+}
+
+/* ── Logo ────────────────────────────────────────────────────────────────── */
+
+.op-logo-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 24px;
+  transition: transform 0.35s ease, margin 0.35s ease;
+}
+
+.op-logo-area--compact {
+  transform: translateY(-14px) scale(0.72);
+  margin-bottom: 4px;
+}
+
+.op-logo-icon {
+  width: 84px;
+  height: 84px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--op-blue), var(--op-blue-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.op-logo-letter {
+  color: #fff;
+  font-size: 40px;
+  font-weight: 800;
+}
+
+.op-logo-title {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 14px;
+  letter-spacing: 0.3px;
+}
+
+.op-logo-sub {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  margin-top: 4px;
+  letter-spacing: 2px;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+
+.op-card {
+  flex: 1;
+  background: var(--op-card-light);
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  padding: 28px 24px 30px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.op-card--in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.op-card--dark {
+  background: var(--op-card-dark);
+  color: #eee;
+}
+
+.op-card-scroll {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── Textos de etapa ─────────────────────────────────────────────────────── */
+
+.op-step-label {
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 14px;
+}
+
+.op-card--dark .op-step-label {
+  color: #fff;
+}
+
+.op-welcome-text {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  color: inherit;
+}
+
+.op-step-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.op-error-text {
+  color: #d92626;
+  font-size: 13px;
+  margin: -8px 0 12px;
+}
+
+/* ── Progress dots ───────────────────────────────────────────────────────── */
+
+.op-progress-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.op-progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: #e0e0e0;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.op-progress-dot--active {
+  width: 20px;
+  background: var(--op-blue);
+}
+
+/* ── Saved user ──────────────────────────────────────────────────────────── */
+
+.op-saved-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 12px;
+  flex: 1;
+  justify-content: center;
+}
+
+.op-saved-avatar {
+  width: 74px;
+  height: 74px;
+  border-radius: 37px;
+  background: var(--op-blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.op-saved-name {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.op-saved-info {
+  font-size: 13px;
+  color: #999;
+  margin-top: 3px;
+}
+
+.op-mt-24 {
+  margin-top: 24px;
+  width: 100%;
+}
+.op-mt-18 {
+  margin-top: 18px;
+}
+.op-mt-16 {
+  margin-top: 16px;
+}
+.op-mt-12 {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.op-link-muted {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 13px;
+  padding: 6px;
+  cursor: pointer;
+}
+
+/* ── Type grid ───────────────────────────────────────────────────────────── */
+
+.op-type-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.op-type-card {
+  width: calc(50% - 5px);
+  border-radius: 14px;
+  border: 1.5px solid #e8e8e8;
+  background: #fff;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  color: #aaa;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.op-card--dark .op-type-card {
+  background: #1e1e1e;
+  border-color: #333;
+  color: #888;
+}
+
+.op-type-card--selected {
+  border-color: var(--op-orange);
+  background: #fff5ed;
+  color: var(--op-orange);
+}
+
+.op-card--dark .op-type-card--selected {
+  background: #2a1a00;
+}
+
+.op-type-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+}
+
+.op-card--dark .op-type-label {
+  color: #eee;
+}
+
+/* ── Input ───────────────────────────────────────────────────────────────── */
+
+.op-input {
+  width: 100%;
+  height: 52px;
+  border-radius: 12px;
+  border: 1.5px solid #e0e0e0;
+  padding: 0 16px;
+  font-size: 16px;
+  color: #111;
+  margin-bottom: 4px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.op-input:focus {
+  border-color: var(--op-blue);
+}
+
+.op-card--dark .op-input {
+  border-color: #333;
+  color: #eee;
+  background: #1a1a2e;
+}
+
+.op-suggest-box {
+  border: 1px solid #ffe8d6;
+  border-radius: 10px;
+  background: #fffaf7;
+  max-height: 160px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.op-card--dark .op-suggest-box {
+  background: #1e1300;
+  border-color: #3a2000;
+}
+
+.op-suggest-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  color: var(--op-blue);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.op-suggest-item:hover {
+  background: rgba(0, 51, 153, 0.06);
+}
+
+/* ── PIN ─────────────────────────────────────────────────────────────────── */
+
+.op-pin-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.op-pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 4px 0 20px;
+}
+
+.op-pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  background: #e0e0e0;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.op-card--dark .op-pin-dot {
+  background: #333;
+}
+
+.op-pin-dot--filled {
+  background: var(--op-orange);
+  transform: scale(1.15);
+}
+
+.op-pin-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.op-pin-toggle span {
+  flex: 1;
+  text-align: left;
+}
+
+.op-card--dark .op-pin-toggle {
+  border-color: #2a2a2a;
+  background: #1a1a2e;
+  color: #888;
+}
+
+.op-pin-toggle--open {
+  color: var(--op-blue);
+}
+
+.op-keyboard {
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.op-kb-row {
+  display: flex;
+  gap: 6px;
+}
+
+.op-key {
+  flex: 1;
+  height: 52px;
+  border-radius: 10px;
+  border: none;
+  background: #f0f0f0;
+  font-size: 20px;
+  font-weight: 400;
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.op-key:active {
+  transform: scale(0.9);
+}
+
+.op-key--blank {
+  background: transparent;
+  cursor: default;
+}
+
+.op-key--special {
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #555;
+}
+
+.op-card--dark .op-key {
+  background: #2a2a2a;
+  color: #eee;
+}
+
+.op-card--dark .op-key--special {
+  background: #1e1e1e;
+  border-color: #333;
+  color: #aaa;
+}
+
+.op-card--dark .op-key--blank {
+  background: transparent;
+}
+
+/* ── Botões ──────────────────────────────────────────────────────────────── */
+
+.op-btn-primary {
+  height: 54px;
+  width: 100%;
+  background: var(--op-blue);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 18px;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.op-btn-primary:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.op-btn-primary:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.op-btn-outline {
+  height: 50px;
+  width: 100%;
+  border-radius: 14px;
+  border: 1.5px solid var(--op-blue);
+  background: transparent;
+  color: var(--op-blue);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.op-card--dark .op-btn-outline {
+  color: #fff;
+  border-color: #fff;
+}
+
+.op-back-link {
+  background: none;
+  border: none;
+  color: var(--op-blue);
+  font-size: 13px;
+  margin-top: 14px;
+  padding: 4px;
+  cursor: pointer;
+  align-self: center;
+}
+
+/* ── Splash / loading de rota protegida ─────────────────────────────────── */
+
+.op-splash {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--op-bg-light);
+}
+
+.op-splash-spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--op-orange);
+  animation: op-spin 0.8s linear infinite;
+}
+
+@keyframes op-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Responsivo: tablets e desktops ──────────────────────────────────────
+   Em telas maiores, o "cartão" vira um painel central com bordas
+   arredondadas em todos os lados, flutuando sobre o fundo azul —
+   como uma tela de banco web, mantendo a identidade visual do app.  */
+
+@media (min-width: 768px) {
+  .op-root {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .op-theme-toggle-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    padding: 0;
+  }
+
+  .op-logo-area {
+    margin-bottom: 20px;
+  }
+
+  .op-logo-area--compact {
+    transform: none;
+    margin-bottom: 20px;
+  }
+
+  .op-card {
+    flex: none;
+    width: 100%;
+    max-width: 460px;
+    min-height: 480px;
+    border-radius: 24px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+  }
+}
+
+@media (min-width: 1100px) {
+  .op-root {
+    flex-direction: row;
+    padding: 0;
+  }
+
+  .op-root::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 107, 0, 0.12), transparent 45%),
+      radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.06), transparent 40%);
+    pointer-events: none;
+  }
+
+  .op-theme-toggle-wrapper {
+    z-index: 2;
+  }
+
+  .op-logo-area,
+  .op-card {
+    position: relative;
+    z-index: 1;
+  }
+}
