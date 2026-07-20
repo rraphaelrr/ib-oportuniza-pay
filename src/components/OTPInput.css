@@ -1,0 +1,61 @@
+.otp{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:12px;
+
+    margin:20px 0;
+
+}
+
+.otp input{
+
+    width:55px;
+
+    height:60px;
+
+    border:2px solid #DDD;
+
+    border-radius:14px;
+
+    text-align:center;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    transition:.25s;
+
+}
+
+.otp input:focus{
+
+    outline:none;
+
+    border-color:#003399;
+
+    box-shadow:0 0 0 4px rgba(0,51,153,.12);
+
+}
+
+@media(max-width:768px){
+
+    .otp{
+
+        gap:8px;
+
+    }
+
+    .otp input{
+
+        width:45px;
+
+        height:50px;
+
+        font-size:18px;
+
+    }
+
+}

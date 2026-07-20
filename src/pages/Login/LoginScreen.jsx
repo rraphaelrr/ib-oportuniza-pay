@@ -15,10 +15,34 @@ const STEP = {
 };
 
 const TYPES = [
-  { key: "cpf", label: "CPF", icon: "id-card", placeholder: "000.000.000-00", inputMode: "numeric" },
-  { key: "email", label: "E-mail", icon: "mail", placeholder: "voce@email.com", inputMode: "email" },
-  { key: "telefone", label: "Telefone", icon: "phone", placeholder: "(11) 99999-9999", inputMode: "numeric" },
-  { key: "cnpj", label: "CNPJ", icon: "briefcase", placeholder: "00.000.000/0000-00", inputMode: "numeric" },
+  {
+    key: "cpf",
+    label: "CPF",
+    icon: "id-card",
+    placeholder: "000.000.000-00",
+    inputMode: "numeric",
+  },
+  {
+    key: "email",
+    label: "E-mail",
+    icon: "mail",
+    placeholder: "voce@email.com",
+    inputMode: "email",
+  },
+  {
+    key: "telefone",
+    label: "Telefone",
+    icon: "phone",
+    placeholder: "(11) 99999-9999",
+    inputMode: "numeric",
+  },
+  {
+    key: "cnpj",
+    label: "CNPJ",
+    icon: "briefcase",
+    placeholder: "00.000.000/0000-00",
+    inputMode: "numeric",
+  },
 ];
 
 const EMAIL_DOMAINS = [
@@ -85,7 +109,9 @@ function Icon({ name, size = 22, color = "currentColor" }) {
         <path d="M3 7l9 6 9-6" />
       </>
     ),
-    phone: <path d="M6 3h3l2 5-2 1a11 11 0 005 5l1-2 5 2v3a2 2 0 01-2 2A16 16 0 013 5a2 2 0 012-2z" />,
+    phone: (
+      <path d="M6 3h3l2 5-2 1a11 11 0 005 5l1-2 5 2v3a2 2 0 01-2 2A16 16 0 013 5a2 2 0 012-2z" />
+    ),
     briefcase: (
       <>
         <rect x="3" y="7" width="18" height="13" rx="2" />
@@ -131,7 +157,11 @@ function Icon({ name, size = 22, color = "currentColor" }) {
 function DarkModeToggle({ darkMode, onToggle }) {
   return (
     <div className="op-theme-toggle">
-      <Icon name="sun" size={16} color={darkMode ? "rgba(255,255,255,0.35)" : "#003399"} />
+      <Icon
+        name="sun"
+        size={16}
+        color={darkMode ? "rgba(255,255,255,0.35)" : "#003399"}
+      />
       <button
         type="button"
         className={`op-switch ${darkMode ? "op-switch--on" : ""}`}
@@ -142,7 +172,11 @@ function DarkModeToggle({ darkMode, onToggle }) {
       >
         <span className="op-switch-thumb" />
       </button>
-      <Icon name="moon" size={16} color={darkMode ? "#003399" : "rgba(255,255,255,0.35)"} />
+      <Icon
+        name="moon"
+        size={16}
+        color={darkMode ? "#003399" : "rgba(255,255,255,0.35)"}
+      />
     </div>
   );
 }
@@ -153,7 +187,10 @@ function ProgressDots({ step }) {
   return (
     <div className="op-progress-row">
       {steps.map((s, i) => (
-        <span key={s} className={`op-progress-dot ${i === idx ? "op-progress-dot--active" : ""}`} />
+        <span
+          key={s}
+          className={`op-progress-dot ${i === idx ? "op-progress-dot--active" : ""}`}
+        />
       ))}
     </div>
   );
@@ -166,7 +203,11 @@ function TypeCard({ item, selected, onPress }) {
       className={`op-type-card ${selected ? "op-type-card--selected" : ""}`}
       onClick={() => onPress(item.key)}
     >
-      <Icon name={item.icon} size={26} color={selected ? "#FF6B00" : undefined} />
+      <Icon
+        name={item.icon}
+        size={26}
+        color={selected ? "#FF6B00" : undefined}
+      />
       <span className="op-type-label">{item.label}</span>
     </button>
   );
@@ -176,7 +217,10 @@ function PinDots({ length, filled }) {
   return (
     <div className="op-pin-dots">
       {Array.from({ length }).map((_, i) => (
-        <span key={i} className={`op-pin-dot ${i < filled ? "op-pin-dot--filled" : ""}`} />
+        <span
+          key={i}
+          className={`op-pin-dot ${i < filled ? "op-pin-dot--filled" : ""}`}
+        />
       ))}
     </div>
   );
@@ -194,7 +238,8 @@ function Keypad({ onPress }) {
       {rows.map((row, ri) => (
         <div className="op-kb-row" key={ri}>
           {row.map((k) => {
-            if (k === "blank") return <div className="op-key op-key--blank" key={k} />;
+            if (k === "blank")
+              return <div className="op-key op-key--blank" key={k} />;
             return (
               <button
                 type="button"
@@ -322,11 +367,13 @@ export default function LoginScreen() {
       const user = await login({ tipo, usuario, senha: pin });
       localStorage.setItem(
         SAVED_USER_KEY,
-        JSON.stringify({ nome: user.nome, tipo, usuario })
+        JSON.stringify({ nome: user.nome, tipo, usuario }),
       );
       navigate(redirectTo, { replace: true });
     } catch (e) {
-      setError("Não foi possível entrar. Verifique seus dados e tente novamente.");
+      setError(
+        "Não foi possível entrar. Verifique seus dados e tente novamente.",
+      );
     } finally {
       setLoading(false);
     }
@@ -336,7 +383,11 @@ export default function LoginScreen() {
     if (!savedUser) return;
     setLoading(true);
     try {
-      const user = await login({ tipo: savedUser.tipo, usuario: savedUser.usuario, senha: "saved" });
+      const user = await login({
+        tipo: savedUser.tipo,
+        usuario: savedUser.usuario,
+        senha: "saved",
+      });
       navigate(redirectTo, { replace: true });
     } finally {
       setLoading(false);
@@ -355,7 +406,9 @@ export default function LoginScreen() {
         <DarkModeToggle darkMode={darkMode} onToggle={setDarkMode} />
       </div>
 
-      <div className={`op-logo-area ${step !== STEP.START ? "op-logo-area--compact" : ""}`}>
+      <div
+        className={`op-logo-area ${step !== STEP.START ? "op-logo-area--compact" : ""}`}
+      >
         <div className="op-logo-icon">
           <span className="op-logo-letter">O</span>
         </div>
@@ -363,7 +416,9 @@ export default function LoginScreen() {
         <div className="op-logo-sub">SEU BANCO DIGITAL</div>
       </div>
 
-      <div className={`op-card ${darkMode ? "op-card--dark" : ""} ${mounted ? "op-card--in" : ""}`}>
+      <div
+        className={`op-card ${darkMode ? "op-card--dark" : ""} ${mounted ? "op-card--in" : ""}`}
+      >
         <div className="op-card-scroll">
           {/* ════ SAVED USER ════ */}
           {step === STEP.SAVED && savedUser && (
@@ -371,14 +426,22 @@ export default function LoginScreen() {
               <div className="op-saved-avatar">{initials}</div>
               <div className="op-saved-name">{userName}</div>
               <div className="op-saved-info">
-                {savedUser.tipo === "cpf" ? maskCPF(savedUser.usuario) : savedUser.usuario}
+                {savedUser.tipo === "cpf"
+                  ? maskCPF(savedUser.usuario)
+                  : savedUser.usuario}
               </div>
 
-              <button className="op-btn-primary op-mt-24" onClick={() => setStep(STEP.START)}>
+              <button
+                className="op-btn-primary op-mt-24"
+                onClick={() => setStep(STEP.START)}
+              >
                 Entrar com senha
               </button>
 
-              <button className="op-link-muted op-mt-18" onClick={forgetSavedUser}>
+              <button
+                className="op-link-muted op-mt-18"
+                onClick={forgetSavedUser}
+              >
                 Usar outra conta
               </button>
             </div>
@@ -389,11 +452,19 @@ export default function LoginScreen() {
             <div className="op-step-center">
               <p className="op-welcome-text">Bem-vindo ao Oportuniza Pay</p>
 
-              <button className="op-btn-primary" onClick={() => (savedUser ? setStep(STEP.SAVED) : setStep(STEP.TYPE))}>
+              <button
+                className="op-btn-primary"
+                onClick={() =>
+                  savedUser ? setStep(STEP.SAVED) : setStep(STEP.TYPE)
+                }
+              >
                 Entrar
               </button>
 
-              <button className="op-btn-outline op-mt-12" onClick={() => alert("Em construção")}>
+              <button
+                className="op-btn-outline op-mt-12"
+                onClick={() => navigate("/cadastro")}
+              >
                 Criar conta
               </button>
             </div>
@@ -406,10 +477,18 @@ export default function LoginScreen() {
               <p className="op-step-label">Como deseja entrar?</p>
               <div className="op-type-grid">
                 {TYPES.map((item) => (
-                  <TypeCard key={item.key} item={item} selected={tipo === item.key} onPress={selectType} />
+                  <TypeCard
+                    key={item.key}
+                    item={item}
+                    selected={tipo === item.key}
+                    onPress={selectType}
+                  />
                 ))}
               </div>
-              <button className="op-back-link" onClick={() => setStep(STEP.START)}>
+              <button
+                className="op-back-link"
+                onClick={() => setStep(STEP.START)}
+              >
                 ← Voltar ao início
               </button>
             </div>
@@ -449,11 +528,18 @@ export default function LoginScreen() {
                 </div>
               )}
 
-              <button className="op-btn-primary" onClick={goToPin} disabled={!inputValid}>
+              <button
+                className="op-btn-primary"
+                onClick={goToPin}
+                disabled={!inputValid}
+              >
                 Continuar
               </button>
 
-              <button className="op-back-link" onClick={() => setStep(STEP.TYPE)}>
+              <button
+                className="op-back-link"
+                onClick={() => setStep(STEP.TYPE)}
+              >
                 ← Voltar
               </button>
             </div>
@@ -469,19 +555,40 @@ export default function LoginScreen() {
 
               {error && <p className="op-error-text">{error}</p>}
 
-              <button className={`op-pin-toggle ${keyboardOpen ? "op-pin-toggle--open" : ""}`} onClick={toggleKeyboard}>
-                <Icon name="lock" size={20} color={keyboardOpen ? "#003399" : undefined} />
-                <span>{keyboardOpen ? "Fechar teclado" : "Toque para digitar a senha"}</span>
-                <Icon name={keyboardOpen ? "chevron-up" : "chevron-down"} size={20} />
+              <button
+                className={`op-pin-toggle ${keyboardOpen ? "op-pin-toggle--open" : ""}`}
+                onClick={toggleKeyboard}
+              >
+                <Icon
+                  name="lock"
+                  size={20}
+                  color={keyboardOpen ? "#003399" : undefined}
+                />
+                <span>
+                  {keyboardOpen
+                    ? "Fechar teclado"
+                    : "Toque para digitar a senha"}
+                </span>
+                <Icon
+                  name={keyboardOpen ? "chevron-up" : "chevron-down"}
+                  size={20}
+                />
               </button>
 
               {keyboardOpen && <Keypad onPress={pressKey} />}
 
-              <button className="op-btn-primary op-mt-16" onClick={handleLogin} disabled={!pinComplete || loading}>
+              <button
+                className="op-btn-primary op-mt-16"
+                onClick={handleLogin}
+                disabled={!pinComplete || loading}
+              >
                 {loading ? "Entrando…" : "Entrar"}
               </button>
 
-              <button className="op-back-link" onClick={() => setStep(STEP.INPUT)}>
+              <button
+                className="op-back-link"
+                onClick={() => setStep(STEP.INPUT)}
+              >
                 ← Voltar
               </button>
             </div>

@@ -1,159 +1,90 @@
-import React, { useRef } from "react";
+import React from "react";
+
+import UploadCard from "../../../components/UploadCard";
+
+import "./CadastroSteps.css";
 
 export default function StepDocumentos({
   tipoConta,
-  data,
-  errors,
-  onFileChange,
+  values,
+  updateField,
+  errors = {},
+  next,
+  back,
 }) {
-  const rgFrenteRef = useRef();
-  const rgVersoRef = useRef();
-  const selfieRef = useRef();
-  const cnpjRef = useRef();
-
-  function renderUpload(
-    title,
-    field,
-    ref,
-    accept = "image/*"
-  ) {
-    return (
-      <div className="upload-card">
-        <label>{title}</label>
-
-        <input
-          ref={ref}
-          type="file"
-          accept={accept}
-          hidden
-          onChange={(e) =>
-            onFileChange(
-              field,
-              e.target.files[0]
-            )
-          }
-        />
-
-        <div
-          className="upload-area"
-          onClick={() =>
-            ref.current.click()
-          }
-        >
-          {data[field] ? (
-            <>
-              <img
-                src={URL.createObjectURL(
-                  data[field]
-                )}
-                alt=""
-              />
-
-              <button
-                type="button"
-                className="change-btn"
-              >
-                Alterar arquivo
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="upload-icon">
-                📄
-              </div>
-
-              <strong>
-                Clique para enviar
-              </strong>
-
-              <span>
-                JPG, PNG ou PDF
-              </span>
-            </>
-          )}
-        </div>
-
-        {errors[field] && (
-          <small>{errors[field]}</small>
-        )}
-      </div>
-    );
+  function handleFile(field, file) {
+    updateField(field, file);
   }
 
   return (
-    <div className="cadastro-step">
+    <div className="step">
+      <div className="step-header">
+        <h2 className="step-title">Documentos</h2>
 
-      <h2>Documentos</h2>
+        <p className="step-description">Envie fotos legíveis dos documentos.</p>
+      </div>
 
-      <p className="step-description">
-        Envie fotos legíveis dos
-        documentos.
-      </p>
+      <div className="form-grid">
+        <UploadCard
+          title="Documento Frente"
+          value={values.documentoFrente}
+          onChange={(file) => handleFile("documentoFrente", file)}
+          error={errors.documentoFrente}
+          accept="image/*"
+        />
 
-      <div className="documents-grid">
+        <UploadCard
+          title="Documento Verso"
+          value={values.documentoVerso}
+          onChange={(file) => handleFile("documentoVerso", file)}
+          error={errors.documentoVerso}
+          accept="image/*"
+        />
 
-        {renderUpload(
-          "Documento (Frente)",
-          "documentoFrente",
-          rgFrenteRef
+        <UploadCard
+          title="Selfie"
+          value={values.selfie}
+          onChange={(file) => handleFile("selfie", file)}
+          error={errors.selfie}
+          accept="image/*"
+        />
+
+        {tipoConta === "PJ" && (
+          <UploadCard
+            title="Cartão CNPJ"
+            value={values.cartaoCNPJ}
+            onChange={(file) => handleFile("cartaoCNPJ", file)}
+            error={errors.cartaoCNPJ}
+            accept=".pdf,image/*"
+          />
         )}
-
-        {renderUpload(
-          "Documento (Verso)",
-          "documentoVerso",
-          rgVersoRef
-        )}
-
-        {renderUpload(
-          "Selfie",
-          "selfie",
-          selfieRef
-        )}
-
-        {tipoConta === "PJ" &&
-          renderUpload(
-            "Cartão CNPJ",
-            "cartaoCnpj",
-            cnpjRef,
-            ".pdf,image/*"
-          )}
-
       </div>
 
       <div className="tips-box">
-
         <h4>Dicas para aprovação</h4>
 
         <ul>
-          <li>
-            Utilize um ambiente bem
-            iluminado.
-          </li>
+          <li>Utilize ambiente bem iluminado.</li>
 
-          <li>
-            Não corte nenhuma parte do
-            documento.
-          </li>
+          <li>Não corte partes do documento.</li>
 
-          <li>
-            Evite reflexos ou sombras.
-          </li>
+          <li>Evite reflexos e sombras.</li>
 
-          <li>
-            A selfie deve mostrar todo o
-            rosto.
-          </li>
+          <li>A selfie deve mostrar todo o rosto.</li>
 
-          {tipoConta === "PJ" && (
-            <li>
-              O Cartão CNPJ deve estar
-              atualizado.
-            </li>
-          )}
+          {tipoConta === "PJ" && <li>O Cartão CNPJ deve estar atualizado.</li>}
         </ul>
-
       </div>
 
+      <div className="step-buttons">
+        <button className="btn btn-secondary" onClick={back}>
+          Voltar
+        </button>
+
+        <button className="btn btn-primary" onClick={next}>
+          Continuar
+        </button>
+      </div>
     </div>
   );
 }

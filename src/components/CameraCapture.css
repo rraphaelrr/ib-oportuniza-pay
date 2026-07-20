@@ -1,0 +1,130 @@
+.camera-card{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    border:1px solid #E5E7EB;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.camera-card h3{
+
+    margin:0;
+
+}
+
+.camera-card p{
+
+    margin:0;
+
+    color:#666;
+
+}
+
+.camera-btn,
+.capture-btn{
+
+    border:none;
+
+    background:#003399;
+
+    color:white;
+
+    border-radius:12px;
+
+    padding:14px 26px;
+
+    cursor:pointer;
+
+    display:flex;
+
+    gap:10px;
+
+    align-items:center;
+
+    font-weight:600;
+
+}
+
+.camera-preview{
+
+    width:100%;
+
+    max-width:450px;
+
+    aspect-ratio:4/3;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    background:black;
+
+}
+
+.camera-preview video{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.captured-photo{
+
+    width:100%;
+
+    max-width:450px;
+
+    border-radius:16px;
+
+}
+
+.camera-actions{
+
+    display:flex;
+
+    gap:15px;
+
+}
+
+.camera-actions button{
+
+    border:none;
+
+    padding:12px 22px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    background:#003399;
+
+    color:#fff;
+
+    display:flex;
+
+    gap:8px;
+
+    align-items:center;
+
+}
+
+.camera-actions .success{
+
+    background:#16A34A;
+
+}

@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 
-import DashboardLayout from "../../layout/DashboardLayout";
-
 import Stepper from "../../components/Stepper";
 
 import StepTipoConta from "./steps/StepTipoConta";
@@ -18,15 +16,23 @@ import "./Cadastro.css";
 export default function Cadastro() {
   const [step, setStep] = useState(0);
 
-  const [form, setForm] = useState({
+  const [loading, setLoading] = useState(false);
+
+  const [protocolo, setProtocolo] = useState("");
+
+  const initialForm = {
     tipoConta: "",
+
+    // PF
 
     cpf: "",
     nome: "",
-    nascimento: "",
+    dataNascimento: "",
     rg: "",
     nomeMae: "",
     sexo: "",
+
+    // PJ
 
     cnpj: "",
     razaoSocial: "",
@@ -35,8 +41,10 @@ export default function Cadastro() {
     inscricaoMunicipal: "",
     naturezaJuridica: "",
     capitalSocial: "",
-    abertura: "",
+    fundacao: "",
     cnae: "",
+
+    // Endereço
 
     cep: "",
     rua: "",
@@ -46,24 +54,26 @@ export default function Cadastro() {
     cidade: "",
     estado: "",
 
-    email: "",
-    emailConfirmacao: "",
-    telefone: "",
-    telefoneConfirmacao: "",
+    // Contato
 
+    email: "",
+    telefone: "",
     codigoEmail: "",
     codigoSMS: "",
+
+    // Documentos
 
     documentoFrente: null,
     documentoVerso: null,
     selfie: null,
     cartaoCNPJ: null,
-  });
 
-  const totalSteps =
-    form.tipoConta === "pj"
-      ? 7
-      : 6;
+    // Termos
+
+    aceite: false,
+  };
+
+  const [form, setForm] = useState(initialForm);
 
   function updateField(field, value) {
     setForm((old) => ({
@@ -72,169 +82,181 @@ export default function Cadastro() {
     }));
   }
 
+  function updateFields(values) {
+    setForm((old) => ({
+      ...old,
+      ...values,
+    }));
+  }
+
+  const stepsPF = [
+    {
+      id: 1,
+      title: "Tipo",
+      component: StepTipoConta,
+    },
+
+    {
+      id: 2,
+      title: "Pessoal",
+      component: StepDadosPessoais,
+    },
+
+    {
+      id: 3,
+      title: "Endereço",
+      component: StepEndereco,
+    },
+
+    {
+      id: 4,
+      title: "Contato",
+      component: StepContato,
+    },
+
+    {
+      id: 5,
+      title: "Documentos",
+      component: StepDocumentos,
+    },
+
+    {
+      id: 6,
+      title: "Confirmação",
+      component: StepConfirmacao,
+    },
+
+    {
+      id: 7,
+      title: "Sucesso",
+      component: StepSucesso,
+    },
+  ];
+
+  const stepsPJ = [
+    {
+      id: 1,
+      title: "Tipo",
+      component: StepTipoConta,
+    },
+
+    {
+      id: 2,
+      title: "Responsável",
+      component: StepDadosPessoais,
+    },
+
+    {
+      id: 3,
+      title: "Empresa",
+      component: StepEmpresa,
+    },
+
+    {
+      id: 4,
+      title: "Endereço",
+      component: StepEndereco,
+    },
+
+    {
+      id: 5,
+      title: "Contato",
+      component: StepContato,
+    },
+
+    {
+      id: 6,
+      title: "Documentos",
+      component: StepDocumentos,
+    },
+
+    {
+      id: 7,
+      title: "Confirmação",
+      component: StepConfirmacao,
+    },
+
+    {
+      id: 8,
+      title: "Sucesso",
+      component: StepSucesso,
+    },
+  ];
+
+  const steps = form.tipoConta?.toUpperCase() === "PJ" ? stepsPJ : stepsPF;
+
+  const CurrentStep = steps[step]?.component;
+
   function next() {
-    if (step < totalSteps) {
-      setStep(step + 1);
+    if (step < steps.length - 1) {
+      setStep((old) => old + 1);
     }
   }
 
   function back() {
     if (step > 0) {
-      setStep(step - 1);
+      setStep((old) => old - 1);
     }
   }
 
-  function renderStep() {
-    switch (step) {
-      case 0:
-        return (
-          <StepTipoConta
-            values={form}
-            updateField={updateField}
-            next={next}
-          />
-        );
+  async function handleSubmit() {
+    try {
+      setLoading(true);
 
-      case 1:
-        return (
-          <StepDadosPessoais
-            values={form}
-            updateField={updateField}
-            next={next}
-            back={back}
-          />
-        );
+      console.log("Cadastro enviado:", form);
 
-      case 2:
-        if (form.tipoConta === "pj") {
-          return (
-            <StepEmpresa
-              values={form}
-              updateField={updateField}
-              next={next}
-              back={back}
-            />
-          );
-        }
+      /*
+        Aqui entra sua API:
 
-        return (
-          <StepEndereco
-            values={form}
-            updateField={updateField}
-            next={next}
-            back={back}
-          />
-        );
+        await api.post("/cadastro",form)
 
-      case 3:
-        if (form.tipoConta === "pj") {
-          return (
-            <StepEndereco
-              values={form}
-              updateField={updateField}
-              next={next}
-              back={back}
-            />
-          );
-        }
+      */
 
-        return (
-          <StepContato
-            values={form}
-            updateField={updateField}
-            next={next}
-            back={back}
-          />
-        );
+      const novoProtocolo = "OP" + Date.now();
 
-      case 4:
-        if (form.tipoConta === "pj") {
-          return (
-            <StepContato
-              values={form}
-              updateField={updateField}
-              next={next}
-              back={back}
-            />
-          );
-        }
+      setProtocolo(novoProtocolo);
 
-        return (
-          <StepDocumentos
-            values={form}
-            updateField={updateField}
-            next={next}
-            back={back}
-          />
-        );
+      // vai para tela sucesso
 
-      case 5:
-        if (form.tipoConta === "pj") {
-          return (
-            <StepDocumentos
-              values={form}
-              updateField={updateField}
-              next={next}
-              back={back}
-            />
-          );
-        }
+      setStep(steps.length - 1);
+    } catch (error) {
+      console.error(error);
 
-        return (
-          <StepConfirmacao
-            values={form}
-            next={next}
-            back={back}
-          />
-        );
-
-      case 6:
-        if (form.tipoConta === "pj") {
-          return (
-            <StepConfirmacao
-              values={form}
-              next={next}
-              back={back}
-            />
-          );
-        }
-
-        return <StepSucesso />;
-
-      case 7:
-        return <StepSucesso />;
-
-      default:
-        return null;
+      alert("Erro ao enviar cadastro");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <DashboardLayout>
-      <div className="cadastro">
+    <div className="cadastro">
+      <div className="cadastro-card">
+        <div className="cadastro-header">
+          <h1>Abertura de Conta</h1>
 
-        <div className="cadastro-card">
-
-          <div className="cadastro-header">
-            <h1>Abertura de Conta</h1>
-
-            <p>
-              Preencha seus dados para abrir sua conta digital.
-            </p>
-          </div>
-
-          <Stepper
-            current={step}
-            total={totalSteps + 1}
-          />
-
-          <div className="cadastro-body">
-            {renderStep()}
-          </div>
-
+          <p>Preencha seus dados para abrir sua conta digital.</p>
         </div>
 
+        <Stepper steps={steps} currentStep={step} />
+
+        <div className="cadastro-body">
+          {CurrentStep && (
+            <CurrentStep
+              values={form}
+              updateField={updateField}
+              updateFields={updateFields}
+              next={next}
+              back={back}
+              onSubmit={handleSubmit}
+              loading={loading}
+              protocolo={protocolo}
+              onHome={() => {
+                window.location.href = "/login";
+              }}
+            />
+          )}
+        </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 }

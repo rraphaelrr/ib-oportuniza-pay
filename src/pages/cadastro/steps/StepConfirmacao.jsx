@@ -1,301 +1,164 @@
 import React from "react";
 
+import "./CadastroSteps.css";
+
 export default function StepConfirmacao({
   tipoConta,
-  data,
-  onChange,
+  values,
+  updateField,
   onSubmit,
   loading,
+  back,
 }) {
+  function renderItem(label, value) {
+    return (
+      <div className="confirm-item">
+        <span>{label}</span>
+
+        <strong>{value || "-"}</strong>
+      </div>
+    );
+  }
+
   return (
-    <div className="cadastro-step">
+    <div className="step">
+      <div className="step-header">
+        <h2 className="step-title">Confirmação do Cadastro</h2>
 
-      <h2>Confirmação do Cadastro</h2>
-
-      <p className="step-description">
-        Revise todas as informações antes de concluir a abertura da conta.
-      </p>
-
-      {/* DADOS DA CONTA */}
+        <p className="step-description">Revise seus dados antes de concluir.</p>
+      </div>
 
       <div className="confirm-card">
-
         <h3>Tipo de Conta</h3>
 
-        <div className="confirm-item">
-          <span>Conta</span>
-          <strong>
-            {tipoConta === "PJ"
-              ? "Pessoa Jurídica"
-              : "Pessoa Física"}
-          </strong>
-        </div>
-
+        {renderItem(
+          "Conta",
+          tipoConta === "PJ" ? "Pessoa Jurídica" : "Pessoa Física",
+        )}
       </div>
-
-      {/* DADOS PESSOAIS */}
 
       <div className="confirm-card">
-
         <h3>Dados Pessoais</h3>
 
-        <div className="confirm-item">
-          <span>Nome</span>
-          <strong>{data.nomeCompleto}</strong>
-        </div>
+        {renderItem("Nome", values.nome)}
 
-        <div className="confirm-item">
-          <span>CPF</span>
-          <strong>{data.cpf}</strong>
-        </div>
+        {renderItem("CPF", values.cpf)}
 
-        <div className="confirm-item">
-          <span>RG</span>
-          <strong>{data.rg}</strong>
-        </div>
+        {renderItem("Nascimento", values.dataNascimento)}
 
-        <div className="confirm-item">
-          <span>Nascimento</span>
-          <strong>{data.dataNascimento}</strong>
-        </div>
+        {renderItem("RG", values.rg)}
 
-        <div className="confirm-item">
-          <span>Sexo</span>
-          <strong>{data.sexo}</strong>
-        </div>
+        {renderItem("Nome da Mãe", values.mae)}
 
-        <div className="confirm-item">
-          <span>Nome da Mãe</span>
-          <strong>{data.nomeMae}</strong>
-        </div>
-
+        {renderItem("Sexo", values.sexo)}
       </div>
-
-      {/* EMPRESA */}
 
       {tipoConta === "PJ" && (
         <div className="confirm-card">
-
           <h3>Empresa</h3>
 
-          <div className="confirm-item">
-            <span>Razão Social</span>
-            <strong>{data.razaoSocial}</strong>
-          </div>
+          {renderItem("CNPJ", values.cnpj)}
 
-          <div className="confirm-item">
-            <span>Nome Fantasia</span>
-            <strong>{data.nomeFantasia}</strong>
-          </div>
+          {renderItem("Razão Social", values.razaoSocial)}
 
-          <div className="confirm-item">
-            <span>CNPJ</span>
-            <strong>{data.cnpj}</strong>
-          </div>
+          {renderItem("Nome Fantasia", values.nomeFantasia)}
 
-          <div className="confirm-item">
-            <span>Data de Abertura</span>
-            <strong>{data.dataAbertura}</strong>
-          </div>
+          {renderItem("Inscrição Estadual", values.inscricaoEstadual)}
 
-          <div className="confirm-item">
-            <span>Porte</span>
-            <strong>{data.porteEmpresa}</strong>
-          </div>
+          {renderItem("Inscrição Municipal", values.inscricaoMunicipal)}
 
-          <div className="confirm-item">
-            <span>CNAE</span>
-            <strong>{data.cnae}</strong>
-          </div>
-
+          {renderItem("Fundação", values.fundacao)}
         </div>
       )}
 
-      {/* ENDEREÇO */}
-
       <div className="confirm-card">
-
         <h3>Endereço</h3>
 
-        <div className="confirm-item">
-          <span>CEP</span>
-          <strong>{data.cep}</strong>
-        </div>
+        {renderItem("CEP", values.cep)}
 
-        <div className="confirm-item">
-          <span>Rua</span>
-          <strong>{data.rua}</strong>
-        </div>
+        {renderItem("Rua", values.rua)}
 
-        <div className="confirm-item">
-          <span>Número</span>
-          <strong>{data.numero}</strong>
-        </div>
+        {renderItem("Número", values.numero)}
 
-        <div className="confirm-item">
-          <span>Complemento</span>
-          <strong>{data.complemento || "-"}</strong>
-        </div>
+        {renderItem("Complemento", values.complemento)}
 
-        <div className="confirm-item">
-          <span>Bairro</span>
-          <strong>{data.bairro}</strong>
-        </div>
+        {renderItem("Bairro", values.bairro)}
 
-        <div className="confirm-item">
-          <span>Cidade</span>
-          <strong>{data.cidade}</strong>
-        </div>
+        {renderItem("Cidade", values.cidade)}
 
-        <div className="confirm-item">
-          <span>Estado</span>
-          <strong>{data.estado}</strong>
-        </div>
-
+        {renderItem("Estado", values.estado)}
       </div>
 
-      {/* CONTATO */}
-
       <div className="confirm-card">
-
         <h3>Contato</h3>
 
-        <div className="confirm-item">
-          <span>E-mail</span>
-          <strong>{data.email}</strong>
-        </div>
+        {renderItem("E-mail", values.email)}
 
-        <div className="confirm-item">
-          <span>Telefone</span>
-          <strong>{data.telefone}</strong>
-        </div>
+        {renderItem("Telefone", values.telefone)}
 
-        <div className="confirm-item">
-          <span>Status do E-mail</span>
-
-          <strong
-            className={
-              data.codigoEmail?.length === 6
-                ? "status-ok"
-                : "status-pending"
-            }
-          >
-            {data.codigoEmail?.length === 6
-              ? "✔ Validado"
-              : "Pendente"}
-          </strong>
-        </div>
-
-        <div className="confirm-item">
-          <span>Status do SMS</span>
-
-          <strong
-            className={
-              data.codigoSMS?.length === 6
-                ? "status-ok"
-                : "status-pending"
-            }
-          >
-            {data.codigoSMS?.length === 6
-              ? "✔ Validado"
-              : "Pendente"}
-          </strong>
-        </div>
-
-      </div>
-
-      {/* DOCUMENTOS */}
-
-      <div className="confirm-card">
-
-        <h3>Documentos</h3>
-
-        <div className="confirm-item">
-          <span>Documento Frente</span>
-
-          <strong>
-            {data.documentoFrente
-              ? "✔ Enviado"
-              : "Não enviado"}
-          </strong>
-        </div>
-
-        <div className="confirm-item">
-          <span>Documento Verso</span>
-
-          <strong>
-            {data.documentoVerso
-              ? "✔ Enviado"
-              : "Não enviado"}
-          </strong>
-        </div>
-
-        <div className="confirm-item">
-          <span>Selfie</span>
-
-          <strong>
-            {data.selfie
-              ? "✔ Enviada"
-              : "Não enviada"}
-          </strong>
-        </div>
-
-        {tipoConta === "PJ" && (
-          <div className="confirm-item">
-            <span>Cartão CNPJ</span>
-
-            <strong>
-              {data.cartaoCnpj
-                ? "✔ Enviado"
-                : "Não enviado"}
-            </strong>
-          </div>
+        {renderItem(
+          "Status E-mail",
+          values.codigoEmail?.length === 6 ? "✔ Validado" : "Pendente",
         )}
 
+        {renderItem(
+          "Status SMS",
+          values.codigoSMS?.length === 6 ? "✔ Validado" : "Pendente",
+        )}
       </div>
 
-      {/* TERMOS */}
+      <div className="confirm-card">
+        <h3>Documentos</h3>
+
+        {renderItem(
+          "Documento Frente",
+          values.documentoFrente ? "✔ Enviado" : "Não enviado",
+        )}
+
+        {renderItem(
+          "Documento Verso",
+          values.documentoVerso ? "✔ Enviado" : "Não enviado",
+        )}
+
+        {renderItem("Selfie", values.selfie ? "✔ Enviada" : "Não enviada")}
+
+        {tipoConta === "PJ" &&
+          renderItem(
+            "Cartão CNPJ",
+            values.cartaoCNPJ ? "✔ Enviado" : "Não enviado",
+          )}
+      </div>
 
       <div className="terms-box">
-
         <label className="checkbox-row">
-
           <input
             type="checkbox"
-            checked={data.aceite || false}
-            onChange={(e) =>
-              onChange(
-                "aceite",
-                e.target.checked
-              )
-            }
+            checked={values.aceite || false}
+            onChange={(e) => updateField("aceite", e.target.checked)}
           />
 
           <span>
-            Declaro que todas as informações
-            fornecidas são verdadeiras e aceito
-            os Termos de Uso, Política de
-            Privacidade e Contrato de Abertura
-            de Conta.
+            Declaro que todas as informações fornecidas são verdadeiras e aceito
+            os Termos de Uso, Política de Privacidade e Contrato de Abertura de
+            Conta.
           </span>
-
         </label>
-
       </div>
 
-      {/* BOTÃO */}
+      <div className="step-buttons">
+        <button className="btn btn-secondary" onClick={back}>
+          Voltar
+        </button>
 
-      <button
-        type="button"
-        className="btn-primary"
-        disabled={!data.aceite || loading}
-        onClick={onSubmit}
-      >
-        {loading
-          ? "Enviando cadastro..."
-          : "Finalizar Cadastro"}
-      </button>
-
+        <button
+          type="button"
+          className="btn btn-primary"
+          disabled={!values.aceite || loading}
+          onClick={onSubmit}
+        >
+          {loading ? "Enviando cadastro..." : "Finalizar Cadastro"}
+        </button>
+      </div>
     </div>
   );
 }

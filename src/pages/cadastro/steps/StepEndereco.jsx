@@ -1,159 +1,360 @@
 import React from "react";
 
+import Input from "../../../components/Input";
+import CEPInput from "../../../components/CEPInput";
+
+import "./CadastroSteps.css";
+
+
 export default function StepEndereco({
-  data,
-  errors,
-  onChange,
-  onBuscarCEP,
-  loadingCep,
+  values,
+  updateField,
+  errors = {},
+  next,
+  back,
 }) {
-  function handleCEP(value) {
-    let cep = value.replace(/\D/g, "");
 
-    if (cep.length > 8) cep = cep.slice(0, 8);
 
-    if (cep.length > 5) {
-      cep = cep.replace(/^(\d{5})(\d)/, "$1-$2");
-    }
+  function handleCEPChange(e) {
 
-    onChange("cep", cep);
+    updateField(
+      "cep",
+      e.target.value
+    );
 
-    if (cep.replace(/\D/g, "").length === 8) {
-      onBuscarCEP(cep.replace(/\D/g, ""));
-    }
   }
 
+
+
+  function handleAddressFound(address) {
+
+    updateField(
+      "cep",
+      address.cep
+    );
+
+
+    updateField(
+      "rua",
+      address.rua
+    );
+
+
+    updateField(
+      "bairro",
+      address.bairro
+    );
+
+
+    updateField(
+      "cidade",
+      address.cidade
+    );
+
+
+    updateField(
+      "estado",
+      address.estado
+    );
+
+  }
+
+
+
+
+  function handleChange(e) {
+
+    const {
+      name,
+      value
+    } = e.target;
+
+
+    let newValue = value;
+
+
+    if(name === "estado") {
+
+      newValue =
+        value.toUpperCase();
+
+    }
+
+
+    updateField(
+      name,
+      newValue
+    );
+
+  }
+
+
+
+
   return (
-    <div className="cadastro-step">
 
-      <h2>Endereço</h2>
+    <div className="step">
 
-      <div className="cadastro-grid">
 
-        <div className="input-group">
-          <label>CEP *</label>
+      <div className="step-header">
 
-          <div className="cep-field">
+        <h2 className="step-title">
 
-            <input
-              value={data.cep}
-              onChange={(e) => handleCEP(e.target.value)}
-              placeholder="00000-000"
-            />
+          Endereço
 
-            <button
-              type="button"
-              onClick={() =>
-                onBuscarCEP(
-                  data.cep.replace(/\D/g, "")
-                )
-              }
-            >
-              {loadingCep ? "..." : "Buscar"}
-            </button>
+        </h2>
 
-          </div>
 
-          {errors.cep && (
-            <small>{errors.cep}</small>
-          )}
-        </div>
+        <p className="step-description">
 
-        <div className="input-group">
-          <label>Rua *</label>
+          Informe o endereço da conta.
 
-          <input
-            value={data.rua}
-            onChange={(e) =>
-              onChange("rua", e.target.value)
-            }
-          />
+        </p>
 
-          {errors.rua && (
-            <small>{errors.rua}</small>
-          )}
-        </div>
-
-        <div className="input-group">
-          <label>Número *</label>
-
-          <input
-            value={data.numero}
-            onChange={(e) =>
-              onChange("numero", e.target.value)
-            }
-          />
-
-          {errors.numero && (
-            <small>{errors.numero}</small>
-          )}
-        </div>
-
-        <div className="input-group">
-          <label>Complemento</label>
-
-          <input
-            value={data.complemento}
-            onChange={(e) =>
-              onChange(
-                "complemento",
-                e.target.value
-              )
-            }
-          />
-        </div>
-
-        <div className="input-group">
-          <label>Bairro *</label>
-
-          <input
-            value={data.bairro}
-            onChange={(e) =>
-              onChange("bairro", e.target.value)
-            }
-          />
-
-          {errors.bairro && (
-            <small>{errors.bairro}</small>
-          )}
-        </div>
-
-        <div className="input-group">
-          <label>Cidade *</label>
-
-          <input
-            value={data.cidade}
-            onChange={(e) =>
-              onChange("cidade", e.target.value)
-            }
-          />
-
-          {errors.cidade && (
-            <small>{errors.cidade}</small>
-          )}
-        </div>
-
-        <div className="input-group">
-          <label>Estado *</label>
-
-          <input
-            value={data.estado}
-            maxLength={2}
-            onChange={(e) =>
-              onChange(
-                "estado",
-                e.target.value.toUpperCase()
-              )
-            }
-          />
-
-          {errors.estado && (
-            <small>{errors.estado}</small>
-          )}
-        </div>
 
       </div>
 
+
+
+
+      <div className="form-grid">
+
+
+
+        <CEPInput
+
+          label="CEP"
+
+          value={
+            values.cep || ""
+          }
+
+          onChange={
+            handleCEPChange
+          }
+
+          onAddressFound={
+            handleAddressFound
+          }
+
+          error={
+            errors.cep
+          }
+
+          required
+
+        />
+
+
+
+
+
+        <Input
+
+          label="Rua"
+
+          name="rua"
+
+          value={
+            values.rua || ""
+          }
+
+          onChange={
+            handleChange
+          }
+
+          placeholder="Rua"
+
+          error={
+            errors.rua
+          }
+
+          required
+
+        />
+
+
+
+
+
+        <Input
+
+          label="Número"
+
+          name="numero"
+
+          value={
+            values.numero || ""
+          }
+
+          onChange={
+            handleChange
+          }
+
+          placeholder="Número"
+
+          error={
+            errors.numero
+          }
+
+          required
+
+        />
+
+
+
+
+
+        <Input
+
+          label="Complemento"
+
+          name="complemento"
+
+          value={
+            values.complemento || ""
+          }
+
+          onChange={
+            handleChange
+          }
+
+          placeholder="Apartamento, bloco..."
+
+        />
+
+
+
+
+
+        <Input
+
+          label="Bairro"
+
+          name="bairro"
+
+          value={
+            values.bairro || ""
+          }
+
+          onChange={
+            handleChange
+          }
+
+          placeholder="Bairro"
+
+          error={
+            errors.bairro
+          }
+
+          required
+
+        />
+
+
+
+
+
+        <Input
+
+          label="Cidade"
+
+          name="cidade"
+
+          value={
+            values.cidade || ""
+          }
+
+          onChange={
+            handleChange
+          }
+
+          placeholder="Cidade"
+
+          error={
+            errors.cidade
+          }
+
+          required
+
+        />
+
+
+
+
+
+        <Input
+
+          label="Estado"
+
+          name="estado"
+
+          value={
+            values.estado || ""
+          }
+
+          onChange={
+            handleChange
+          }
+
+          placeholder="UF"
+
+          maxLength={2}
+
+          error={
+            errors.estado
+          }
+
+          required
+
+        />
+
+
+
+      </div>
+
+
+
+
+
+      <div className="step-buttons">
+
+
+        <button
+
+          className="btn btn-secondary"
+
+          onClick={back}
+
+        >
+
+          Voltar
+
+        </button>
+
+
+
+
+        <button
+
+          className="btn btn-primary"
+
+          onClick={next}
+
+        >
+
+          Continuar
+
+        </button>
+
+
+
+      </div>
+
+
+
     </div>
+
   );
+
 }

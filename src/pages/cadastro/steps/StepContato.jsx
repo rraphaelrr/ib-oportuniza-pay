@@ -1,232 +1,414 @@
 import React, { useState } from "react";
 
+import Input from "../../../components/Input";
+import PhoneInput from "../../../components/PhoneInput";
+import OTPInput from "../../../components/OTPInput";
+
+import "./CadastroSteps.css";
+
+
 export default function StepContato({
-  data,
-  errors,
-  onChange,
+  values,
+  updateField,
+  errors = {},
+  next,
+  back,
 }) {
+
+
   const [emailToken, setEmailToken] =
     useState(false);
+
 
   const [smsToken, setSmsToken] =
     useState(false);
 
-  function formatPhone(value) {
-    return value
-      .replace(/\D/g, "")
-      .replace(/^(\d{2})(\d)/, "($1) $2")
-      .replace(/(\d)(\d{4})$/, "$1-$2")
-      .slice(0, 15);
-  }
+
 
   function validarEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-      email
-    );
+
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      .test(email);
+
   }
+
+
+
 
   function enviarTokenEmail() {
-    if (!validarEmail(data.email)) {
-      alert("Informe um e-mail válido.");
+
+    if(
+      !validarEmail(
+        values.email
+      )
+    ){
+
+      alert(
+        "Informe um e-mail válido."
+      );
+
       return;
+
     }
 
+
     alert(
-      "Token enviado para o e-mail (simulação)."
+      "Código enviado para o e-mail."
     );
+
 
     setEmailToken(true);
+
   }
+
+
+
+
 
   function enviarTokenSMS() {
-    if (
-      data.telefone.replace(/\D/g, "").length <
-      11
-    ) {
-      alert("Telefone inválido.");
+
+    const telefone =
+      values.telefone?.replace(
+        /\D/g,
+        ""
+      );
+
+
+    if(
+      telefone.length < 11
+    ){
+
+      alert(
+        "Telefone inválido."
+      );
+
       return;
+
     }
 
+
     alert(
-      "Token enviado por SMS (simulação)."
+      "Código SMS enviado."
     );
 
+
     setSmsToken(true);
+
   }
 
+
+
+
+
   return (
-    <div className="cadastro-step">
 
-      <h2>Contato</h2>
+    <div className="step">
 
-      <p className="step-description">
-        Informe seus meios de contato.
-      </p>
 
-      <div className="cadastro-grid">
+      <div className="step-header">
 
-        {/* EMAIL */}
 
-        <div className="input-group full">
-          <label>E-mail *</label>
+        <h2 className="step-title">
 
-          <input
-            type="email"
-            placeholder="email@empresa.com"
-            value={data.email}
-            onChange={(e) =>
-              onChange(
-                "email",
-                e.target.value
-              )
-            }
-          />
+          Contato
 
-          {errors.email && (
-            <small>{errors.email}</small>
-          )}
-        </div>
+        </h2>
 
-        <div className="input-group full">
-          <label>Confirmar E-mail *</label>
 
-          <div className="token-row">
+        <p className="step-description">
 
-            <input
-              type="email"
-              placeholder="Repita o e-mail"
-              value={data.confirmarEmail}
-              onChange={(e) =>
-                onChange(
-                  "confirmarEmail",
-                  e.target.value
-                )
-              }
-            />
+          Informe seus meios de contato.
 
-            <button
-              type="button"
-              onClick={enviarTokenEmail}
-            >
-              Enviar código
-            </button>
+        </p>
 
-          </div>
-
-          {errors.confirmarEmail && (
-            <small>
-              {errors.confirmarEmail}
-            </small>
-          )}
-        </div>
-
-        {emailToken && (
-          <div className="input-group full">
-
-            <label>
-              Código recebido por e-mail
-            </label>
-
-            <input
-              maxLength={6}
-              placeholder="000000"
-              value={data.codigoEmail}
-              onChange={(e) =>
-                onChange(
-                  "codigoEmail",
-                  e.target.value
-                )
-              }
-            />
-
-          </div>
-        )}
-
-        {/* TELEFONE */}
-
-        <div className="input-group full">
-          <label>Celular *</label>
-
-          <input
-            placeholder="(11) 99999-9999"
-            value={data.telefone}
-            onChange={(e) =>
-              onChange(
-                "telefone",
-                formatPhone(
-                  e.target.value
-                )
-              )
-            }
-          />
-
-          {errors.telefone && (
-            <small>{errors.telefone}</small>
-          )}
-        </div>
-
-        <div className="input-group full">
-          <label>
-            Confirmar Celular *
-          </label>
-
-          <div className="token-row">
-
-            <input
-              placeholder="Repita o telefone"
-              value={
-                data.confirmarTelefone
-              }
-              onChange={(e) =>
-                onChange(
-                  "confirmarTelefone",
-                  formatPhone(
-                    e.target.value
-                  )
-                )
-              }
-            />
-
-            <button
-              type="button"
-              onClick={enviarTokenSMS}
-            >
-              Enviar SMS
-            </button>
-
-          </div>
-
-          {errors.confirmarTelefone && (
-            <small>
-              {errors.confirmarTelefone}
-            </small>
-          )}
-        </div>
-
-        {smsToken && (
-          <div className="input-group full">
-
-            <label>
-              Código recebido por SMS
-            </label>
-
-            <input
-              maxLength={6}
-              placeholder="000000"
-              value={data.codigoSMS}
-              onChange={(e) =>
-                onChange(
-                  "codigoSMS",
-                  e.target.value
-                )
-              }
-            />
-
-          </div>
-        )}
 
       </div>
 
+
+
+
+
+      <div className="form-grid">
+
+
+
+
+
+        <Input
+
+          label="E-mail"
+
+          name="email"
+
+          type="email"
+
+          value={
+            values.email || ""
+          }
+
+          onChange={(e)=>
+            updateField(
+              "email",
+              e.target.value
+            )
+          }
+
+          placeholder="email@empresa.com"
+
+          error={
+            errors.email
+          }
+
+          required
+
+        />
+
+
+
+
+
+        <Input
+
+          label="Confirmar E-mail"
+
+          name="confirmarEmail"
+
+          type="email"
+
+          value={
+            values.confirmarEmail || ""
+          }
+
+          onChange={(e)=>
+            updateField(
+              "confirmarEmail",
+              e.target.value
+            )
+          }
+
+          placeholder="Repita o e-mail"
+
+          error={
+            errors.confirmarEmail
+          }
+
+          required
+
+        />
+
+
+
+
+
+        <button
+
+          type="button"
+
+          className="btn btn-secondary"
+
+          onClick={
+            enviarTokenEmail
+          }
+
+        >
+
+          Enviar código e-mail
+
+        </button>
+
+
+
+
+
+        {
+          emailToken && (
+
+            <OTPInput
+
+              label="Código do e-mail"
+
+              value={
+                values.codigoEmail || ""
+              }
+
+              onChange={(value)=>
+                updateField(
+                  "codigoEmail",
+                  value
+                )
+              }
+
+              length={6}
+
+              error={
+                errors.codigoEmail
+              }
+
+            />
+
+          )
+        }
+
+
+
+
+
+
+
+        <PhoneInput
+
+          label="Celular"
+
+          value={
+            values.telefone || ""
+          }
+
+          onChange={(e)=>
+            updateField(
+              "telefone",
+              e.target.value
+            )
+          }
+
+          error={
+            errors.telefone
+          }
+
+          required
+
+        />
+
+
+
+
+
+
+
+        <PhoneInput
+
+          label="Confirmar Celular"
+
+          value={
+            values.confirmarTelefone || ""
+          }
+
+          onChange={(e)=>
+            updateField(
+              "confirmarTelefone",
+              e.target.value
+            )
+          }
+
+          error={
+            errors.confirmarTelefone
+          }
+
+          required
+
+        />
+
+
+
+
+
+        <button
+
+          type="button"
+
+          className="btn btn-secondary"
+
+          onClick={
+            enviarTokenSMS
+          }
+
+        >
+
+          Enviar SMS
+
+        </button>
+
+
+
+
+
+
+
+        {
+          smsToken && (
+
+            <OTPInput
+
+              label="Código SMS"
+
+              value={
+                values.codigoSMS || ""
+              }
+
+              onChange={(value)=>
+                updateField(
+                  "codigoSMS",
+                  value
+                )
+              }
+
+              length={6}
+
+              error={
+                errors.codigoSMS
+              }
+
+            />
+
+          )
+        }
+
+
+
+      </div>
+
+
+
+
+
+
+
+      <div className="step-buttons">
+
+
+        <button
+
+          className="btn btn-secondary"
+
+          onClick={back}
+
+        >
+
+          Voltar
+
+        </button>
+
+
+
+
+        <button
+
+          className="btn btn-primary"
+
+          onClick={next}
+
+        >
+
+          Continuar
+
+        </button>
+
+
+      </div>
+
+
+
     </div>
+
   );
+
 }
