@@ -1,257 +1,336 @@
-.home{
-    width:100%;
-    max-width:100%;
-    overflow-x:hidden;
+.home {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 
-    display:flex;
-    flex-direction:column;
-    gap:28px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.welcome{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.welcome h1{
-    font-size:32px;
-    color:#fff;
+.welcome h1 {
+  font-size: 32px;
+  color: #fff;
 }
 
-.welcome span{
-    color:#777;
+.welcome span {
+  color: #777;
 }
 
-.cards{
-    display:grid;
-    grid-template-columns:2fr 1fr 1fr;
-    gap:20px;
-    width:100%;
+.cards {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 20px;
+  width: 100%;
 }
 
-.balance-card{
-    background:linear-gradient(135deg,#003399,#0055ff);
-    color:white;
-    border-radius:22px;
-    padding:28px;
-    box-shadow:0 15px 35px rgba(0,51,153,.25);
+.balance-card {
+  background: linear-gradient(135deg, #003399, #0055ff);
+  color: white;
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: 0 15px 35px rgba(0, 51, 153, 0.25);
 }
 
-.balance-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.balance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.balance-header button{
-    background:none;
-    border:none;
-    color:white;
-    cursor:pointer;
-    font-size:20px;
+.balance-header button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 20px;
 }
 
-.balance-card h2{
-    margin-top:25px;
-    font-size:40px;
+.balance-card h2 {
+  margin-top: 25px;
+  font-size: 40px;
 }
 
-.small-card{
-    background:white;
-    border-radius:20px;
-    padding:22px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    box-shadow:0 8px 25px rgba(0,0,0,.06);
+.small-card {
+  background: white;
+  border-radius: 20px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
 }
 
-.small-card span{
-    color:#888;
+.small-card span {
+  color: #888;
 }
 
-.small-card h3{
-    margin-top:10px;
-    color:#003399;
+.small-card h3 {
+  margin-top: 10px;
+  color: #003399;
 }
 
-.quick-actions{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
 }
 
-.quick-actions button{
-    height:65px;
-    border:none;
-    border-radius:18px;
-    background:white;
-    cursor:pointer;
-    font-weight:600;
-    transition:.25s;
-    box-shadow:0 8px 18px rgba(0,0,0,.05);
+.quick-actions button {
+  height: 65px;
+  border: none;
+  border-radius: 18px;
+  background: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
 }
 
-.quick-actions button:hover{
-    background:#003399;
-    color:white;
-    transform:translateY(-4px);
+.quick-actions button:hover {
+  background: #003399;
+  color: white;
+  transform: translateY(-4px);
 }
 
-.content-grid{
-    display:grid;
-    grid-template-columns:minmax(0,1.4fr) minmax(0,.9fr);
-    gap:20px;
-    width:100%;
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+  gap: 20px;
+  width: 100%;
 }
 
 .transactions,
-.chart{
-    background:white;
-    border-radius:22px;
-    padding:25px;
-    box-shadow:0 8px 25px rgba(0,0,0,.05);
+.chart {
+  background: white;
+  border-radius: 22px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
 }
 
-.transaction{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:18px 0;
-    border-bottom:1px solid #ececec;
+.transaction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid #ececec;
 }
 
-.transaction:last-child{
-    border:none;
+.transaction:last-child {
+  border: none;
 }
 
-.transaction span{
-    display:block;
-    color:#888;
-    margin-top:4px;
+.transaction span {
+  display: block;
+  color: #888;
+  margin-top: 4px;
 }
 
-.positive{
-    color:#13a845;
+.positive {
+  color: #13a845;
 }
 
-.negative{
-    color:#d93131;
+.negative {
+  color: #d93131;
 }
 
-.fake-chart{
-    margin-top:20px;
-    height:260px;
-    border-radius:18px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:linear-gradient(135deg,#f7f9ff,#edf3ff);
-    color:#003399;
-    font-weight:600;
+.fake-chart {
+  margin-top: 20px;
+  height: 260px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f7f9ff, #edf3ff);
+  color: #003399;
+  font-weight: 600;
 }
 
-.jobs{
-    display:flex;
-    flex-direction:column;
-    gap:18px;
+.jobs {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
-.jobs-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.jobs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.jobs-carousel{
-    display:flex;
-    gap:18px;
-    overflow:auto;
-    padding-bottom:8px;
+.jobs-carousel {
+  display: flex;
+  gap: 18px;
+  overflow: auto;
+  padding-bottom: 8px;
 }
 
-.jobs-carousel::-webkit-scrollbar{
-    height:8px;
+.jobs-carousel::-webkit-scrollbar {
+  height: 8px;
 }
 
-.jobs-carousel::-webkit-scrollbar-thumb{
-    background:#00339955;
-    border-radius:20px;
+.jobs-carousel::-webkit-scrollbar-thumb {
+  background: #00339955;
+  border-radius: 20px;
 }
 
-.job-card{
-    min-width:320px;
-    background:white;
-    border-radius:22px;
-    padding:24px;
-    box-shadow:0 10px 30px rgba(0,0,0,.06);
-    transition:.3s;
+.job-card {
+  min-width: 320px;
+  background: white;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  transition: 0.3s;
 }
 
-.job-card:hover{
-    transform:translateY(-8px);
+.job-card:hover {
+  transform: translateY(-8px);
 }
 
-.job-card h3{
-    color:#003399;
+.job-card h3 {
+  color: #003399;
 }
 
-.job-card h4{
-    margin:15px 0;
-    color:#18a058;
+.job-card h4 {
+  margin: 15px 0;
+  color: #18a058;
 }
 
-.job-card p{
-    color:#666;
-    line-height:24px;
-    min-height:70px;
+.job-card p {
+  color: #666;
+  line-height: 24px;
+  min-height: 70px;
 }
 
-.job-card button{
-    margin-top:18px;
-    width:100%;
-    height:48px;
-    border:none;
-    border-radius:12px;
-    background:#003399;
-    color:white;
-    cursor:pointer;
-    transition:.25s;
+.job-card button {
+  margin-top: 18px;
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: #003399;
+  color: white;
+  cursor: pointer;
+  transition: 0.25s;
 }
 
-.job-card button:hover{
-    background:#002a80;
+.job-card button:hover {
+  background: #002a80;
 }
 
-@media(max-width:1200px){
+@media (max-width: 1200px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
 
-.cards{
-    grid-template-columns:1fr;
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-.content-grid{
-    grid-template-columns:1fr;
-}
+@media (max-width: 700px) {
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
 
-.quick-actions{
-    grid-template-columns:repeat(2,1fr);
-}
+  .balance-card h2 {
+    font-size: 30px;
+  }
 
-}
+  .job-card {
+    min-width: 280px;
+  }
+  .chart-box {
+    width: 100%;
+    height: 320px;
+  }
 
-@media(max-width:700px){
+  .chart {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  }
 
-.quick-actions{
-    grid-template-columns:1fr;
-}
+  .cards {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 20px;
+  }
 
-.balance-card h2{
-    font-size:30px;
-}
+  .balance-card {
+    background: linear-gradient(135deg, #003399, #0055dd);
+    color: #fff;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 15px 35px rgba(0, 51, 153, 0.35);
+  }
 
-.job-card{
-    min-width:280px;
-}
+  .small-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+  }
 
+  .small-card svg {
+    font-size: 26px;
+  }
+
+  .income svg {
+    color: #22c55e;
+  }
+
+  .expense svg {
+    color: #ef4444;
+  }
+  .transaction {
+    display: flex;
+    align-items: center;
+    padding: 18px;
+    border-radius: 14px;
+    transition: 0.25s;
+  }
+
+  .transaction:hover {
+    background: #f6f8fc;
+  }
+
+  .transaction-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #eef4ff;
+    color: #003399;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+  }
+
+  .transaction-info {
+    flex: 1;
+  }
+
+  .positive {
+    color: #16a34a;
+  }
+
+  .negative {
+    color: #dc2626;
+  }
 }

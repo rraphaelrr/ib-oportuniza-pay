@@ -10,6 +10,7 @@ export default function StepConfirmacao({
   loading,
   back,
 }) {
+  const isPJ = values.tipoConta === "pj";
   function renderItem(label, value) {
     return (
       <div className="confirm-item">
@@ -31,10 +32,7 @@ export default function StepConfirmacao({
       <div className="confirm-card">
         <h3>Tipo de Conta</h3>
 
-        {renderItem(
-          "Conta",
-          tipoConta === "PJ" ? "Pessoa Jurídica" : "Pessoa Física",
-        )}
+        {renderItem("Conta", isPJ ? "Pessoa Jurídica" : "Pessoa Física")}
       </div>
 
       <div className="confirm-card">
@@ -44,18 +42,18 @@ export default function StepConfirmacao({
 
         {renderItem("CPF", values.cpf)}
 
-        {renderItem("Nascimento", values.dataNascimento)}
+        {renderItem("Nascimento", values.nascimento)}
 
         {renderItem("RG", values.rg)}
 
-        {renderItem("Nome da Mãe", values.mae)}
+        {renderItem("Nome da Mãe", values.nomeMae)}
 
         {renderItem("Sexo", values.sexo)}
       </div>
 
-      {tipoConta === "PJ" && (
+      {isPJ && (
         <div className="confirm-card">
-          <h3>Empresa</h3>
+          <h3>Dados da Empresa</h3>
 
           {renderItem("CNPJ", values.cnpj)}
 
@@ -67,7 +65,13 @@ export default function StepConfirmacao({
 
           {renderItem("Inscrição Municipal", values.inscricaoMunicipal)}
 
-          {renderItem("Fundação", values.fundacao)}
+          {renderItem("Natureza Jurídica", values.naturezaJuridica)}
+
+          {renderItem("Capital Social", values.capitalSocial)}
+
+          {renderItem("Data de Abertura", values.abertura)}
+
+          {renderItem("CNAE", values.cnae)}
         </div>
       )}
 
@@ -122,7 +126,7 @@ export default function StepConfirmacao({
 
         {renderItem("Selfie", values.selfie ? "✔ Enviada" : "Não enviada")}
 
-        {tipoConta === "PJ" &&
+        {isPJ &&
           renderItem(
             "Cartão CNPJ",
             values.cartaoCNPJ ? "✔ Enviado" : "Não enviado",

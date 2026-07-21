@@ -17,6 +17,7 @@ import { useAuth } from "../context/AuthContext";
 
 import "./Sidebar.css";
 import logo from "../assets/privateAssets/logo.png";
+import logoIcon from "../assets/android-icon-foreground.png";
 
 export default function Sidebar({ collapsed, onToggle }) {
   const navigate = useNavigate();
@@ -68,7 +69,11 @@ export default function Sidebar({ collapsed, onToggle }) {
   return (
     <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       <div className="sidebar-logo">
-        <img src={logo} alt="Logo" width={200}/>
+        <img
+          src={collapsed ? logoIcon : logo}
+          alt="Oportuniza Pay"
+          className={collapsed ? "logo-small" : "logo-full"}
+        />
       </div>
 
       <nav className="sidebar-menu">

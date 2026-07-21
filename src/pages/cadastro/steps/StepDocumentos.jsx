@@ -5,7 +5,6 @@ import UploadCard from "../../../components/UploadCard";
 import "./CadastroSteps.css";
 
 export default function StepDocumentos({
-  tipoConta,
   values,
   updateField,
   errors = {},
@@ -21,43 +20,55 @@ export default function StepDocumentos({
       <div className="step-header">
         <h2 className="step-title">Documentos</h2>
 
-        <p className="step-description">Envie fotos legíveis dos documentos.</p>
+        <p className="step-description">
+          Envie fotos nítidas dos documentos solicitados.
+        </p>
       </div>
 
       <div className="form-grid">
+
         <UploadCard
-          title="Documento Frente"
+          title="Documento (Frente)"
           value={values.documentoFrente}
-          onChange={(file) => handleFile("documentoFrente", file)}
+          onChange={(file) =>
+            handleFile("documentoFrente", file)
+          }
           error={errors.documentoFrente}
-          accept="image/*"
+          accept="image/*,.pdf"
         />
 
         <UploadCard
-          title="Documento Verso"
+          title="Documento (Verso)"
           value={values.documentoVerso}
-          onChange={(file) => handleFile("documentoVerso", file)}
+          onChange={(file) =>
+            handleFile("documentoVerso", file)
+          }
           error={errors.documentoVerso}
-          accept="image/*"
+          accept="image/*,.pdf"
         />
 
         <UploadCard
           title="Selfie"
           value={values.selfie}
-          onChange={(file) => handleFile("selfie", file)}
+          onChange={(file) =>
+            handleFile("selfie", file)
+          }
           error={errors.selfie}
           accept="image/*"
         />
 
-        {tipoConta === "PJ" && (
+        {values.tipoConta === "pj" && (
           <UploadCard
             title="Cartão CNPJ"
             value={values.cartaoCNPJ}
-            onChange={(file) => handleFile("cartaoCNPJ", file)}
+            onChange={(file) =>
+              handleFile("cartaoCNPJ", file)
+            }
             error={errors.cartaoCNPJ}
-            accept=".pdf,image/*"
+            accept="image/*,.pdf"
           />
         )}
+
       </div>
 
       <div className="tips-box">
@@ -65,23 +76,28 @@ export default function StepDocumentos({
 
         <ul>
           <li>Utilize ambiente bem iluminado.</li>
-
-          <li>Não corte partes do documento.</li>
-
-          <li>Evite reflexos e sombras.</li>
-
+          <li>Fotografe o documento inteiro.</li>
+          <li>Evite reflexos.</li>
           <li>A selfie deve mostrar todo o rosto.</li>
 
-          {tipoConta === "PJ" && <li>O Cartão CNPJ deve estar atualizado.</li>}
+          {values.tipoConta === "pj" && (
+            <li>Envie um Cartão CNPJ atualizado.</li>
+          )}
         </ul>
       </div>
 
       <div className="step-buttons">
-        <button className="btn btn-secondary" onClick={back}>
+        <button
+          className="btn btn-secondary"
+          onClick={back}
+        >
           Voltar
         </button>
 
-        <button className="btn btn-primary" onClick={next}>
+        <button
+          className="btn btn-primary"
+          onClick={next}
+        >
           Continuar
         </button>
       </div>

@@ -7,12 +7,12 @@ import DateInput from "../../../components/DateInput";
 import "./CadastroSteps.css";
 
 export default function StepEmpresa({
-  data = {},
+  values,
   errors = {},
-  onChange,
+  updateField,
   next,
   back,
-})  {
+}) {
   return (
     <div className="step">
       <div className="step-header">
@@ -28,8 +28,8 @@ export default function StepEmpresa({
           className="full"
           label="Razão Social"
           name="razaoSocial"
-          value={data.razaoSocial || ""}
-          onChange={(e) => onChange("razaoSocial", e.target.value)}
+          value={values.razaoSocial || ""}
+          onChange={(e) => updateField("razaoSocial", e.target.value)}
           placeholder="Razão Social"
           error={errors.razaoSocial}
           required
@@ -39,32 +39,32 @@ export default function StepEmpresa({
           className="full"
           label="Nome Fantasia"
           name="nomeFantasia"
-          value={data.nomeFantasia || ""}
-          onChange={(e) => onChange("nomeFantasia", e.target.value)}
+          value={values.nomeFantasia || ""}
+          onChange={(e) => updateField("nomeFantasia", e.target.value)}
           placeholder="Nome Fantasia"
         />
 
         <CNPJInput
           label="CNPJ"
           required
-          value={data.cnpj || ""}
-          onChange={(e) => onChange("cnpj", e.target.value)}
+          value={values.cnpj || ""}
+          onChange={(e) => updateField("cnpj", e.target.value)}
           error={errors.cnpj}
         />
 
         <DateInput
           label="Data de Abertura"
           required
-          value={data.dataAbertura || ""}
-          onChange={(e) => onChange("dataAbertura", e.target.value)}
+          value={values.dataAbertura || ""}
+          onChange={(e) => updateField("dataAbertura", e.target.value)}
           error={errors.dataAbertura}
         />
 
         <Input
           className="full"
           label="Natureza Jurídica"
-          value={data.naturezaJuridica || ""}
-          onChange={(e) => onChange("naturezaJuridica", e.target.value)}
+          value={values.naturezaJuridica || ""}
+          onChange={(e) => updateField("naturezaJuridica", e.target.value)}
           placeholder="Ex.: Sociedade Empresária Limitada"
           error={errors.naturezaJuridica}
           required
@@ -79,8 +79,8 @@ export default function StepEmpresa({
           <div className="input-wrapper">
             <select
               className="input"
-              value={data.porteEmpresa || ""}
-              onChange={(e) => onChange("porteEmpresa", e.target.value)}
+              value={values.porteEmpresa || ""}
+              onChange={(e) => updateField("porteEmpresa", e.target.value)}
             >
               <option value="">Selecione</option>
 
@@ -104,8 +104,8 @@ export default function StepEmpresa({
         <Input
           label="Faturamento Mensal"
           type="number"
-          value={data.faturamento || ""}
-          onChange={(e) => onChange("faturamento", e.target.value)}
+          value={values.faturamento || ""}
+          onChange={(e) => updateField("faturamento", e.target.value)}
           placeholder="0,00"
           error={errors.faturamento}
           required
@@ -114,8 +114,8 @@ export default function StepEmpresa({
         <Input
           className="full"
           label="Atividade Principal (CNAE)"
-          value={data.cnae || ""}
-          onChange={(e) => onChange("cnae", e.target.value)}
+          value={values.cnae || ""}
+          onChange={(e) => updateField("cnae", e.target.value)}
           placeholder="Ex.: 6201-5/01"
         />
 
@@ -126,8 +126,8 @@ export default function StepEmpresa({
             <textarea
               className="input"
               rows="5"
-              value={data.objetoSocial || ""}
-              onChange={(e) => onChange("objetoSocial", e.target.value)}
+              value={values.objetoSocial || ""}
+              onChange={(e) => updateField("objetoSocial", e.target.value)}
               placeholder="
               Descreva a atividade exercida pela empresa.
               "

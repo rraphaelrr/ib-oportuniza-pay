@@ -1,8 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import {
   FaCloudUploadAlt,
   FaFileImage,
-  FaTrash
+  FaTrash,
+  FaFilePdf
 } from "react-icons/fa";
 
 import "./UploadCard.css";
@@ -10,23 +11,45 @@ import "./UploadCard.css";
 export default function UploadCard({
   title,
   description,
-  file,
+  value,
   accept = "image/*",
   onChange,
   onRemove,
 }) {
   const inputRef = useRef();
 
+  const preview = useMemo(() => {
+    if (!value) return null;
+
+    if (value.type?.startsWith("image/")) {
+      return URL.createObjectURL(value);
+    }
+
+    return null;
+  }, [value]);
+
   function openFile() {
-    inputRef.current.click();
+    inputRef.current?.click();
   }
 
-  function handleFile(event) {
-    const selected = event.target.files[0];
+  function handleFile(e) {
+    const file = e.target.files[0];
 
-    if (!selected) return;
+    if (!file) return;
 
-    onChange(selected);
+    onChange(file);
+  }
+
+  function remove() {
+    if (onRemove) {
+      onRemove();
+    } else {
+      onChange(null);
+    }
+
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   }
 
   return (
@@ -40,9 +63,8 @@ export default function UploadCard({
         onChange={handleFile}
       />
 
-      {!file ? (
+      {!value ? (
         <>
-
           <FaCloudUploadAlt
             size={45}
             color="#003399"
@@ -58,19 +80,31 @@ export default function UploadCard({
           >
             Selecionar arquivo
           </button>
-
         </>
       ) : (
         <>
-          <FaFileImage
-            size={45}
-            color="#16a34a"
-          />
+          {preview ? (
+            <img
+              src={preview}
+              alt={title}
+              className="upload-preview"
+            />
+          ) : value.type === "application/pdf" ? (
+            <FaFilePdf
+              size={60}
+              color="#E53935"
+            />
+          ) : (
+            <FaFileImage
+              size={60}
+              color="#16a34a"
+            />
+          )}
 
-          <h3>{file.name}</h3>
+          <h3>{value.name}</h3>
 
           <small>
-            {(file.size / 1024 / 1024).toFixed(2)} MB
+            {(value.size / 1024 / 1024).toFixed(2)} MB
           </small>
 
           <div className="upload-actions">
@@ -85,18 +119,15 @@ export default function UploadCard({
             <button
               type="button"
               className="remove"
-              onClick={onRemove}
+              onClick={remove}
             >
               <FaTrash />
-
               Remover
             </button>
 
           </div>
-
         </>
       )}
-
     </div>
   );
 }

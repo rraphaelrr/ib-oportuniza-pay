@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import useDarkMode from "../../hooks/useDarkMode";
 import "./LoginScreen.css";
+import logo from "../../assets/privateAssets/logo.png";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
@@ -406,15 +407,13 @@ export default function LoginScreen() {
         <DarkModeToggle darkMode={darkMode} onToggle={setDarkMode} />
       </div>
 
-      <div
+      {/* <div
         className={`op-logo-area ${step !== STEP.START ? "op-logo-area--compact" : ""}`}
       >
         <div className="op-logo-icon">
-          <span className="op-logo-letter">O</span>
+          <img src={logo} alt="Logo" className="op-logo-icon" width={200} />
         </div>
-        <div className="op-logo-title">Oportuniza Pay</div>
-        <div className="op-logo-sub">SEU BANCO DIGITAL</div>
-      </div>
+      </div> */}
 
       <div
         className={`op-card ${darkMode ? "op-card--dark" : ""} ${mounted ? "op-card--in" : ""}`}
@@ -450,8 +449,8 @@ export default function LoginScreen() {
           {/* ════ START ════ */}
           {step === STEP.START && (
             <div className="op-step-center">
-              <p className="op-welcome-text">Bem-vindo ao Oportuniza Pay</p>
-
+              {/* <p className="op-welcome-text">Bem-vindo ao Oportuniza Pay</p> */}
+              <img src={logo} alt="Logo" className="op-logo-icon" width={200} />
               <button
                 className="op-btn-primary"
                 onClick={() =>
