@@ -4,6 +4,7 @@ import ProtectedRoute, { PublicOnlyRoute } from "./ProtectedRoute";
 import LoginScreen from "../pages/Login/LoginScreen";
 import Home from "../pages/Home/Home";
 import Cadastro from "../pages/cadastro/Cadastro";
+import Extrato from "../pages/Extrato/Extrato";
 
 /**
  * Todas as rotas da aplicação ficam centralizadas aqui.
@@ -49,6 +50,14 @@ export default function AppRoutes() {
         }
       />
 
+      <Route
+        path="/extrato"
+        element={
+          <ProtectedRoute>
+            <Extrato />
+          </ProtectedRoute>
+        }
+      />
       {/* Qualquer rota desconhecida cai no login/redirecionamento */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

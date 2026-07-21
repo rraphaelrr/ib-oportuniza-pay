@@ -1,0 +1,207 @@
+.filtro-extrato {
+  width: 100%;
+  background: var(--card);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 20px;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  border: 1px solid var(--border);
+}
+
+
+/* Campos */
+
+.filtro-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+.filtro-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+
+/* Inputs e selects */
+
+.filtro-group input,
+.filtro-group select {
+
+  height: 44px;
+
+  width: 100%;
+
+  padding: 0 14px;
+
+  border-radius: 12px;
+
+  border: 1px solid var(--border);
+
+  background: var(--background);
+
+  color: var(--text);
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition: .2s;
+}
+
+
+.filtro-group input:focus,
+.filtro-group select:focus {
+
+  border-color: #005bea;
+
+  box-shadow:
+    0 0 0 3px rgba(0,91,234,.12);
+
+}
+
+
+
+/* Campo de busca */
+
+.filtro-group.busca {
+
+  grid-column: span 1;
+
+}
+
+
+
+/* Botões */
+
+.filtro-actions {
+
+  display: flex;
+
+  align-items: flex-end;
+
+  gap: 10px;
+
+}
+
+
+
+.filtro-actions button {
+
+  height: 44px;
+
+  padding: 0 22px;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  transition: .2s;
+
+}
+
+
+
+.btn-filtrar {
+
+  border: none;
+
+  background: #005bea;
+
+  color: #fff;
+
+}
+
+
+
+.btn-filtrar:hover {
+
+  opacity: .9;
+
+}
+
+
+
+.btn-limpar {
+
+  background: transparent;
+
+  color: var(--text);
+
+  border: 1px solid var(--border);
+
+}
+
+
+
+.btn-limpar:hover {
+
+  background: var(--background);
+
+}
+
+
+
+/* Responsivo Tablet */
+
+@media (max-width: 1024px) {
+
+  .filtro-extrato {
+
+    grid-template-columns: repeat(2, 1fr);
+
+  }
+
+
+  .filtro-actions {
+
+    grid-column: span 2;
+
+  }
+
+}
+
+
+
+/* Responsivo Mobile */
+
+@media (max-width: 600px) {
+
+
+  .filtro-extrato {
+
+    grid-template-columns: 1fr;
+
+    padding: 16px;
+
+    border-radius: 16px;
+
+  }
+
+
+  .filtro-actions {
+
+    grid-column: span 1;
+
+    width: 100%;
+
+  }
+
+
+  .filtro-actions button {
+
+    flex: 1;
+
+  }
+
+}

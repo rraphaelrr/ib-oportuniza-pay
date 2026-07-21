@@ -1,0 +1,231 @@
+.comprovante-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  z-index: 999;
+
+  padding: 20px;
+}
+
+.comprovante-modal {
+  width: 100%;
+
+  max-width: 460px;
+
+  background: white;
+
+  color: var(--text);
+
+  border-radius: 20px;
+
+  padding: 24px;
+
+  animation: modalShow 0.25s ease;
+}
+
+@keyframes modalShow {
+  from {
+    opacity: 0;
+
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+.comprovante-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  margin-bottom: 25px;
+}
+
+.comprovante-header h2 {
+  margin: 0;
+
+  font-size: 22px;
+}
+
+.comprovante-header span {
+  font-size: 13px;
+
+  color: var(--text-secondary);
+}
+
+.close-button {
+  border: none;
+
+  background: none;
+
+  font-size: 28px;
+
+  cursor: pointer;
+
+  color: var(--text);
+}
+
+.comprovante-status {
+  display: flex;
+
+  gap: 15px;
+
+  align-items: center;
+
+  padding: 15px;
+
+  border-radius: 14px;
+
+  background: var(--background);
+}
+
+.status-icon {
+  width: 48px;
+
+  height: 48px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 26px;
+
+  font-weight: bold;
+}
+
+.status-icon.entrada {
+  background: #dcfce7;
+
+  color: #16a34a;
+}
+
+.status-icon.saida {
+  background: #fee2e2;
+
+  color: #dc2626;
+}
+
+.comprovante-status strong {
+  display: block;
+}
+
+.comprovante-status p {
+  margin: 5px 0 0;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+}
+
+.comprovante-valor {
+  text-align: center;
+
+  padding: 25px 0;
+}
+
+.comprovante-valor span {
+  display: block;
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+}
+
+.comprovante-valor strong {
+  font-size: 32px;
+}
+
+.comprovante-details {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  font-size: 14px;
+}
+
+.detail-item span {
+  color: var(--text-secondary);
+}
+
+.detail-item strong {
+  text-align: right;
+}
+
+.comprovante-actions {
+  display: flex;
+
+  gap: 12px;
+
+  margin-top: 25px;
+}
+
+.comprovante-actions button {
+  flex: 1;
+
+  height: 44px;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  font-weight: 600;
+}
+
+.btn-download {
+  background: #005bea;
+
+  color: white;
+
+  border: none;
+}
+
+.btn-close {
+  background: transparent;
+
+  border: 1px solid var(--border);
+
+  color: var(--text);
+}
+
+@media (max-width: 480px) {
+  .comprovante-modal {
+    padding: 18px;
+  }
+
+  .comprovante-valor strong {
+    font-size: 26px;
+  }
+
+  .comprovante-actions {
+    flex-direction: column;
+  }
+}
