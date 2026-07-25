@@ -12,7 +12,7 @@ import StepConfirmacao from "./steps/StepConfirmacao";
 import StepSucesso from "./steps/StepSucesso";
 
 import "./Cadastro.css";
-
+import { createAccount } from "../../services/accountService";
 export default function Cadastro() {
   const [step, setStep] = useState(0);
 
@@ -200,33 +200,27 @@ export default function Cadastro() {
   }
 
   async function handleSubmit() {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      console.log("Cadastro enviado:", form);
+    const response = await createAccount(form);
 
-      /*
-        Aqui entra sua API:
+    console.log(response);
 
-        await api.post("/cadastro",form)
+    setProtocolo(response.account_number);
 
-      */
+    setStep(steps.length - 1);
+  } catch (error) {
+    console.error(error);
 
-      const novoProtocolo = "OP" + Date.now();
-
-      setProtocolo(novoProtocolo);
-
-      // vai para tela sucesso
-
-      setStep(steps.length - 1);
-    } catch (error) {
-      console.error(error);
-
-      alert("Erro ao enviar cadastro");
-    } finally {
-      setLoading(false);
-    }
+    alert(
+      error.response?.data?.message ||
+      "Erro ao criar a conta."
+    );
+  } finally {
+    setLoading(false);
   }
+}
 
   return (
     <div className="cadastro">

@@ -454,7 +454,8 @@ export default function LoginScreen() {
               <button
                 className="op-btn-primary"
                 onClick={() =>
-                  savedUser ? setStep(STEP.SAVED) : setStep(STEP.TYPE)
+                  /* savedUser ? setStep(STEP.SAVED) : setStep(STEP.TYPE) */
+                  setStep(STEP.TYPE)
                 }
               >
                 Entrar

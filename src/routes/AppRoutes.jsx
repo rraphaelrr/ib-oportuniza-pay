@@ -5,6 +5,7 @@ import LoginScreen from "../pages/Login/LoginScreen";
 import Home from "../pages/Home/Home";
 import Cadastro from "../pages/cadastro/Cadastro";
 import Extrato from "../pages/Extrato/Extrato";
+import Pix from "../pages/Pix/Pix";
 
 /**
  * Todas as rotas da aplicação ficam centralizadas aqui.
@@ -55,6 +56,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <Extrato />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pix"
+        element={
+          <ProtectedRoute>
+            <Pix />
           </ProtectedRoute>
         }
       />
