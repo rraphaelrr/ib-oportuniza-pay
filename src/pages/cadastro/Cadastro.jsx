@@ -10,9 +10,12 @@ import StepContato from "./steps/StepContato";
 import StepDocumentos from "./steps/StepDocumentos";
 import StepConfirmacao from "./steps/StepConfirmacao";
 import StepSucesso from "./steps/StepSucesso";
-
+import StepSenha from "./steps/StepSenha";
 import "./Cadastro.css";
-import { createAccount } from "../../services/accountService";
+import {
+  createAccount,
+  uploadAccountAttachment,
+} from "../../services/accountService";
 export default function Cadastro() {
   const [step, setStep] = useState(0);
 
@@ -22,7 +25,7 @@ export default function Cadastro() {
 
   const initialForm = {
     tipoConta: "",
-
+    agencyId: "",
     // PF
 
     cpf: "",
@@ -58,8 +61,11 @@ export default function Cadastro() {
 
     email: "",
     telefone: "",
-    codigoEmail: "",
-    codigoSMS: "",
+
+    // Senha
+
+    numericPassword: "",
+    confirmNumericPassword: "",
 
     // Documentos
 
@@ -95,39 +101,38 @@ export default function Cadastro() {
       title: "Tipo",
       component: StepTipoConta,
     },
-
     {
       id: 2,
       title: "Pessoal",
       component: StepDadosPessoais,
     },
-
     {
       id: 3,
       title: "Endereço",
       component: StepEndereco,
     },
-
     {
       id: 4,
       title: "Contato",
       component: StepContato,
     },
-
     {
       id: 5,
+      title: "Senha",
+      component: StepSenha,
+    },
+    {
+      id: 6,
       title: "Documentos",
       component: StepDocumentos,
     },
-
     {
-      id: 6,
+      id: 7,
       title: "Confirmação",
       component: StepConfirmacao,
     },
-
     {
-      id: 7,
+      id: 8,
       title: "Sucesso",
       component: StepSucesso,
     },
@@ -139,45 +144,43 @@ export default function Cadastro() {
       title: "Tipo",
       component: StepTipoConta,
     },
-
     {
       id: 2,
       title: "Responsável",
       component: StepDadosPessoais,
     },
-
     {
       id: 3,
       title: "Empresa",
       component: StepEmpresa,
     },
-
     {
       id: 4,
       title: "Endereço",
       component: StepEndereco,
     },
-
     {
       id: 5,
       title: "Contato",
       component: StepContato,
     },
-
     {
       id: 6,
+      title: "Senha",
+      component: StepSenha,
+    },
+    {
+      id: 7,
       title: "Documentos",
       component: StepDocumentos,
     },
-
     {
-      id: 7,
+      id: 8,
       title: "Confirmação",
       component: StepConfirmacao,
     },
-
     {
-      id: 8,
+      id: 9,
       title: "Sucesso",
       component: StepSucesso,
     },
@@ -205,7 +208,49 @@ export default function Cadastro() {
 
     const response = await createAccount(form);
 
-    console.log(response);
+    console.log("Conta criada:", response);
+
+    const accountId = response.id;
+
+    const attachments = [];
+
+    if (form.documentoFrente) {
+      attachments.push({
+        file: form.documentoFrente,
+        attachmentType: "identity_document",
+        description: "document_front",
+      });
+    }
+
+    if (form.documentoVerso) {
+      attachments.push({
+        file: form.documentoVerso,
+        attachmentType: "identity_document",
+        description: "document_back",
+      });
+    }
+
+    if (form.selfie) {
+      attachments.push({
+        file: form.selfie,
+        attachmentType: "selfie",
+        description: "selfie_with_document",
+      });
+    }
+
+    if (form.cartaoCNPJ) {
+      attachments.push({
+        file: form.cartaoCNPJ,
+        attachmentType: "company_document",
+        description: "cnpj_card",
+      });
+    }
+
+    if (attachments.length > 0) {
+      await uploadAccountAttachment(accountId, attachments);
+
+      console.log("Todos os anexos enviados.");
+    }
 
     setProtocolo(response.account_number);
 

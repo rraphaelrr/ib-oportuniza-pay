@@ -26,7 +26,7 @@ export default function PixHome({
   return (
     <div className="pix-home">
       <div className="pix-home-header">
-        <h1>Área Pix</h1>
+        <h1 style={{color: "white"}}>Área Pix</h1>
         <p>Envie, receba e gerencie suas transações Pix.</p>
       </div>
 

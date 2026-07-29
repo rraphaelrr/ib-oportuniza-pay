@@ -41,7 +41,7 @@ export default function PixReceber({ onBack, onGerar }) {
           <ArrowLeft size={22} />
         </button>
 
-        <h2>Receber Pix</h2>
+        <h2 style={{color: "white"}}>Receber Pix</h2>
       </div>
 
       <div className="pix-card">

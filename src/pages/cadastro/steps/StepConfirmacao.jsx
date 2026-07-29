@@ -32,103 +32,95 @@ export default function StepConfirmacao({
       <div className="confirm-card">
         <h3>Tipo de Conta</h3>
 
-        {renderItem("Conta", isPJ ? "Pessoa Jurídica" : "Pessoa Física")}
+        {renderItem("Conta: ", isPJ ? "Pessoa Jurídica" : "Pessoa Física")}
       </div>
 
       <div className="confirm-card">
         <h3>Dados Pessoais</h3>
 
-        {renderItem("Nome", values.nome)}
+        {renderItem("Nome: ", values.nome)}
 
-        {renderItem("CPF", values.cpf)}
+        {renderItem("CPF: ", values.cpf)}
 
-        {renderItem("Nascimento", values.nascimento)}
+        {renderItem("Nascimento: ", values.nascimento)}
 
-        {renderItem("RG", values.rg)}
+        {renderItem("RG: ", values.rg)}
 
-        {renderItem("Nome da Mãe", values.nomeMae)}
+        {renderItem("Nome da Mãe: ", values.nomeMae)}
 
-        {renderItem("Sexo", values.sexo)}
+        {renderItem("Sexo: ", values.sexo)}
       </div>
 
       {isPJ && (
         <div className="confirm-card">
           <h3>Dados da Empresa</h3>
 
-          {renderItem("CNPJ", values.cnpj)}
+          {renderItem("CNPJ: ", values.cnpj)}
 
-          {renderItem("Razão Social", values.razaoSocial)}
+          {renderItem("Razão Social: ", values.razaoSocial)}
 
-          {renderItem("Nome Fantasia", values.nomeFantasia)}
+          {renderItem("Nome Fantasia: ", values.nomeFantasia)}
 
-          {renderItem("Inscrição Estadual", values.inscricaoEstadual)}
+          {renderItem("Inscrição Estadual: ", values.inscricaoEstadual)}
 
-          {renderItem("Inscrição Municipal", values.inscricaoMunicipal)}
+          {renderItem("Inscrição Municipal: ", values.inscricaoMunicipal)}
 
-          {renderItem("Natureza Jurídica", values.naturezaJuridica)}
+          {renderItem("Natureza Jurídica: ", values.naturezaJuridica)}
 
-          {renderItem("Capital Social", values.capitalSocial)}
+          {renderItem("Capital Social: ", values.capitalSocial)}
 
-          {renderItem("Data de Abertura", values.abertura)}
+          {renderItem("Data de Abertura: ", values.abertura)}
 
-          {renderItem("CNAE", values.cnae)}
+          {renderItem("CNAE: ", values.cnae)}
         </div>
       )}
 
       <div className="confirm-card">
         <h3>Endereço</h3>
 
-        {renderItem("CEP", values.cep)}
+        {renderItem("CEP: ", values.cep)}
 
-        {renderItem("Rua", values.rua)}
+        {renderItem("Rua: ", values.rua)}
 
-        {renderItem("Número", values.numero)}
+        {renderItem("Número: ", values.numero)}
 
-        {renderItem("Complemento", values.complemento)}
+        {renderItem("Complemento: ", values.complemento)}
 
-        {renderItem("Bairro", values.bairro)}
+        {renderItem("Bairro: ", values.bairro)}
 
-        {renderItem("Cidade", values.cidade)}
+        {renderItem("Cidade: ", values.cidade)}
 
-        {renderItem("Estado", values.estado)}
+        {renderItem("Estado: ", values.estado)}
       </div>
 
       <div className="confirm-card">
         <h3>Contato</h3>
 
-        {renderItem("E-mail", values.email)}
+        {renderItem("E-mail: ", values.email)}
 
-        {renderItem("Telefone", values.telefone)}
+        {renderItem("Telefone: ", values.telefone)}
 
-        {renderItem(
-          "Status E-mail",
-          values.codigoEmail?.length === 6 ? "✔ Validado" : "Pendente",
-        )}
-
-        {renderItem(
-          "Status SMS",
-          values.codigoSMS?.length === 6 ? "✔ Validado" : "Pendente",
-        )}
+        
       </div>
 
       <div className="confirm-card">
         <h3>Documentos</h3>
 
         {renderItem(
-          "Documento Frente",
+          "Documento Frente: ",
           values.documentoFrente ? "✔ Enviado" : "Não enviado",
         )}
 
         {renderItem(
-          "Documento Verso",
+          "Documento Verso: ",
           values.documentoVerso ? "✔ Enviado" : "Não enviado",
         )}
 
-        {renderItem("Selfie", values.selfie ? "✔ Enviada" : "Não enviada")}
+        {renderItem("Selfie: ", values.selfie ? "✔ Enviada" : "Não enviada")}
 
         {isPJ &&
           renderItem(
-            "Cartão CNPJ",
+            "Cartão CNPJ: ",
             values.cartaoCNPJ ? "✔ Enviado" : "Não enviado",
           )}
       </div>

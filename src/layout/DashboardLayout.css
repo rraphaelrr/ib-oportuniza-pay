@@ -41,6 +41,7 @@ body{
     padding:30px;
     overflow-y:auto;
     overflow-x:hidden;
+    margin-left: 10px;
 }
 
 @media(max-width:900px){

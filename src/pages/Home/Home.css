@@ -8,6 +8,8 @@
   gap: 28px;
 }
 
+/* HEADER */
+
 .welcome {
   display: flex;
   justify-content: space-between;
@@ -15,142 +17,106 @@
 }
 
 .welcome h1 {
+  margin: 0;
   font-size: 32px;
-  color: #fff;
+  color: #ffffff;
+  font-weight: 700;
 }
 
 .welcome span {
-  color: #777;
+  color: #9ca3af;
+  font-size: 15px;
 }
 
-.cards {
+/* CARDS PRINCIPAIS */
+
+/* CARDS PRINCIPAIS */
+
+.dashboard-cards {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+
+  grid-template-columns: repeat(12, 1fr);
+
   gap: 20px;
+
   width: 100%;
 }
 
 .balance-card {
-  background: linear-gradient(135deg, #003399, #0055ff);
-  color: white;
-  border-radius: 22px;
-  padding: 28px;
-  box-shadow: 0 15px 35px rgba(0, 51, 153, 0.25);
+  grid-column: span 8;
 }
 
-.balance-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.credit-card {
+  grid-column: span 4;
 }
 
-.balance-header button {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 20px;
-}
+/* CARDS FINANCEIROS */
 
-.balance-card h2 {
-  margin-top: 25px;
-  font-size: 40px;
-}
-
-.small-card {
-  background: white;
-  border-radius: 20px;
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-}
-
-.small-card span {
-  color: #888;
-}
-
-.small-card h3 {
-  margin-top: 10px;
-  color: #003399;
-}
-
-.quick-actions {
+.stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-}
 
-.quick-actions button {
-  height: 65px;
-  border: none;
-  border-radius: 18px;
-  background: white;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.25s;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
-}
+  grid-template-columns: repeat(12, 1fr);
 
-.quick-actions button:hover {
-  background: #003399;
-  color: white;
-  transform: translateY(-4px);
-}
-
-.content-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
   gap: 20px;
+
   width: 100%;
 }
 
-.transactions,
-.chart {
-  background: white;
-  border-radius: 22px;
-  padding: 25px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+.stats-grid > * {
+  grid-column: span 3;
 }
 
-.transaction {
+/* AÇÕES RÁPIDAS */
+
+.quick-actions {
+  width: 100%;
+}
+
+/* BANNER */
+
+.promotion-banner {
+  width: 100%;
+}
+
+/* SERVIÇOS */
+
+.services-section {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 0;
-  border-bottom: 1px solid #ececec;
+  flex-direction: column;
+  gap: 18px;
 }
 
-.transaction:last-child {
-  border: none;
+.services-section h2 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 22px;
 }
 
-.transaction span {
-  display: block;
-  color: #888;
-  margin-top: 4px;
+.services-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 18px;
 }
 
-.positive {
-  color: #13a845;
+/* FINANCEIRO */
+
+.finance-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.2fr)
+    minmax(0, 1fr);
+
+  gap: 20px;
+
+  width: 100%;
 }
 
-.negative {
-  color: #d93131;
-}
-
-.fake-chart {
-  margin-top: 20px;
-  height: 260px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f7f9ff, #edf3ff);
-  color: #003399;
-  font-weight: 600;
-}
+/* ÁREA DE VAGAS */
 
 .jobs {
   display: flex;
@@ -160,15 +126,26 @@
 
 .jobs-header {
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
+}
+
+.jobs-header h2 {
+  color: #ffffff;
+
+  font-size: 22px;
 }
 
 .jobs-carousel {
   display: flex;
+
   gap: 18px;
-  overflow: auto;
-  padding-bottom: 8px;
+
+  overflow-x: auto;
+
+  padding-bottom: 10px;
 }
 
 .jobs-carousel::-webkit-scrollbar {
@@ -177,20 +154,26 @@
 
 .jobs-carousel::-webkit-scrollbar-thumb {
   background: #00339955;
+
   border-radius: 20px;
 }
 
 .job-card {
   min-width: 320px;
-  background: white;
+
+  background: #ffffff;
+
   border-radius: 22px;
+
   padding: 24px;
+
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+
   transition: 0.3s;
 }
 
 .job-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
 }
 
 .job-card h3 {
@@ -199,24 +182,37 @@
 
 .job-card h4 {
   margin: 15px 0;
-  color: #18a058;
+
+  color: #16a34a;
 }
 
 .job-card p {
   color: #666;
+
   line-height: 24px;
+
   min-height: 70px;
 }
 
 .job-card button {
-  margin-top: 18px;
   width: 100%;
+
   height: 48px;
+
+  margin-top: 18px;
+
   border: none;
+
   border-radius: 12px;
+
   background: #003399;
-  color: white;
+
+  color: #ffffff;
+
   cursor: pointer;
+
+  font-weight: 600;
+
   transition: 0.25s;
 }
 
@@ -224,113 +220,42 @@
   background: #002a80;
 }
 
+/* TABLET */
+
 @media (max-width: 1200px) {
-  .cards {
+  .dashboard-cards {
     grid-template-columns: 1fr;
   }
 
-  .content-grid {
+  .finance-grid {
     grid-template-columns: 1fr;
   }
 
-  .quick-actions {
+  .services-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
+/* MOBILE */
+
 @media (max-width: 700px) {
-  .quick-actions {
-    grid-template-columns: 1fr;
+  .welcome {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 10px;
   }
 
-  .balance-card h2 {
-    font-size: 30px;
+  .welcome h1 {
+    font-size: 26px;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
   }
 
   .job-card {
     min-width: 280px;
-  }
-  .chart-box {
-    width: 100%;
-    height: 320px;
-  }
-
-  .chart {
-    background: #fff;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-  }
-
-  .cards {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 20px;
-  }
-
-  .balance-card {
-    background: linear-gradient(135deg, #003399, #0055dd);
-    color: #fff;
-    border-radius: 24px;
-    padding: 28px;
-    box-shadow: 0 15px 35px rgba(0, 51, 153, 0.35);
-  }
-
-  .small-card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 22px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
-  }
-
-  .small-card svg {
-    font-size: 26px;
-  }
-
-  .income svg {
-    color: #22c55e;
-  }
-
-  .expense svg {
-    color: #ef4444;
-  }
-  .transaction {
-    display: flex;
-    align-items: center;
-    padding: 18px;
-    border-radius: 14px;
-    transition: 0.25s;
-  }
-
-  .transaction:hover {
-    background: #f6f8fc;
-  }
-
-  .transaction-icon {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: #eef4ff;
-    color: #003399;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-  }
-
-  .transaction-info {
-    flex: 1;
-  }
-
-  .positive {
-    color: #16a34a;
-  }
-
-  .negative {
-    color: #dc2626;
   }
 }

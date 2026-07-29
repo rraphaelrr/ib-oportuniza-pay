@@ -1,44 +1,171 @@
 :root {
+
+  /* Cores principais */
   --op-blue: #003399;
   --op-blue-dark: #002266;
+  --op-blue-light: #0055ff;
+
   --op-orange: #ff6b00;
-  --op-bg-light: #0f1f3d;
+
+
+  /* Background */
+  --op-bg-light: #f5f7fb;
   --op-bg-dark: #090d16;
+
+
+  /* Cards */
   --op-card-light: #ffffff;
   --op-card-dark: #111827;
+
+
+  /* Textos */
+  --op-text: #111827;
+  --op-text-light: #6b7280;
+
+
+  /* Status */
+  --op-success: #16a34a;
+  --op-danger: #dc2626;
+
+
+  /* Bordas */
+  --op-border: #e5e7eb;
+
+
+  /* Sombras */
+  --op-shadow:
+    0 8px 25px rgba(0,0,0,.06);
+
+  --op-shadow-hover:
+    0 12px 30px rgba(0,0,0,.10);
+
 }
 
+
+
 * {
+
   box-sizing: border-box;
+
 }
+
+
 
 html,
 body,
 #root {
+
+  width: 100%;
+
   height: 100%;
+
   margin: 0;
+
   padding: 0;
+
 }
+
+
 
 body {
-  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  background-color: var(--op-bg-light);
+
+  font-family:
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+
+
+  background:
+    var(--op-bg-light);
+
+
+  color:
+    var(--op-text);
+
+
+  -webkit-font-smoothing:
+    antialiased;
+
 }
+
+
+
+button,
+input,
+textarea,
+select {
+
+  font-family:
+    inherit;
+
+}
+
+
 
 button {
-  font-family: inherit;
+
+  cursor: pointer;
+
 }
+
+
 
 a {
+
   text-decoration: none;
+
+  color: inherit;
+
 }
 
-/* Barra de rolagem discreta em telas maiores */
-::-webkit-scrollbar {
-  width: 8px;
+
+
+img {
+
+  max-width: 100%;
+
+  display: block;
+
 }
+
+
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+
+  width: 8px;
+
+}
+
+
+
+::-webkit-scrollbar-track {
+
+  background:
+    transparent;
+
+}
+
+
+
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
+
+  background:
+    rgba(0,0,0,.15);
+
+  border-radius:
+    8px;
+
+}
+
+
+
+::-webkit-scrollbar-thumb:hover {
+
+  background:
+    rgba(0,0,0,.25);
+
 }

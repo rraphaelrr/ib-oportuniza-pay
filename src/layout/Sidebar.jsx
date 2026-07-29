@@ -1,108 +1,139 @@
 import React from "react";
+
 import {
-  FaHome,
-  FaMoneyCheckAlt,
-  FaFileInvoiceDollar,
+  FaHouse,
+  FaPix,
+  FaArrowRightArrowLeft,
   FaCreditCard,
-  FaUserCircle,
-  FaCog,
-  FaSignOutAlt,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
+  FaDollarSign,
+  FaClock,
+  FaChartLine,
+  FaGear,
+  FaWallet,
+  FaArrowRightFromBracket,
+} from "react-icons/fa6";
 
-import { useLocation, useNavigate } from "react-router-dom";
-
-import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 import "./Sidebar.css";
-import logo from "../assets/privateAssets/logo.png";
-import logoIcon from "../assets/android-icon-foreground.png";
+import { useAuth } from "../context/AuthContext";
 
 export default function Sidebar({ collapsed, onToggle }) {
   const navigate = useNavigate();
 
-  const location = useLocation();
-
   const { logout } = useAuth();
 
-  const menu = [
+  const menus = [
     {
-      title: "Dashboard",
-      icon: <FaHome />,
-      path: "/home",
+      title: "PRINCIPAL",
+      show: true,
+      items: [
+        {
+          label: "Início",
+          icon: <FaHouse />,
+          path: "/home",
+          show: true,
+        },
+        {
+          label: "Pix",
+          icon: <FaPix />,
+          path: "/pix",
+          show: true,
+        },
+        {
+          label: "Extrato",
+          icon: <FaWallet />,
+          path: "/extrato",
+          show: true,
+        },
+        {
+          label: "Transferências",
+          icon: <FaArrowRightArrowLeft />,
+          path: "/transferencias",
+          show: false,
+        },
+        {
+          label: "Cartões",
+          icon: <FaCreditCard />,
+          path: "/cartoes",
+          show: false,
+        },
+      ],
     },
+
     {
-      title: "PIX",
-      icon: <FaMoneyCheckAlt />,
-      path: "/pix",
-    },
-    {
-      title: "Extrato",
-      icon: <FaFileInvoiceDollar />,
-      path: "/extrato",
-    },
-    {
-      title: "Cartões",
-      icon: <FaCreditCard />,
-      path: "/cartoes",
-    },
-    {
-      title: "Perfil",
-      icon: <FaUserCircle />,
-      path: "/perfil",
-    },
-    {
-      title: "Configurações",
-      icon: <FaCog />,
-      path: "/configuracoes",
+      title: "CRÉDITO & ATIVOS",
+      show: false,
+      items: [
+        {
+          label: "Antecipação",
+          icon: <FaDollarSign />,
+          path: "/antecipacao",
+          show: false,
+        },
+        {
+          label: "Consórcio",
+          icon: <FaClock />,
+          path: "/consorcio",
+          show: false,
+        },
+        {
+          label: "Investimentos",
+          icon: <FaChartLine />,
+          path: "/investimentos",
+          show: false,
+        },
+      ],
     },
   ];
-
-  function handleLogout() {
-    logout();
-    navigate("/login", {
-      replace: true,
-    });
-  }
 
   return (
     <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       <div className="sidebar-logo">
-        <img
-          src={collapsed ? logoIcon : logo}
-          alt="Oportuniza Pay"
-          className={collapsed ? "logo-small" : "logo-full"}
-        />
+        <strong>
+          Oportuni<span>ZA</span>
+        </strong>
+
+        <small>PAY</small>
       </div>
 
-      <nav className="sidebar-menu">
-        {menu.map((item) => (
-          <button
-            key={item.path}
-            className={`sidebar-item ${
-              location.pathname === item.path ? "active" : ""
-            }`}
-            onClick={() => navigate(item.path)}
-          >
-            <span className="icon">{item.icon}</span>
+      <nav>
+        {menus
+          .filter((item) => item.show !== false)
+          .map((group, index) => (
+            <div className="menu-group" key={index}>
+              <h4>{group.title}</h4>
 
-            {!collapsed && <span>{item.title}</span>}
-          </button>
-        ))}
+              {group.items
+                .filter((item) => item.show !== false)
+                .map((item, i) => (
+                  <button
+                    key={i}
+                    className={
+                      item.path === window.location.pathname ? "active" : ""
+                    }
+                    onClick={() => navigate(item.path)}
+                  >
+                    <span className="menu-icon">{item.icon}</span>
+
+                    {!collapsed && <span>{item.label}</span>}
+                  </button>
+                ))}
+            </div>
+          ))}
       </nav>
 
-      <div className="sidebar-bottom">
-        <button className="sidebar-item logout" onClick={handleLogout}>
-          <span className="icon">
-            <FaSignOutAlt />
-          </span>
+      <div className="sidebar-footer">
+        <button onClick={() => navigate("/configuracoes")}>
+          <FaGear />
 
-          {!collapsed && <span>Sair</span>}
+          {!collapsed && <span>Configurações</span>}
         </button>
 
-        <button className="collapse-button" onClick={onToggle}>
-          {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
+        <button onClick={logout}>
+          <FaArrowRightFromBracket />
+
+          {!collapsed && <span>Sair</span>}
         </button>
       </div>
     </aside>

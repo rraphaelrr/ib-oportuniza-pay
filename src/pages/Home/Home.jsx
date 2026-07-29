@@ -1,234 +1,213 @@
-import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import DashboardLayout from "../../layout/DashboardLayout";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  Tooltip,
-  CartesianGrid,
-} from "recharts";
 
-import { FaArrowDown, FaArrowUp, FaPix, FaWallet } from "react-icons/fa6";
+import BalanceCard from "../../components/Home/BalanceCard";
+import CreditCard from "../../components/Home/CreditCard";
+import QuickActions from "../../components/Home/QuickActions";
+import StatsCard from "../../components/Home/StatsCard";
+import TransactionList from "../../components/Home/TransactionList";
+import CashFlowChart from "../../components/Home/CashFlowChart";
+import ServiceCard from "../../components/Home/ServiceCard";
+import PromotionBanner from "../../components/Home/PromotionBanner";
+
+import {
+  FaPix,
+  FaFileInvoiceDollar,
+  FaCreditCard,
+  FaMoneyBillTransfer,
+} from "react-icons/fa6";
+
+import { getBalances } from "../../services/balanceService";
+
 import "./Home.css";
+import Produtos from "../../components/Produtos";
 
 export default function Home() {
   const navigate = useNavigate();
 
-  const [showBalance, setShowBalance] = useState(true);
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  const jobs = [
-    {
-      id: 1,
-      titulo: "Médico Clínico Geral",
-      salario: "R$ 18.500",
-      resumo: "Hospital particular busca médico para plantões diurnos.",
-    },
-    {
-      id: 2,
-      titulo: "Enfermeiro",
-      salario: "R$ 6.800",
-      resumo: "Atuação em UTI adulto com escala 12x36.",
-    },
-    {
-      id: 3,
-      titulo: "Farmacêutico",
-      salario: "R$ 5.900",
-      resumo: "Controle de medicamentos hospitalares.",
-    },
-    {
-      id: 4,
-      titulo: "Fisioterapeuta",
-      salario: "R$ 7.200",
-      resumo: "Atendimento em unidade intensiva.",
-    },
-  ];
+  const [balance, setBalance] = useState(0);
 
   const transactions = [
     {
       id: 1,
-      descricao: "PIX Recebido",
-      valor: "+ R$ 850,00",
-      data: "Hoje • 10:30",
-      positive: true,
+      description: "PIX Recebido",
+      value: 850,
+      date: "Hoje • 10:30",
+      type: "credit",
     },
     {
       id: 2,
-      descricao: "PIX Enviado",
-      valor: "- R$ 120,00",
-      data: "Ontem • 18:12",
-      positive: false,
+      description: "PIX Enviado",
+      value: 120,
+      date: "Ontem • 18:12",
+      type: "debit",
     },
     {
       id: 3,
-      descricao: "Pagamento",
-      valor: "- R$ 340,00",
-      data: "18/07",
-      positive: false,
+      description: "Pagamento boleto",
+      value: 340,
+      date: "18/07",
+      type: "purchase",
     },
   ];
-  const chartData = [
+
+  const cashFlow = [
     {
-      mes: "Jan",
-      valor: 8200,
+      month: "Jan",
+      income: 8200,
+      expense: 3200,
     },
     {
-      mes: "Fev",
-      valor: 9100,
+      month: "Fev",
+      income: 9100,
+      expense: 4100,
     },
     {
-      mes: "Mar",
-      valor: 7600,
+      month: "Mar",
+      income: 7600,
+      expense: 2800,
     },
     {
-      mes: "Abr",
-      valor: 10300,
+      month: "Abr",
+      income: 10300,
+      expense: 5200,
     },
     {
-      mes: "Mai",
-      valor: 8900,
+      month: "Mai",
+      income: 8900,
+      expense: 3700,
     },
     {
-      mes: "Jun",
-      valor: 12500,
-    },
-    {
-      mes: "Jul",
-      valor: 9800,
+      month: "Jun",
+      income: 12500,
+      expense: 6100,
     },
   ];
+
+  useEffect(() => {
+    async function loadBalance() {
+      try {
+        const accountId = user?.user?.account_id;
+
+        if (!accountId) return;
+
+        const response = await getBalances(accountId);
+
+        const amount =
+          response.available_balance ??
+          response.available ??
+          response.balance ??
+          response.balances?.[0]?.available ??
+          0;
+
+        setBalance(Number(amount));
+      } catch (error) {
+        console.error("Erro ao carregar saldo:", error);
+      }
+    }
+
+    loadBalance();
+  }, []);
+
   return (
     <DashboardLayout>
       <div className="home">
-        <div className="welcome">
-          <div>
-            <h1>Bem-vindo</h1>
-            <span>Confira suas informações financeiras.</span>
-          </div>
-        </div>
+        <section className="welcome">
+          <h1>Bem-vindo</h1>
 
-        <div className="cards">
+          <span>Confira suas informações financeiras.</span>
+        </section>
+
+        <section className="dashboard-cards">
           <div className="balance-card">
-            <div className="balance-header">
-              <span>Saldo disponível</span>
+            <BalanceCard balance={balance} />
+          </div>
 
-              <button onClick={() => setShowBalance(!showBalance)}>
-                {showBalance ? <FaEye /> : <FaEyeSlash />}
-              </button>
+          {Produtos.cartão && (
+            <div className="credit-card">
+              <CreditCard limit="5000" holder={user?.user?.name} />
             </div>
+          )}
+        </section>
 
-            <h2>{showBalance ? "R$ 42.583,15" : "••••••••"}</h2>
+        <section className="stats-grid">
+          <StatsCard title="Entradas" value="R$ 18.300,00" type="income" />
+
+          <StatsCard title="Saídas" value="R$ 5.200,00" type="expense" />
+
+          <StatsCard title="Antecipação" value="R$ 3.000,00" type="income" />
+
+          <StatsCard title="Investimentos" value="R$ 12.500,00" type="income" />
+        </section>
+        <QuickActions
+          actions={[
+            {
+              title: "PIX",
+              icon: <FaPix />,
+              onClick: () => navigate("/pix"),
+            },
+            {
+              title: "Extrato",
+              onClick: () => navigate("/extrato"),
+            },
+            {
+              title: "Cartões",
+              icon: <FaCreditCard />,
+            },
+            {
+              title: "Transferir",
+              icon: <FaMoneyBillTransfer />,
+            },
+          ]}
+        />
+
+        <PromotionBanner
+          title="Tenha mais benefícios"
+          description="Controle sua conta, cartões e pagamentos pelo Oportuniza Pay."
+          buttonText="Conhecer"
+          onClick={() => navigate("/beneficios")}
+        />
+
+        <section className="services-section">
+          <h2>Serviços</h2>
+
+          <div className="services-grid">
+            <ServiceCard
+              icon={<FaPix />}
+              title="PIX"
+              description="Enviar e receber"
+              onClick={() => navigate("/pix")}
+            />
+
+            <ServiceCard
+              icon={<FaFileInvoiceDollar />}
+              title="Boletos"
+              description="Pagar contas"
+            />
+
+            <ServiceCard
+              icon={<FaCreditCard />}
+              title="Cartões"
+              description="Gerenciar cartão"
+            />
+
+            <ServiceCard
+              icon={<FaMoneyBillTransfer />}
+              title="Transferências"
+              description="TED e PIX"
+            />
           </div>
+        </section>
 
-          <div className="small-card income">
-            <FaArrowDown />
+        <section className="finance-grid">
+          <TransactionList transactions={transactions} />
 
-            <span>Entradas</span>
-
-            <h3>R$ 18.300,00</h3>
-          </div>
-
-          <div className="small-card expense">
-            <FaArrowUp />
-
-            <span>Saídas</span>
-
-            <h3>R$ 5.200,00</h3>
-          </div>
-        </div>
-
-        <div className="quick-actions">
-          <button onClick={() => navigate("/pix")}>PIX</button>
-
-          <button onClick={() => navigate("/extrato")}>Extrato</button>
-
-          <button>Cartões</button>
-
-          <button>Transferir</button>
-        </div>
-
-        <div className="content-grid">
-          <div className="transactions">
-            <h2>Últimas movimentações</h2>
-
-            {transactions.map((item) => (
-              <div key={item.id} className="transaction">
-                <div className="transaction-icon">
-                  {item.positive ? <FaArrowDown /> : <FaArrowUp />}
-                </div>
-
-                <div className="transaction-info">
-                  <strong>{item.descricao}</strong>
-
-                  <span>{item.data}</span>
-                </div>
-
-                <strong className={item.positive ? "positive" : "negative"}>
-                  {item.valor}
-                </strong>
-              </div>
-            ))}
-          </div>
-
-          <div className="chart">
-            <h2>Movimentação</h2>
-
-            <div className="chart-box">
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id="saldo" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#003399" stopOpacity={0.8} />
-
-                      <stop
-                        offset="100%"
-                        stopColor="#003399"
-                        stopOpacity={0.05}
-                      />
-                    </linearGradient>
-                  </defs>
-
-                  <CartesianGrid strokeDasharray="4 4" />
-
-                  <XAxis dataKey="mes" />
-
-                  <Tooltip />
-
-                  <Area
-                    type="monotone"
-                    dataKey="valor"
-                    stroke="#003399"
-                    fill="url(#saldo)"
-                    strokeWidth={3}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-
-        <div className="jobs">
-          <div className="jobs-header">
-            <h2>Vagas da área da saúde</h2>
-          </div>
-
-          <div className="jobs-carousel">
-            {jobs.map((job) => (
-              <div key={job.id} className="job-card">
-                <h3>{job.titulo}</h3>
-
-                <h4>{job.salario}</h4>
-
-                <p>{job.resumo}</p>
-
-                <button>Ver vaga</button>
-              </div>
-            ))}
-          </div>
-        </div>
+          <CashFlowChart data={cashFlow} />
+        </section>
       </div>
     </DashboardLayout>
   );
