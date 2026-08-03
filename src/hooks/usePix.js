@@ -1,214 +1,214 @@
-// src/hooks/usePix.js
+import { useState } from "react";
 
-import { useCallback, useMemo, useState } from "react";
+import {
+  gerarQRCodePix,
+  consultarChavePix,
+  consultarQRCode,
+  pagarPixDict,
+  pagarPixQRCode,
+} from "../services/pixService";
+
+import { detectarTipoChave } from "../utils/pixValidator";
 
 export default function usePix() {
+  // ==============================
+  // DADOS DO USUÁRIO
+  // ==============================
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const accountId = user?.user?.account_id;
+
+  // ==============================
+  // ESTADOS
+  // ==============================
+
   const [loading, setLoading] = useState(false);
 
-  const [chaves] = useState([
-    {
-      id: 1,
-      tipo: "cpf",
-      chave: "123.456.789-00",
-      principal: true,
-    },
-    {
-      id: 2,
-      tipo: "email",
-      chave: "raphael@oportuniza.com",
-      principal: false,
-    },
-    {
-      id: 3,
-      tipo: "telefone",
-      chave: "(11) 99999-9999",
-      principal: false,
-    },
-    {
-      id: 4,
-      tipo: "aleatoria",
-      chave: "550e8400-e29b-41d4-a716-446655440000",
-      principal: false,
-    },
-  ]);
+  const [comprovante, setComprovante] = useState(null);
 
-  const [favoritos, setFavoritos] = useState([
-    {
-      id: 1,
-      nome: "João Silva",
-      chave: "joao@gmail.com",
-      banco: "Banco do Brasil",
-    },
-    {
-      id: 2,
-      nome: "Maria Oliveira",
-      chave: "(11) 98888-9999",
-      banco: "Itaú",
-    },
-    {
-      id: 3,
-      nome: "Empresa XPTO",
-      chave: "12.345.678/0001-99",
-      banco: "Bradesco",
-    },
-  ]);
+  // ==============================
+  // GERAR QR CODE
+  // ==============================
 
-  const [historico, setHistorico] = useState([
-    {
-      id: 1,
-      tipo: "entrada",
-      nome: "João Silva",
-      descricao: "Pix recebido",
-      valor: 250,
-      data: "24/07/2026 10:45",
-    },
-    {
-      id: 2,
-      tipo: "saida",
-      nome: "Netflix",
-      descricao: "Pagamento",
-      valor: 55.9,
-      data: "23/07/2026 21:18",
-    },
-    {
-      id: 3,
-      tipo: "entrada",
-      nome: "Empresa XPTO",
-      descricao: "Pagamento",
-      valor: 3500,
-      data: "22/07/2026 08:10",
-    },
-  ]);
-
-  const buscarChave = useCallback(async (chave) => {
-    setLoading(true);
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setLoading(false);
-
-    return {
-      nome: "João Silva",
-      banco: "Banco Inter",
-      chave,
-      documento: "***.456.789-**",
-    };
-  }, []);
-
-  const gerarQRCode = useCallback(
-    async ({ chave, valor, descricao }) => {
+  async function gerarQRCode(dados) {
+    try {
       setLoading(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
+      return await gerarQRCodePix({
+        accountId,
+        agencyId: 123,
+        valor: dados.valor,
+        descricao: dados.descricao,
+      });
+    } finally {
       setLoading(false);
+    }
+  }
 
-      return `00020126580014BR.GOV.BCB.PIX0114${
-        chave || "pix@oportuniza.com"
-      }52040000530398654${valor || ""}5802BR5917Oportuniza Pay6009Sao Paulo62070503***6304ABCD${
-        descricao || ""
-      }`;
-    },
-    []
-  );
+  // ==============================
+  // CONSULTAR PIX
+  // ==============================
 
-  const enviarPix = useCallback(
-    async ({ chave, valor, descricao }) => {
+  async function consultarPix(dados) {
+    try {
       setLoading(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const chave = dados.chavePix.trim();
 
-      const movimento = {
-        id: Date.now(),
-        tipo: "saida",
-        nome: "Destinatário",
-        descricao: descricao || "Transferência Pix",
-        valor: Number(
-          String(valor)
-            .replace(/[^\d,]/g, "")
-            .replace(",", ".")
-        ),
-        data: new Date().toLocaleString("pt-BR"),
+      const tipo = detectarTipoChave(chave);
+
+      switch (tipo) {
+        case "qrcode": {
+          const resposta = await consultarQRCode({
+            qr_code: chave,
+          });
+
+          return {
+            tipo,
+            info: resposta.info || resposta,
+          };
+        }
+
+        case "cpf":
+        case "cnpj":
+        case "email":
+        case "telefone":
+        case "aleatoria": {
+          const resposta = await consultarChavePix(chave);
+
+          return {
+            tipo,
+            info: resposta.info || resposta,
+          };
+        }
+
+        default:
+          throw new Error("Chave Pix inválida.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ==============================
+  // ENVIAR PIX
+  // ==============================
+
+  async function enviarPix(dados) {
+    try {
+      setLoading(true);
+
+      if (dados.tipo === "qrcode") {
+        const pagamento = await pagarPixQRCode({
+          qr_code: dados.chavePix,
+          valor: formatAmount(dados.valor),
+        });
+
+        setComprovante(pagamento);
+
+        return {
+          sucesso: true,
+          pagamento,
+        };
+      }
+
+      const chave = dados.chavePix.trim();
+
+      const chaveInfo = dados.chaveInfo;
+
+      const payload = {
+        account_id: accountId,
+
+        agency_id: 123,
+
+        amount: formatAmount(dados.valor),
+
+        currency_code: "BRL",
+
+        description: dados.descricao || "Pagamento Pix",
+
+        external_id: crypto.randomUUID(),
+
+        person_type:
+          chaveInfo.holder?.person_type === "individual" ? "PF" : "PJ",
+
+        pix_key: chave,
+
+        pix_key_lookup_id: chaveInfo.lookup_id,
+
+        pix_key_type: chaveInfo.key_type,
+      };
+      const pagamento = await pagarPixDict(payload);
+
+      const comprovantePix = {
+        id: pagamento.id,
+
+        tipo: "pix enviado",
+
+        descricao: dados.descricao || "Pagamento Pix",
+
+        nome: dados.chaveInfo?.holder?.name || "Cliente Pix",
+
+        valor: pagamento.amount,
+
+        data: new Date().toISOString(),
+
+        ...pagamento,
       };
 
-      setHistorico((old) => [movimento, ...old]);
-
-      setLoading(false);
+      setComprovante(comprovantePix);
 
       return {
         sucesso: true,
-        comprovante: {
-          nome: "Destinatário",
-          chave,
-          banco: "Banco Inter",
-          valor,
-          descricao,
-          data: movimento.data,
-          idTransacao: crypto.randomUUID(),
-          e2e:
-            "E" +
-            Math.random()
-              .toString(36)
-              .substring(2)
-              .toUpperCase(),
-        },
+        pagamento,
       };
-    },
-    []
-  );
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  const removerFavorito = useCallback((id) => {
-    setFavoritos((old) =>
-      old.filter((item) => item.id !== id)
-    );
-  }, []);
-
-  const adicionarFavorito = useCallback((favorito) => {
-    setFavoritos((old) => [
-      {
-        id: Date.now(),
-        ...favorito,
-      },
-      ...old,
-    ]);
-  }, []);
-
-  const obterComprovante = useCallback(
-    (id) => historico.find((item) => item.id === id),
-    [historico]
-  );
-
-  const estatisticas = useMemo(() => {
-    const enviados = historico.filter(
-      (x) => x.tipo === "saida"
-    ).length;
-
-    const recebidos = historico.filter(
-      (x) => x.tipo === "entrada"
-    ).length;
-
-    return {
-      enviados,
-      recebidos,
-      total: historico.length,
-    };
-  }, [historico]);
+  // ==============================
+  // RETORNO DO HOOK
+  // ==============================
 
   return {
     loading,
 
-    chaves,
-    favoritos,
-    historico,
-    estatisticas,
+    comprovante,
 
-    buscarChave,
     gerarQRCode,
+
+    consultarPix,
+
     enviarPix,
-
-    adicionarFavorito,
-    removerFavorito,
-
-    obterComprovante,
   };
+}
+
+// ==============================
+// HELPERS
+// ==============================
+
+function formatAmount(value) {
+  if (!value) {
+    return "0.00";
+  }
+
+  let stringValue = String(value).replace("R$", "").trim();
+
+  // Se já está no formato decimal americano
+  if (stringValue.includes(".") && !stringValue.includes(",")) {
+    return Number(stringValue).toFixed(2);
+  }
+
+  // Formato brasileiro
+  stringValue = stringValue.replace(/\./g, "").replace(",", ".");
+
+  const number = Number(stringValue);
+
+  if (Number.isNaN(number)) {
+    return "0.00";
+  }
+
+  return number.toFixed(2);
 }

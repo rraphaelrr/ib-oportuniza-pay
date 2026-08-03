@@ -39,15 +39,14 @@ export default function FiltroExtrato({ onFilter, onClear }) {
 
   return (
     <div className="filtro-extrato">
-      
       <div className="filtro-group">
-        <label style={{ color: "white" }}>Período</label>
+        <label>Período</label>
 
         <select
           name="periodo"
           value={filtros.periodo}
           onChange={handleChange}
-           style={{ backgroundColor: "white" }}
+          style={{ backgroundColor: "white" }}
         >
           <option value="7">Últimos 7 dias</option>
           <option value="15">Últimos 15 dias</option>
@@ -57,24 +56,23 @@ export default function FiltroExtrato({ onFilter, onClear }) {
         </select>
       </div>
 
-
       {/* Datas personalizadas */}
       {filtros.periodo === "custom" && (
         <>
           <div className="filtro-group">
-            <label style={{ color: "white" }}>Data inicial</label>
+            <label>Data inicial</label>
 
             <input
               type="date"
               name="dataInicio"
               value={filtros.dataInicio}
               onChange={handleChange}
-               style={{ backgroundColor: "white" }}
+              style={{ backgroundColor: "white" }}
             />
           </div>
 
           <div className="filtro-group">
-            <label style={{ color: "white" }}>Data final</label>
+            <label>Data final</label>
 
             <input
               type="date"
@@ -82,21 +80,20 @@ export default function FiltroExtrato({ onFilter, onClear }) {
               value={filtros.dataFim}
               min={filtros.dataInicio}
               onChange={handleChange}
-               style={{ backgroundColor: "white" }}
+              style={{ backgroundColor: "white" }}
             />
           </div>
         </>
       )}
 
-
       <div className="filtro-group">
-        <label style={{ color: "white" }}>Tipo</label>
+        <label>Tipo</label>
 
         <select
           name="tipo"
           value={filtros.tipo}
           onChange={handleChange}
-           style={{ backgroundColor: "white" }}
+          style={{ backgroundColor: "white" }}
         >
           <option value="todos">Todas movimentações</option>
           <option value="entrada">Entradas</option>
@@ -107,9 +104,8 @@ export default function FiltroExtrato({ onFilter, onClear }) {
         </select>
       </div>
 
-
       <div className="filtro-group busca">
-        <label style={{ color: "white" }}>Buscar</label>
+        <label >Buscar</label>
 
         <input
           type="text"
@@ -117,19 +113,14 @@ export default function FiltroExtrato({ onFilter, onClear }) {
           value={filtros.busca}
           onChange={handleChange}
           placeholder="Descrição ou nome"
-           style={{ backgroundColor: "white" }}
+          style={{ backgroundColor: "white" }}
         />
       </div>
 
-
       <div className="filtro-actions">
-        <button 
-          className="btn-filtrar" 
-          onClick={aplicarFiltro}
-        >
+        <button className="btn-filtrar" onClick={aplicarFiltro}>
           Filtrar
         </button>
-
 
         <button
           className="btn-limpar"
@@ -139,7 +130,6 @@ export default function FiltroExtrato({ onFilter, onClear }) {
           Limpar
         </button>
       </div>
-
     </div>
   );
 }

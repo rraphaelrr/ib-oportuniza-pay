@@ -1,31 +1,58 @@
 import React, { useState } from "react";
+
 import "./ComprovanteModal.css";
+
 import { downloadReceiptPDF } from "../utils/generateReceipt";
-import ComprovanteMovimento from "./ComprovanteMovimento";
-import { formatDate } from "../utils/formatDate";
 import { formatCurrency } from "../utils/formatCurrency";
+import { formatDate } from "../utils/formatDate";
+
+import ComprovanteMovimento from "./ComprovanteMovimento";
+
 export default function ComprovanteModal({ movimento, open, onClose }) {
-  const [btnComprovante, setBtnComprovante] = useState(false)
+  const [gerandoComprovante, setGerandoComprovante] = useState(false);
+
   if (!open || !movimento) {
     return null;
   }
 
+  // ==========================
+  // HELPERS
+  // ==========================
+
+  const isEntrada = movimento.tipo === "entrada";
+
+  const valor = formatCurrency(movimento.valor ?? movimento.amount);
+
+  const titulo = isEntrada ? "Entrada recebida" : "Pagamento realizado";
+
+  const statusClass = isEntrada ? "status-icon entrada" : "status-icon saida";
+
+  const statusIcon = isEntrada ? "+" : "-";
+
+  // ==========================
+  // EVENTOS
+  // ==========================
+
   function handleDownload() {
-    setBtnComprovante(true)
+    setGerandoComprovante(true);
 
     downloadReceiptPDF("comprovante-movimento", `comprovante-${movimento.id}`);
+
     setTimeout(() => {
-      setBtnComprovante(false)
+      setGerandoComprovante(false);
     }, 1000);
   }
 
+  // ==========================
+  // RENDER
+  // ==========================
+console.log(movimento);
   return (
     <div className="comprovante-overlay">
       <div className="comprovante-modal">
         <div className="comprovante-header">
           <div>
             <h2>Comprovante</h2>
-
             <span>Oportuniza Pay</span>
           </div>
 
@@ -35,22 +62,10 @@ export default function ComprovanteModal({ movimento, open, onClose }) {
         </div>
 
         <div className="comprovante-status">
-          <div
-            className={
-              movimento.tipo === "entrada"
-                ? "status-icon entrada"
-                : "status-icon saida"
-            }
-          >
-            {movimento.tipo === "entrada" ? "+" : "-"}
-          </div>
+          <div className={statusClass}>{statusIcon}</div>
 
           <div>
-            <strong>
-              {movimento.tipo === "entrada"
-                ? "Entrada recebida"
-                : "Pagamento realizado"}
-            </strong>
+            <strong>{titulo}</strong>
 
             <p>{formatDate(movimento.data)}</p>
           </div>
@@ -59,7 +74,7 @@ export default function ComprovanteModal({ movimento, open, onClose }) {
         <div className="comprovante-valor">
           <span>Valor</span>
 
-          <strong>{formatCurrency(movimento.valor)}</strong>
+          <strong>{valor}</strong>
         </div>
 
         <div className="comprovante-details">
@@ -77,12 +92,25 @@ export default function ComprovanteModal({ movimento, open, onClose }) {
         </div>
 
         <div className="comprovante-actions">
-          <button className="btn-download" onClick={handleDownload} disabled={btnComprovante}>
-           {btnComprovante ? "Gerando Comprovante" : "Gerar Comprovante"}
+          <button
+            className="btn-download"
+            onClick={handleDownload}
+            disabled={gerandoComprovante}
+          >
+            {gerandoComprovante
+              ? "Gerando Comprovante..."
+              : "Gerar Comprovante"}
           </button>
         </div>
       </div>
-      <div style={{ position: "absolute", left: "-9999px" }}>
+
+      {/* Área utilizada para gerar o PDF */}
+      <div
+        style={{
+          position: "absolute",
+          left: "-9999px",
+        }}
+      >
         <ComprovanteMovimento movimento={movimento} />
       </div>
     </div>

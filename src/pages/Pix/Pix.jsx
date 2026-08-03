@@ -1,263 +1,320 @@
-// src/pages/Pix/Pix.jsx
-
 import React, { useState } from "react";
+
+import DashboardLayout from "../../layout/DashboardLayout";
 
 import usePix from "../../hooks/usePix";
 
-import PixHome from "../../components/pix/PixHome";
+import PixTabs from "../../components/pix/PixTabs";
 import PixEnviar from "../../components/pix/PixEnviar";
 import PixReceber from "../../components/pix/PixReceber";
-import PixQRCode from "../../components/pix/PixQRCode";
-import PixCopiarColar from "../../components/pix/PixCopiarColar";
-import PixHistorico from "../../components/pix/PixHistorico";
-import PixFavoritos from "../../components/pix/PixFavoritos";
-import PixComprovante from "../../components/pix/PixComprovante";
-import PixChaveCard from "../../components/pix/PixChaveCard";
-import DashboardLayout from "../../layout/DashboardLayout";
+import PixQRCodeModal from "../../components/pix/PixQRCodeModal";
+import ComprovanteModal from "../../components/ComprovanteModal";
+
 import "./Pix.css";
 
-const TELAS = {
-  HOME: "HOME",
+// ==============================
+// CONSTANTES
+// ==============================
+
+const ABAS = {
   ENVIAR: "ENVIAR",
   RECEBER: "RECEBER",
-  QRCODE: "QRCODE",
-  COPIA_COLA: "COPIA_COLA",
-  HISTORICO: "HISTORICO",
-  FAVORITOS: "FAVORITOS",
-  CHAVES: "CHAVES",
-  COMPROVANTE: "COMPROVANTE",
 };
 
-export default function Pix() {
-  const {
-    loading,
-    favoritos,
-    historico,
-    chaves,
-    buscarChave,
-    gerarQRCode,
-    enviarPix,
-    removerFavorito,
-  } = usePix();
+const TIPOS_PIX = {
+  CHAVE: "chave",
+  QRCODE: "qrcode",
+};
 
-  const [tela, setTela] = useState(TELAS.HOME);
+// ==============================
+// HELPERS
+// ==============================
 
-  const [payloadQRCode, setPayloadQRCode] = useState("");
+function montarMovimentoPix({ pagamento, dadosPix, chaveConsultada }) {
+  return {
+    id: pagamento.id,
 
-  const [comprovante, setComprovante] = useState(null);
+    tipo: "saida",
 
-  const voltarHome = () => {
-    setTela(TELAS.HOME);
+    descricao: dadosPix?.descricao || "Pagamento Pix",
+
+    nome: chaveConsultada?.holder?.name || "Cliente Pix",
+
+    valor: pagamento.amount,
+
+    amount: pagamento.amount,
+
+    data: new Date().toISOString(),
+
+    chavePix: pagamento.pix_key,
+
+    banco: chaveConsultada?.bank_account?.bank_name || "Banco Mock",
+
+    e2e: pagamento.end_to_end_id,
   };
+}
 
-  async function handleBuscar(chave) {
+export default function Pix() {
+  // ==============================
+  // HOOKS
+  // ==============================
+
+  const { loading, gerarQRCode, consultarPix, enviarPix } = usePix();
+
+  // ==============================
+  // CONTROLE DE ABA
+  // ==============================
+
+  const [aba, setAba] = useState(ABAS.ENVIAR);
+
+  // ==============================
+  // ESTADO PRINCIPAL PIX
+  // ==============================
+
+  const [pix, setPix] = useState({
+    tipo: null,
+
+    dados: null,
+
+    destinatario: null,
+
+    chaveInfo: null,
+
+    movimento: null,
+  });
+
+  // ==============================
+  // QR CODE
+  // ==============================
+
+  const [qrCode, setQrCode] = useState({
+    aberto: false,
+
+    payload: "",
+
+    valor: "",
+
+    descricao: "",
+
+    txid: "",
+
+    codigo: "",
+  });
+
+  // ==============================
+  // COMPROVANTE
+  // ==============================
+
+  const [mostrarComprovante, setMostrarComprovante] = useState(false);
+
+  // ==============================
+  // CONSULTAR PIX
+  // ==============================
+
+  async function handleConsultarPix(dados) {
     try {
-      const resultado = await buscarChave(chave);
+      const resposta = await consultarPix(dados);
 
-      alert(
-        `Destinatário encontrado:\n\n${resultado.nome}\n${resultado.banco}`,
-      );
-    } catch (err) {
-      alert(err.message);
-    }
-  }
+      const info = resposta.info;
 
-  async function handleEnviarPix(dados) {
-    try {
-      const resposta = await enviarPix(dados);
+      setPix((prev) => ({
+        ...prev,
 
-      if (resposta.sucesso) {
-        setComprovante(resposta.comprovante);
-        setTela(TELAS.COMPROVANTE);
+        tipo: dados.tipo,
+
+        dados,
+      }));
+
+      if (dados.tipo === TIPOS_PIX.CHAVE) {
+        setPix((prev) => ({
+          ...prev,
+
+          chaveInfo: info,
+
+          destinatario: {
+            key: info.key,
+
+            key_type: info.key_type,
+
+            holder_name: info.holder_name || "JOÃO DA SILVA",
+
+            holder_document: info.holder_document || "*.456.789-**",
+
+            bank_name: info.bank_name || "BANCO EXEMPLO S.A.",
+
+            branch: info.branch || "0001",
+
+            account: info.account || "12345678",
+          },
+        }));
       }
-    } catch (err) {
-      alert(err.message);
+
+      if (dados.tipo === TIPOS_PIX.QRCODE) {
+        setPix((prev) => ({
+          ...prev,
+
+          destinatario: null,
+
+          chaveInfo: null,
+        }));
+      }
+    } catch (error) {
+      alert(error.message);
     }
   }
+
+  // ==============================
+  // ENVIAR PIX
+  // ==============================
+
+  async function handleEnviarPix(formulario) {
+    try {
+      const resposta = await enviarPix({
+        ...pix.dados,
+
+        ...formulario,
+
+        tipo: pix.tipo,
+
+        chaveInfo: pix.chaveInfo,
+      });
+      console.log("RESPOSTA:", resposta);
+      console.log("PAGAMENTO:", resposta.pagamento);
+      if (resposta.sucesso) {
+        const movimento = montarMovimentoPix({
+          pagamento: resposta.pagamento.pagamento,
+
+          dadosPix: pix.dados,
+
+          chaveConsultada: pix.chaveInfo,
+        });
+
+        setPix((prev) => ({
+          ...prev,
+
+          movimento,
+        }));
+
+        setMostrarComprovante(true);
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || error.message);
+    }
+  }
+
+  // ==============================
+  // GERAR QR CODE
+  // ==============================
 
   async function handleGerarQRCode(dados) {
     try {
-      const payload = await gerarQRCode(dados);
+      const resposta = await gerarQRCode(dados);
 
-      setPayloadQRCode(payload);
+      setQrCode({
+        aberto: true,
 
-      setTela(TELAS.QRCODE);
+        payload: resposta.qr_code,
 
-      return payload;
-    } catch (err) {
-      alert(err.message);
+        valor: resposta.amount,
+
+        descricao: dados.descricao,
+
+        codigo: resposta.qr_code,
+
+        txid: resposta.tx_id,
+      });
+    } catch (error) {
+      alert(error.message);
     }
   }
 
-  function handleSelecionarHistorico(item) {
-    setComprovante({
-      nome: item.nome,
-      chave: item.chave || "-",
-      banco: item.banco || "Oportuniza Pay",
-      valor: item.valor,
-      descricao: item.descricao,
-      data: item.data,
-      idTransacao: item.id.toString(),
-      e2e: "E2E-" + item.id,
-    });
+  // ==============================
+  // FECHAR COMPROVANTE
+  // ==============================
 
-    setTela(TELAS.COMPROVANTE);
+  function fecharComprovante() {
+    setMostrarComprovante(false);
+
+    setPix((prev) => ({
+      ...prev,
+
+      movimento: null,
+    }));
   }
 
-  function handleCopiarQRCode() {
-    alert("Código Pix copiado.");
+  // ==============================
+  // FECHAR QR CODE
+  // ==============================
+
+  function fecharQRCode() {
+    setQrCode((prev) => ({
+      ...prev,
+
+      aberto: false,
+    }));
   }
 
-  function handleCompartilharQRCode() {
-    alert("Compartilhamento em desenvolvimento.");
-  }
-
-  function handleSalvarQRCode() {
-    alert("Salvar QRCode em desenvolvimento.");
-  }
-
-  function handleDownloadComprovante() {
-    alert("Download PDF em desenvolvimento.");
-  }
-
-  function handleCompartilharComprovante() {
-    alert("Compartilhar comprovante.");
-  }
+  // ==============================
+  // LOADING
+  // ==============================
 
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="pix-loading">
-          <div className="spinner" />
-          <p>Processando...</p>
-        </div>
+        <div className="pix-loading">Processando Pix...</div>
       </DashboardLayout>
     );
   }
 
-  let content;
+  // ==============================
+  // RENDER
+  // ==============================
 
-  switch (tela) {
-    case TELAS.ENVIAR:
-      content = (
-        <PixEnviar
-          onBack={voltarHome}
-          onBuscar={handleBuscar}
-          onContinuar={handleEnviarPix}
-          onLerQRCode={() => setTela(TELAS.COPIA_COLA)}
-        />
-      );
-      break;
-
-    case TELAS.RECEBER:
-      content = (
-        <PixReceber
-          onBack={voltarHome}
-          onGerar={handleGerarQRCode}
-        />
-      );
-      break;
-
-    case TELAS.QRCODE:
-      content = (
-        <PixQRCode
-          payload={payloadQRCode}
-          onBack={voltarHome}
-          onCopy={handleCopiarQRCode}
-          onShare={handleCompartilharQRCode}
-          onDownload={handleSalvarQRCode}
-        />
-      );
-      break;
-
-    case TELAS.COPIA_COLA:
-      content = (
-        <PixCopiarColar
-          onBack={voltarHome}
-          onContinuar={(codigo) =>
-            alert(`Código recebido:\n\n${codigo}`)
-          }
-        />
-      );
-      break;
-
-    case TELAS.HISTORICO:
-      content = (
-        <PixHistorico
-          historico={historico}
-          onBack={voltarHome}
-          onSelecionar={handleSelecionarHistorico}
-        />
-      );
-      break;
-
-    case TELAS.FAVORITOS:
-      content = (
-        <PixFavoritos
-          favoritos={favoritos}
-          onBack={voltarHome}
-          onEnviar={() => setTela(TELAS.ENVIAR)}
-          onRemover={(favorito) =>
-            removerFavorito(favorito.id)
-          }
-        />
-      );
-      break;
-
-    case TELAS.CHAVES:
-      content = (
-        <div className="pix-page">
-          <div className="pix-header">
-            <button
-              className="pix-back"
-              onClick={voltarHome}
-            >
-              ←
-            </button>
-
-            <h2>Minhas Chaves Pix</h2>
-          </div>
+  return (
+    <DashboardLayout>
+      <div className="pix-page">
+        <div className="pix-left">
+          <PixTabs active={aba} onChange={setAba} />
 
           <div className="pix-card">
-            {chaves.map((item) => (
-              <PixChaveCard
-                key={item.id}
-                tipo={item.tipo}
-                chave={item.chave}
-                principal={item.principal}
-                onCopy={() => alert("Chave copiada.")}
+            {aba === ABAS.ENVIAR && (
+              <PixEnviar
+                tipoPix={pix.tipo}
+                onConsultar={handleConsultarPix}
+                onEnviar={handleEnviarPix}
+                destinatario={pix.destinatario}
+                loading={loading}
               />
-            ))}
+            )}
+
+            {aba === ABAS.RECEBER && <PixReceber onGerar={handleGerarQRCode} />}
           </div>
         </div>
-      );
-      break;
+      </div>
 
-    case TELAS.COMPROVANTE:
-      content = (
-        <PixComprovante
-          comprovante={comprovante}
-          onBack={voltarHome}
-          onDownload={handleDownloadComprovante}
-          onShare={handleCompartilharComprovante}
-        />
-      );
-      break;
+      {/* ============================
+          MODAL QR CODE
+      ============================= */}
 
-    case TELAS.HOME:
-    default:
-      content = (
-        <PixHome
-          favoritos={favoritos}
-          historico={historico}
-          onEnviar={() => setTela(TELAS.ENVIAR)}
-          onReceber={() => setTela(TELAS.RECEBER)}
-          onHistorico={() => setTela(TELAS.HISTORICO)}
-          onFavoritos={() => setTela(TELAS.FAVORITOS)}
-          onChaves={() => setTela(TELAS.CHAVES)}
-        />
-      );
-  }
+      <PixQRCodeModal
+        open={qrCode.aberto}
+        payload={qrCode.payload}
+        valor={qrCode.valor}
+        descricao={qrCode.descricao}
+        qrCode={qrCode.codigo}
+        txid={qrCode.txid}
+        onClose={fecharQRCode}
+      />
 
-  return <DashboardLayout>{content}</DashboardLayout>;
+      {/* ============================
+          MODAL COMPROVANTE
+      ============================= */}
+
+      <ComprovanteModal
+        open={mostrarComprovante}
+        movimento={pix.movimento}
+        onClose={fecharComprovante}
+      />
+    </DashboardLayout>
+  );
 }

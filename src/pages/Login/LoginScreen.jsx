@@ -27,67 +27,67 @@ export default function LoginScreen() {
 
   const [loginData, setLoginData] = useState(null);
 
- async function handleLogin(mfaOtp = null) {
-  if (loading) return;
+  async function handleLogin(mfaOtp = null) {
+    if (loading) return;
 
-  setLoading(true);
-  setError("");
+    setLoading(true);
+    setError("");
 
-  try {
-    // Primeira chamada usa os campos da tela.
-    // Segunda chamada (após MFA) usa os dados salvos.
-    const email = loginData?.email ?? document;
-    const senha = loginData?.password ?? password;
+    try {
+      // Primeira chamada usa os campos da tela.
+      // Segunda chamada (após MFA) usa os dados salvos.
+      const email = loginData?.email ?? document;
+      const senha = loginData?.password ?? password;
 
-    console.log("Enviando login:", {
-      email,
-      password: senha,
-      mfaOtp,
-    });
-
-    const response = await loginPartner({
-      email,
-      password: senha,
-      mfaOtp,
-    });
-
-    console.log("Resposta:", response);
-
-    localStorage.setItem("access_token", response.access_token);
-    localStorage.setItem("refresh_token", response.refresh_token);
-    localStorage.setItem("user", JSON.stringify(response));
-
-    login({
-      ...response.user,
-      accessToken: response.access_token,
-      refreshToken: response.refresh_token,
-      sessionId: response.session_id,
-    });
-
-    setShowMfaModal(false);
-
-    navigate("/home");
-  } catch (err) {
-    console.error("Erro login:", err);
-    console.error("Resposta API:", err.response?.data);
-
-    const apiError = err.response?.data?.error;
-
-    if (apiError?.code === "mfa_required" && !mfaOtp) {
-      setLoginData({
-        email: document,
-        password,
+      console.log("Enviando login:", {
+        email,
+        password: senha,
+        mfaOtp,
       });
 
-      setShowMfaModal(true);
-      return;
-    }
+      const response = await loginPartner({
+        email,
+        password: senha,
+        mfaOtp,
+      });
 
-    setError(apiError?.message || "Erro ao realizar login.");
-  } finally {
-    setLoading(false);
+      console.log("Resposta:", response);
+
+      localStorage.setItem("access_token", response.access_token);
+      localStorage.setItem("refresh_token", response.refresh_token);
+      localStorage.setItem("user", JSON.stringify(response));
+
+      login({
+        ...response.user,
+        accessToken: response.access_token,
+        refreshToken: response.refresh_token,
+        sessionId: response.session_id,
+      });
+
+      setShowMfaModal(false);
+
+      navigate("/home");
+    } catch (err) {
+      console.error("Erro login:", err);
+      console.error("Resposta API:", err.response?.data);
+
+      const apiError = err.response?.data?.error;
+
+      if (apiError?.code === "mfa_required" && !mfaOtp) {
+        setLoginData({
+          email: document,
+          password,
+        });
+
+        setShowMfaModal(true);
+        return;
+      }
+
+      setError(apiError?.message || "Erro ao realizar login.");
+    } finally {
+      setLoading(false);
+    }
   }
-}
   return (
     <>
       <div className="login">
@@ -101,8 +101,8 @@ export default function LoginScreen() {
             </h1>
 
             <p>
-              Conta, Pix, cartões, antecipação de honorários, Wallet
-              USDT e gestão financeira.
+              Conta, Pix, cartões, antecipação de honorários, Wallet USDT e
+              gestão financeira.
             </p>
           </div>
 
@@ -164,6 +164,13 @@ export default function LoginScreen() {
               onClick={() => handleLogin()}
             >
               {loading ? "Entrando..." : "Entrar →"}
+            </button>
+            <button
+              type="button"
+              className="open-account-button"
+              onClick={() => navigate("/cadastro")}
+            >
+              Abrir minha conta
             </button>
           </div>
         </section>

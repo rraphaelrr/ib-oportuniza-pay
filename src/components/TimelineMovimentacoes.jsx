@@ -40,7 +40,7 @@ export default function TimelineMovimentacoes({
           <div className="timeline-header">
             <div className="timeline-dot" />
 
-            <h3 style={{ color: "white" }}>{data}</h3>
+            <h3 >{data}</h3>
 
             <div className="timeline-line" />
           </div>

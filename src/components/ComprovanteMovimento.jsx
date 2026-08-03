@@ -30,10 +30,13 @@ export default function ComprovanteMovimento({ movimento }) {
         <span>Valor</span>
 
         <strong>
-          {Number(movimento.valor).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          })}
+          {Number(movimento.valor ?? movimento.amount ?? 0).toLocaleString(
+            "pt-BR",
+            {
+              style: "currency",
+              currency: "BRL",
+            },
+          )}
         </strong>
       </div>
 

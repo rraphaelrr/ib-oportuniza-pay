@@ -1,25 +1,15 @@
 import React from "react";
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Download,
-  Share2,
-  Copy,
-} from "lucide-react";
-
-import "../../pages/Pix/Pix.css";
+import { CheckCircle, ArrowLeft, Share2, Download, Copy } from "lucide-react";
 
 export default function PixComprovante({
   comprovante,
   onBack,
-  onDownload,
   onShare,
+  onDownload,
 }) {
-  if (!comprovante) return null;
-
-  const copiarId = () => {
-    navigator.clipboard.writeText(comprovante.idTransacao || "");
-  };
+  if (!comprovante) {
+    return null;
+  }
 
   const formatarValor = (valor) =>
     Number(valor || 0).toLocaleString("pt-BR", {
@@ -28,97 +18,68 @@ export default function PixComprovante({
     });
 
   return (
-    <div className="pix-page">
-
-      <div className="pix-header">
-
-        <button className="pix-back" onClick={onBack}>
-          <ArrowLeft size={22} />
+    <div className="pix-comprovante">
+      <div className="pix-comprovante-header">
+        <button className="pix-back-button" onClick={onBack}>
+          <ArrowLeft size={20} />
         </button>
 
         <h2>Comprovante Pix</h2>
-
       </div>
 
-      <div className="pix-card comprovante">
+      <div className="pix-comprovante-card">
+        <div className="pix-success">
+          <CheckCircle size={55} />
 
-        <CheckCircle2
-          size={70}
-          color="#0aa84f"
-          style={{ marginBottom: 20 }}
-        />
+          <h3>Pix enviado com sucesso</h3>
 
-        <h2>Transferência realizada</h2>
-
-        <div className="pix-comprovante-item">
-          <span>Valor</span>
           <strong>{formatarValor(comprovante.valor)}</strong>
         </div>
 
-        <div className="pix-comprovante-item">
-          <span>Destinatário</span>
-          <strong>{comprovante.nome}</strong>
-        </div>
+        <div className="pix-info-list">
+          <div className="pix-info-item">
+            <span>Destinatário</span>
+            <strong>{comprovante.nome || "-"}</strong>
+          </div>
 
-        <div className="pix-comprovante-item">
-          <span>Chave Pix</span>
-          <strong>{comprovante.chave}</strong>
-        </div>
+          <div className="pix-info-item">
+            <span>Banco</span>
+            <strong>{comprovante.banco || "-"}</strong>
+          </div>
 
-        <div className="pix-comprovante-item">
-          <span>Instituição</span>
-          <strong>{comprovante.banco}</strong>
-        </div>
+          <div className="pix-info-item">
+            <span>Chave Pix</span>
+            <strong>{comprovante.chave || "QR Code"}</strong>
+          </div>
 
-        <div className="pix-comprovante-item">
-          <span>Descrição</span>
-          <strong>{comprovante.descricao || "-"}</strong>
-        </div>
+          <div className="pix-info-item">
+            <span>Data</span>
+            <strong>{comprovante.data || "-"}</strong>
+          </div>
 
-        <div className="pix-comprovante-item">
-          <span>Data</span>
-          <strong>{comprovante.data}</strong>
-        </div>
+          <div className="pix-info-item">
+            <span>ID da transação</span>
+            <strong>{comprovante.idTransacao || "-"}</strong>
+          </div>
 
-        <div className="pix-comprovante-item">
-          <span>ID da Transação</span>
-
-          <div className="pix-copy-field">
-            <strong>{comprovante.idTransacao}</strong>
-
-            <button onClick={copiarId}>
-              <Copy size={16} />
-            </button>
+          <div className="pix-info-item">
+            <span>E2E</span>
+            <strong className="pix-code">{comprovante.e2e || "-"}</strong>
           </div>
         </div>
 
-        <div className="pix-comprovante-item">
-          <span>E2E</span>
-          <strong>{comprovante.e2e}</strong>
-        </div>
-
-        <div className="pix-actions-inline">
-
-          <button
-            className="secondary"
-            onClick={() => onShare?.(comprovante)}
-          >
-            <Share2 size={18} />
-            Compartilhar
-          </button>
-
-          <button
-            className="secondary"
-            onClick={() => onDownload?.(comprovante)}
-          >
+        <div className="pix-comprovante-actions">
+          <button className="pix-secondary-btn" onClick={onDownload}>
             <Download size={18} />
             Baixar PDF
           </button>
 
+          <button className="pix-primary-btn" onClick={onShare}>
+            <Share2 size={18} />
+            Compartilhar
+          </button>
         </div>
-
       </div>
-
     </div>
   );
 }

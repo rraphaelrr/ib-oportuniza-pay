@@ -1,315 +1,254 @@
-// src/services/pixService.js
+import api from "./api";
+import { v4 as uuidv4 } from "uuid";
 
-/**
- * Serviço responsável por todas as chamadas da API PIX.
- * Atualmente utiliza dados mockados.
- * Basta substituir os métodos fetch pelos endpoints reais.
- */
+const TOKEN =
+  "5b7a8e4ffbeae77b80085436d2bde1d60b93f3dd7f876a84e0a59eeff5fe8a87dab367cd047af7ef7aaef2b15f31d185";
 
-const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+// =====================================
+// CONFIGURAÇÃO DE HEADERS
+// =====================================
 
-const MOCK_DELAY = 800;
+function pixHeaders() {
+  return {
+    "X-Partner-Internal-Token": TOKEN,
 
-const wait = (ms = MOCK_DELAY) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+    "Idempotency-Key": uuidv4(),
 
-async function request(url, options = {}) {
-  const token = localStorage.getItem("token");
-
-  const response = await fetch(`${API_URL}${url}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-    },
-    ...options,
-  });
-
-  if (!response.ok) {
-    let error = "Erro ao processar a requisição.";
-
-    try {
-      const body = await response.json();
-      error = body.message || error;
-    } catch {}
-
-    throw new Error(error);
-  }
-
-  return response.json();
+    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  };
 }
 
-const pixService = {
-  /**
-   * Busca uma chave PIX.
-   */
-  async buscarChave(chave) {
-    // ===== API REAL =====
-    // return request("/pix/buscar-chave", {
-    //   method: "POST",
-    //   body: JSON.stringify({ chave }),
-    // });
+// =====================================
+// MOCKS
+// =====================================
 
-    await wait();
+export async function gerarQRCodePixMock(dados) {
+  await new Promise((resolve) => setTimeout(resolve, 800));
 
-    return {
-      sucesso: true,
-      data: {
-        nome: "João Silva",
-        banco: "Banco Inter",
-        documento: "***.456.789-**",
-        chave,
-      },
-    };
-  },
+  return {
+    account_id: "123456",
 
-  /**
-   * Envia um PIX.
-   */
-  async enviarPix(payload) {
-    // ===== API REAL =====
-    // return request("/pix/enviar", {
-    //   method: "POST",
-    //   body: JSON.stringify(payload),
-    // });
+    agency_id: "0001",
 
-    await wait(1500);
+    amount: Number(dados.valor).toFixed(2),
 
-    return {
-      sucesso: true,
-      comprovante: {
-        idTransacao: crypto.randomUUID(),
-        e2e:
-          "E" +
-          Math.random()
-            .toString(36)
-            .substring(2)
-            .toUpperCase(),
-        data: new Date().toLocaleString("pt-BR"),
-        ...payload,
-      },
-    };
-  },
+    currency_code: "BRL",
 
-  /**
-   * Gera QRCode PIX.
-   */
-  async gerarQRCode(payload) {
-    // ===== API REAL =====
-    // return request("/pix/qrcode", {
-    //   method: "POST",
-    //   body: JSON.stringify(payload),
-    // });
+    external_id: crypto.randomUUID(),
 
-    await wait();
+    id: crypto.randomUUID(),
 
-    return {
-      sucesso: true,
-      payload:
-        "00020126580014BR.GOV.BCB.PIX0114PIX@OPORTUNIZA.COM5204000053039865406100.005802BR5920OPORTUNIZA PAY6009SAO PAULO62070503***6304ABCD",
-    };
-  },
+    operation: "PIX_DYNAMIC",
 
-  /**
-   * Valida um código Pix Copia e Cola.
-   */
-  async validarPayload(payload) {
-    // ===== API REAL =====
-    // return request("/pix/validar", {
-    //   method: "POST",
-    //   body: JSON.stringify({ payload }),
-    // });
+    pix_key: "pix@empresa.com.br",
 
-    await wait();
+    pix_key_type: "EMAIL",
 
-    return {
-      sucesso: true,
-      data: {
-        nome: "Empresa XPTO",
-        banco: "Banco do Brasil",
-        valor: 150.75,
-        payload,
-      },
-    };
-  },
+    provider: "Mock",
 
-  /**
-   * Lista chaves PIX.
-   */
-  async listarChaves() {
-    // ===== API REAL =====
-    // return request("/pix/chaves");
+    provider_transaction_id: crypto.randomUUID(),
 
-    await wait();
+    qr_code: `00020126580014BR.GOV.BCB.PIX0136pix@empresa.com.br520400005303986540${Number(
+      dados.valor,
+    ).toFixed(2)}5802BR5913Empresa Teste6009SAO PAULO62070503***6304ABCD`,
 
-    return [
-      {
-        id: 1,
-        tipo: "cpf",
-        chave: "123.456.789-00",
-        principal: true,
-      },
-      {
-        id: 2,
-        tipo: "telefone",
-        chave: "(11)99999-9999",
-      },
-      {
-        id: 3,
-        tipo: "email",
-        chave: "usuario@email.com",
-      },
-      {
-        id: 4,
-        tipo: "aleatoria",
-        chave: crypto.randomUUID(),
-      },
-    ];
-  },
+    status: "CREATED",
 
-  /**
-   * Lista favoritos.
-   */
-  async listarFavoritos() {
-    // ===== API REAL =====
-    // return request("/pix/favoritos");
+    tx_id: crypto.randomUUID(),
+  };
+}
 
-    await wait();
+export async function consultarChavePixMock(chave) {
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
-    return [
-      {
-        id: 1,
-        nome: "João Silva",
-        chave: "joao@email.com",
-        banco: "Banco Inter",
-      },
-      {
-        id: 2,
-        nome: "Maria Oliveira",
-        chave: "(11)99999-8888",
-        banco: "Itaú",
-      },
-    ];
-  },
+  return {
+    info: {
+      key: chave,
 
-  /**
-   * Lista histórico PIX.
-   */
-  async listarHistorico() {
-    // ===== API REAL =====
-    // return request("/pix/historico");
+      key_type: "EMAIL",
 
-    await wait();
+      holder_name: "Empresa Teste LTDA",
 
-    return [
-      {
-        id: 1,
-        tipo: "entrada",
-        nome: "Empresa XPTO",
-        descricao: "Pagamento",
-        valor: 2500,
-        data: "24/07/2026 09:20",
-      },
-      {
-        id: 2,
-        tipo: "saida",
-        nome: "Netflix",
-        descricao: "Assinatura",
-        valor: 55.9,
-        data: "23/07/2026 21:18",
-      },
-      {
-        id: 3,
-        tipo: "saida",
-        nome: "João Silva",
-        descricao: "Transferência",
-        valor: 150,
-        data: "22/07/2026 14:55",
-      },
-    ];
-  },
+      holder_document: "12.345.678/0001-90",
 
-  /**
-   * Obtém comprovante.
-   */
-  async obterComprovante(id) {
-    // ===== API REAL =====
-    // return request(`/pix/comprovante/${id}`);
+      bank_name: "Banco Mock",
 
-    await wait();
+      branch: "0001",
 
-    return {
-      id,
-      nome: "João Silva",
-      chave: "joao@email.com",
-      banco: "Banco Inter",
-      valor: 150,
-      descricao: "Pagamento",
-      data: "24/07/2026 14:20",
-      idTransacao: crypto.randomUUID(),
-      e2e:
-        "E" +
-        Math.random()
-          .toString(36)
-          .substring(2)
-          .toUpperCase(),
-    };
-  },
+      account: "12345678",
+    },
+  };
+}
 
-  /**
-   * Remove favorito.
-   */
-  async removerFavorito(id) {
-    // ===== API REAL =====
-    // return request(`/pix/favoritos/${id}`, {
-    //   method: "DELETE",
-    // });
+export async function consultarQRCodeMock() {
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
-    await wait();
+  return {
+    info: {
+      amount: "100.00",
 
-    return {
-      sucesso: true,
-      id,
-    };
-  },
+      merchant_name: "Empresa Teste",
 
-  /**
-   * Adiciona favorito.
-   */
-  async adicionarFavorito(payload) {
-    // ===== API REAL =====
-    // return request("/pix/favoritos", {
-    //   method: "POST",
-    //   body: JSON.stringify(payload),
-    // });
+      pix_key: "pix@empresa.com.br",
+    },
+  };
+}
 
-    await wait();
+export async function pagarPixMock(payload) {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    return {
-      sucesso: true,
+  return {
+    sucesso: true,
+
+    pagamento: {
       id: crypto.randomUUID(),
-      ...payload,
-    };
-  },
 
-  /**
-   * Devolução PIX.
-   */
-  async devolverPix(id, valor) {
-    // ===== API REAL =====
-    // return request(`/pix/devolver/${id}`, {
-    //   method: "POST",
-    //   body: JSON.stringify({ valor }),
-    // });
+      amount: payload.amount || "10.00",
 
-    await wait();
+      pix_key: payload.pix_key || "pix@empresa.com.br",
 
-    return {
-      sucesso: true,
-      id,
-      valor,
-    };
-  },
-};
+      end_to_end_id: "E1234567890123456789012345678901",
+    },
+  };
+}
 
-export default pixService;
+// =====================================
+// API REAL
+// =====================================
+
+// =====================================
+// GERAR QR CODE PIX DINÂMICO
+// POST /partner/v1/pix/dynamic
+// =====================================
+
+export async function gerarQRCodePixReal({
+  accountId,
+
+  agencyId,
+
+  valor,
+
+  descricao,
+}) {
+  const { data } = await api.post(
+    "/partner/v1/pix/dynamic",
+
+    {
+      account_id: accountId,
+
+      agency_id: agencyId,
+
+      amount: Number(valor).toFixed(2),
+
+      currency_code: "BRL",
+
+      description: descricao,
+
+      expires_in: 3600,
+
+      external_id: uuidv4(),
+    },
+
+    {
+      headers: pixHeaders(),
+    },
+  );
+
+  return data;
+}
+
+// =====================================
+// CONSULTAR CHAVE PIX
+// GET /partner/v1/pix/keys/{pixKey}/info
+// =====================================
+
+export async function consultarChavePixReal(pixKey) {
+  const { data } = await api.get(
+    `/partner/v1/pix/keys/${encodeURIComponent(pixKey)}/info`,
+
+    {
+      headers: pixHeaders(),
+    },
+  );
+
+  return data;
+}
+
+// =====================================
+// CONSULTAR QR CODE PIX
+// POST /partner/v1/pix/payments/qrc/info
+// =====================================
+
+export async function consultarQRCodeReal(payload) {
+  const { data } = await api.post(
+    "/partner/v1/pix/payments/qrc/info",
+
+    payload,
+
+    {
+      headers: pixHeaders(),
+    },
+  );
+
+  return data;
+}
+
+// =====================================
+// PAGAR PIX POR QR CODE
+// POST /partner/v1/pix/payments/qrc
+// =====================================
+
+export async function pagarPixQRCodeReal(payload) {
+  const { data } = await api.post(
+    "/partner/v1/pix/payments/qrc",
+
+    payload,
+
+    {
+      headers: pixHeaders(),
+    },
+  );
+
+  return data;
+}
+
+// =====================================
+// PAGAR PIX POR CHAVE DICT
+// POST /partner/v1/pix/out/dict
+// =====================================
+
+export async function pagarPixDictReal(payload) {
+  const { data } = await api.post(
+    "/partner/v1/pix/out/dict",
+
+    payload,
+
+    {
+      headers: pixHeaders(),
+    },
+  );
+
+  return data;
+}
+
+const USE_MOCK = true;
+
+// ========================
+// EXPORTS
+// ========================
+
+export const gerarQRCodePix = USE_MOCK
+  ? gerarQRCodePixMock
+  : gerarQRCodePixReal;
+
+export const consultarChavePix = USE_MOCK
+  ? consultarChavePixMock
+  : consultarChavePixReal;
+
+export const consultarQRCode = USE_MOCK
+  ? consultarQRCodeMock
+  : consultarQRCodeReal;
+
+export const pagarPixQRCode = USE_MOCK ? pagarPixMock : pagarPixQRCodeReal;
+
+export const pagarPixDict = USE_MOCK ? pagarPixMock : pagarPixDictReal;

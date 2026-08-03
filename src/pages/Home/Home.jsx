@@ -23,95 +23,121 @@ import { getBalances } from "../../services/balanceService";
 
 import "./Home.css";
 import Produtos from "../../components/Produtos";
-
+import { getExtrato } from "../../services/extratoService";
 export default function Home() {
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [balance, setBalance] = useState(0);
+  const [transactions, setTransactions] = useState([]);
+  const [cashFlow, setCashFlow] = useState([]);
+  const [income, setIncome] = useState(0);
+  const [expense, setExpense] = useState(0);
+ 
 
-  const transactions = [
-    {
-      id: 1,
-      description: "PIX Recebido",
-      value: 850,
-      date: "Hoje • 10:30",
-      type: "credit",
-    },
-    {
-      id: 2,
-      description: "PIX Enviado",
-      value: 120,
-      date: "Ontem • 18:12",
-      type: "debit",
-    },
-    {
-      id: 3,
-      description: "Pagamento boleto",
-      value: 340,
-      date: "18/07",
-      type: "purchase",
-    },
-  ];
+  
 
-  const cashFlow = [
-    {
-      month: "Jan",
-      income: 8200,
-      expense: 3200,
-    },
-    {
-      month: "Fev",
-      income: 9100,
-      expense: 4100,
-    },
-    {
-      month: "Mar",
-      income: 7600,
-      expense: 2800,
-    },
-    {
-      month: "Abr",
-      income: 10300,
-      expense: 5200,
-    },
-    {
-      month: "Mai",
-      income: 8900,
-      expense: 3700,
-    },
-    {
-      month: "Jun",
-      income: 12500,
-      expense: 6100,
-    },
-  ];
+ useEffect(() => {
+  async function loadData() {
+    try {
+      const accountId = user?.user?.account_id;
 
-  useEffect(() => {
-    async function loadBalance() {
-      try {
-        const accountId = user?.user?.account_id;
+      if (!accountId) return;
 
-        if (!accountId) return;
+      // Saldo
+      const response = await getBalances(accountId);
 
-        const response = await getBalances(accountId);
+      const balance = Array.isArray(response)
+        ? response[0]
+        : response;
 
-        const amount =
-          response.available_balance ??
-          response.available ??
-          response.balance ??
-          response.balances?.[0]?.available ??
-          0;
+      setBalance(Number(balance?.available_balance ?? 0));
 
-        setBalance(Number(amount));
-      } catch (error) {
-        console.error("Erro ao carregar saldo:", error);
-      }
+      // Extrato
+      const extrato = await getExtrato(accountId);
+
+      const items = extrato?.items ?? [];
+
+      // Últimas movimentações
+      const ultimas = [...items]
+        .sort(
+          (a, b) =>
+            new Date(b.created_at) - new Date(a.created_at)
+        )
+        .slice(0, 5)
+        .map((item) => ({
+          id: item.ledger_entry_id,
+
+          description: item.entry_type
+            .replaceAll("_", " ")
+            .toLowerCase()
+            .replace(/\b\w/g, (l) => l.toUpperCase()),
+
+          value: Number(item.amount),
+
+          date: new Date(item.created_at).toLocaleString("pt-BR"),
+
+          type:
+            item.direction === "CREDIT"
+              ? "credit"
+              : "debit",
+        }));
+
+      setTransactions(ultimas);
+
+      // Entradas
+      const totalEntradas = items
+        .filter((item) => item.direction === "CREDIT")
+        .reduce(
+          (acc, item) => acc + Number(item.amount),
+          0
+        );
+
+      // Saídas
+      const totalSaidas = items
+        .filter((item) => item.direction === "DEBIT")
+        .reduce(
+          (acc, item) => acc + Number(item.amount),
+          0
+        );
+
+      setIncome(totalEntradas);
+      setExpense(totalSaidas);
+
+      // Fluxo financeiro
+      const meses = {};
+
+      items.forEach((item) => {
+        const data = new Date(item.created_at);
+
+        const mes = data.toLocaleString("pt-BR", {
+          month: "short",
+        });
+
+        if (!meses[mes]) {
+          meses[mes] = {
+            month: mes,
+            income: 0,
+            expense: 0,
+          };
+        }
+
+        if (item.direction === "CREDIT") {
+          meses[mes].income += Number(item.amount);
+        } else {
+          meses[mes].expense += Number(item.amount);
+        }
+      });
+
+      setCashFlow(Object.values(meses));
+    } catch (error) {
+      console.error("Erro ao carregar dados:", error);
     }
+  }
 
-    loadBalance();
-  }, []);
+  loadData();
+}, []);
 
   return (
     <DashboardLayout>
@@ -135,9 +161,23 @@ export default function Home() {
         </section>
 
         <section className="stats-grid">
-          <StatsCard title="Entradas" value="R$ 18.300,00" type="income" />
+          <StatsCard
+  title="Entradas"
+  value={income.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  })}
+  type="income"
+/>
 
-          <StatsCard title="Saídas" value="R$ 5.200,00" type="expense" />
+         <StatsCard
+  title="Saídas"
+  value={expense.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  })}
+  type="expense"
+/>
 
           <StatsCard title="Antecipação" value="R$ 3.000,00" type="income" />
 
@@ -205,6 +245,7 @@ export default function Home() {
 
         <section className="finance-grid">
           <TransactionList transactions={transactions} />
+
 
           <CashFlowChart data={cashFlow} />
         </section>

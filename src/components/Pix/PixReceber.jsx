@@ -1,130 +1,132 @@
 import React, { useState } from "react";
 import {
-  ArrowLeft,
-  Copy,
-  Share2,
-  Download,
+  DollarSign,
+  MessageSquare,
   QrCode,
 } from "lucide-react";
 
-import QRCode from "react-qr-code";
-
-import "../../pages/Pix/Pix.css";
-
-export default function PixReceber({ onBack, onGerar }) {
+export default function PixReceber({
+  onGerar,
+  loading = false,
+  qrCode,
+  payload,
+}) {
   const [valor, setValor] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [chave, setChave] = useState("");
-  const [payload, setPayload] = useState("");
 
-  const gerar = () => {
-    const codigo =
-      onGerar?.({
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (Number(valor) <= 0) {
+      alert("Informe um valor maior que zero.");
+      return;
+    }
+
+    try {
+      await onGerar?.({
         valor,
         descricao,
-        chave,
-      }) ||
-      "00020126580014BR.GOV.BCB.PIX0114pix@teste.com5204000053039865406100.005802BR5920Oportuniza Pay6009Sao Paulo62070503***6304ABCD";
+      });
 
-    setPayload(codigo);
-  };
+      setValor("");
+      setDescricao("");
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao gerar QR Code.");
+    }
+  }
 
-  const copiar = () => {
+  function copiarCodigo() {
+    if (!payload) return;
+
     navigator.clipboard.writeText(payload);
-  };
+    alert("Código Pix copiado!");
+  }
 
   return (
-    <div className="pix-page">
+    <>
+      <form className="pix-form" onSubmit={handleSubmit}>
+        <h2>Receber Pix</h2>
 
-      <div className="pix-header">
-        <button className="pix-back" onClick={onBack}>
-          <ArrowLeft size={22} />
-        </button>
+        <p className="pix-subtitle">
+          Informe um valor para gerar um QR Code Pix e compartilhar com o
+          pagador.
+        </p>
 
-        <h2 style={{color: "white"}}>Receber Pix</h2>
-      </div>
+        <div className="pix-field">
+          <label>Valor</label>
 
-      <div className="pix-card">
+          <div className="pix-input">
+            <DollarSign size={18} />
 
-        <label>Valor (opcional)</label>
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              placeholder="0,00"
+              value={valor}
+              onChange={(e) => setValor(e.target.value)}
+              required
+            />
+          </div>
+        </div>
 
-        <input
-          type="number"
-          placeholder="R$ 0,00"
-          value={valor}
-          onChange={(e) => setValor(e.target.value)}
-        />
+        <div className="pix-field">
+          <label>Descrição</label>
 
-        <label>Descrição (opcional)</label>
+          <div className="pix-input">
+            <MessageSquare size={18} />
 
-        <textarea
-          rows={3}
-          placeholder="Descrição"
-          value={descricao}
-          onChange={(e) => setDescricao(e.target.value)}
-        />
-
-        <label>Selecionar chave (opcional)</label>
-
-        <select
-          value={chave}
-          onChange={(e) => setChave(e.target.value)}
-        >
-          <option value="">Escolher automaticamente</option>
-          <option value="cpf">CPF</option>
-          <option value="telefone">Telefone</option>
-          <option value="email">Email</option>
-          <option value="aleatoria">Chave Aleatória</option>
-        </select>
+            <input
+              type="text"
+              maxLength={140}
+              placeholder="Ex.: Pagamento de serviço"
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+            />
+          </div>
+        </div>
 
         <button
-          className="pix-primary-button"
-          onClick={gerar}
+          className="pix-primary-btn"
+          type="submit"
+          disabled={loading}
         >
           <QrCode size={18} />
-          Gerar QRCode
+
+          {loading
+            ? "Gerando QR Code..."
+            : "Gerar QR Code"}
         </button>
+      </form>
 
-      </div>
+      {qrCode && (
+        <div className="pix-qrcode-result">
+          <h3>QR Code Pix</h3>
 
-      {payload && (
-        <div className="pix-card qr-result">
-
-          <QRCode
-            value={payload}
-            size={220}
+          <img
+            src={qrCode}
+            alt="QR Code Pix"
+            className="pix-qrcode-image"
           />
+
+          <label>Código Copia e Cola</label>
 
           <textarea
+            className="pix-copy-textarea"
             readOnly
-            value={payload}
-            rows={4}
+            value={payload || ""}
           />
 
-          <div className="pix-actions-inline">
-
-            <button
-              className="secondary"
-              onClick={copiar}
-            >
-              <Copy size={18} />
-              Copiar
-            </button>
-
-            <button className="secondary">
-              <Share2 size={18} />
-              Compartilhar
-            </button>
-
-            <button className="secondary">
-              <Download size={18} />
-              Salvar
-            </button>
-
-          </div>
-
+          <button
+            type="button"
+            className="pix-primary-btn"
+            onClick={copiarCodigo}
+          >
+            Copiar código Pix
+          </button>
         </div>
       )}
-    </div>
+    </>
   );
 }

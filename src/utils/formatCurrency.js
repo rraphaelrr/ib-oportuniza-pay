@@ -37,11 +37,19 @@ export function currencyToNumber(value) {
  * Máscara monetária enquanto digita
  */
 export function maskCurrency(value) {
-  const numbers = value.replace(/\D/g, "");
+  if (!value) return "";
 
-  const amount = Number(numbers) / 100;
+  const number = Number(
+    value
+      .replace(/[^\d,.-]/g, "")
+      .replace(",", ".")
+  );
 
-  return amount.toLocaleString("pt-BR", {
+  if (isNaN(number)) {
+    return "";
+  }
+
+  return number.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });

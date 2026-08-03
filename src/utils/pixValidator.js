@@ -7,7 +7,13 @@ export function detectarTipoChave(chave = "") {
   const valor = chave.trim();
 
   if (!valor) return null;
-
+  if (
+    valor.startsWith("000201") &&
+    valor.length > 50 &&
+    valor.includes("6304")
+  ) {
+    return "qrcode";
+  }
   const numeros = valor.replace(/\D/g, "");
 
   // Email
@@ -37,13 +43,19 @@ export function detectarTipoChave(chave = "") {
   // Chave Aleatória UUID
   if (
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      valor
+      valor,
     )
   ) {
     return "aleatoria";
   }
 
   return "desconhecida";
+}
+
+export function validarQRCode(qr = "") {
+  qr = qr.trim();
+
+  return qr.startsWith("000201") && qr.length > 50 && qr.includes("6304");
 }
 
 /**
@@ -163,7 +175,18 @@ export function validarChave(chave = "") {
     case "aleatoria":
       return true;
 
+    case "qrcode":
+      return validarQRCode(chave);
+
     default:
       return false;
   }
+}
+
+
+export function isQRCodePix(value = "") {
+  return (
+    value.startsWith("000201") ||
+    value.length > 50
+  );
 }

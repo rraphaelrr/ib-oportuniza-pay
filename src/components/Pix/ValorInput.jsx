@@ -1,49 +1,68 @@
 import React from "react";
-import { CircleDollarSign } from "lucide-react";
-
-import "../../pages/Pix/Pix.css";
-
-function formatar(valor) {
-  const numero = valor.replace(/\D/g, "");
-
-  const convertido = (Number(numero) / 100).toLocaleString(
-    "pt-BR",
-    {
-      style: "currency",
-      currency: "BRL",
-    }
-  );
-
-  return convertido;
-}
+import { DollarSign } from "lucide-react";
 
 export default function ValorInput({
   value,
   onChange,
-  placeholder = "R$ 0,00",
+  label = "Valor",
+  placeholder = "0,00",
   disabled = false,
 }) {
-  const handleChange = (e) => {
-    const apenasNumeros = e.target.value.replace(/\D/g, "");
 
-    onChange(formatar(apenasNumeros));
-  };
+  function formatarValor(valor) {
+
+    const somenteNumeros = valor
+      .replace(/\D/g, "");
+
+    if (!somenteNumeros) {
+      return "";
+    }
+
+    const numero = Number(somenteNumeros) / 100;
+
+    return numero.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+  }
+
+
+  function handleChange(e) {
+
+    const formatado = formatarValor(
+      e.target.value
+    );
+
+    onChange(formatado);
+
+  }
+
 
   return (
-    <div className="pix-input-wrapper">
-      <div className="pix-input-icon">
-        <CircleDollarSign size={20} />
+    <div className="pix-field">
+
+      <label>
+        {label}
+      </label>
+
+
+      <div className="pix-input">
+
+        <DollarSign size={18}/>
+
 
         <input
           type="text"
-          inputMode="numeric"
-          autoComplete="off"
-          disabled={disabled}
           value={value}
+          disabled={disabled}
           placeholder={placeholder}
           onChange={handleChange}
         />
+
+
       </div>
+
     </div>
   );
 }
