@@ -141,7 +141,7 @@ export default function LoginScreen() {
               <input
                 value={document}
                 onChange={(e) => setDocument(e.target.value)}
-                placeholder="000.000.000-00"
+                placeholder="exemplo@exemplo.com.br"
               />
             </div>
 
