@@ -1,9 +1,9 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   FaCloudUploadAlt,
   FaFileImage,
   FaTrash,
-  FaFilePdf
+  FaFilePdf,
 } from "react-icons/fa";
 
 import "./UploadCard.css";
@@ -17,15 +17,18 @@ export default function UploadCard({
   onRemove,
 }) {
   const inputRef = useRef();
+  const [preview, setPreview] = useState(null);
 
-  const preview = useMemo(() => {
-    if (!value) return null;
-
-    if (value.type?.startsWith("image/")) {
-      return URL.createObjectURL(value);
+  useEffect(() => {
+    if (!value || !value.type?.startsWith("image/")) {
+      setPreview(null);
+      return;
     }
 
-    return null;
+    const url = URL.createObjectURL(value);
+    setPreview(url);
+
+    return () => URL.revokeObjectURL(url);
   }, [value]);
 
   function openFile() {
@@ -54,7 +57,6 @@ export default function UploadCard({
 
   return (
     <div className="upload-card">
-
       <input
         ref={inputRef}
         hidden
@@ -65,66 +67,39 @@ export default function UploadCard({
 
       {!value ? (
         <>
-          <FaCloudUploadAlt
-            size={45}
-            color="#003399"
-          />
+          <FaCloudUploadAlt size={45} color="#003399" />
 
           <h3>{title}</h3>
 
           <p>{description}</p>
 
-          <button
-            type="button"
-            onClick={openFile}
-          >
+          <button type="button" onClick={openFile}>
             Selecionar arquivo
           </button>
         </>
       ) : (
         <>
           {preview ? (
-            <img
-              src={preview}
-              alt={title}
-              className="upload-preview"
-            />
+            <img src={preview} alt={title} className="upload-preview" />
           ) : value.type === "application/pdf" ? (
-            <FaFilePdf
-              size={60}
-              color="#E53935"
-            />
+            <FaFilePdf size={60} color="#E53935" />
           ) : (
-            <FaFileImage
-              size={60}
-              color="#16a34a"
-            />
+            <FaFileImage size={60} color="#16a34a" />
           )}
 
           <h3>{value.name}</h3>
 
-          <small>
-            {(value.size / 1024 / 1024).toFixed(2)} MB
-          </small>
+          <small>{(value.size / 1024 / 1024).toFixed(2)} MB</small>
 
           <div className="upload-actions">
-
-            <button
-              type="button"
-              onClick={openFile}
-            >
+            <button type="button" onClick={openFile}>
               Alterar
             </button>
 
-            <button
-              type="button"
-              className="remove"
-              onClick={remove}
-            >
+            <button type="button" className="remove" onClick={remove}>
               <FaTrash />
               Remover
             </button>
-
           </div>
         </>
       )}

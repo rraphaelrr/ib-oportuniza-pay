@@ -1,9 +1,6 @@
-import React from "react";
-import DatePicker from "react-datepicker";
-import { ptBR } from "date-fns/locale";
-
-import "react-datepicker/dist/react-datepicker.css";
-import "./DateInput.css";
+import { useState } from "react";
+import dayjs from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 export default function DateInput({
   label,
@@ -14,51 +11,70 @@ export default function DateInput({
   helper,
   min,
   max,
-  ...props
 }) {
-  const selectedDate = value ? new Date(value) : null;
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="date-group">
+    <div className="date-input-group">
       {label && (
         <label className="date-label">
           {label}
-          {required && <span>*</span>}
+          {required && <span className="required">*</span>}
         </label>
       )}
 
       <DatePicker
-        selected={selectedDate}
+        open={open}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
+        openTo="year"
+        views={["year", "month", "day"]}
+        value={value ? dayjs(value) : null}
         onChange={(date) =>
           onChange({
             target: {
-              value: date
-                ? date.toISOString().split("T")[0]
-                : "",
+              value: date ? date.format("YYYY-MM-DD") : "",
             },
           })
         }
-        locale={ptBR}
-        dateFormat="dd/MM/yyyy"
-        placeholderText="dd/mm/aaaa"
-        showYearDropdown
-        showMonthDropdown
-        dropdownMode="select"
-        scrollableYearDropdown
-        yearDropdownItemNumber={120}
-        minDate={min ? new Date(min) : undefined}
-        maxDate={max ? new Date(max) : undefined}
-        className={`date-input ${error ? "error" : ""}`}
-        {...props}
+        format="DD/MM/YYYY"
+        minDate={min ? dayjs(min) : undefined}
+        maxDate={max ? dayjs(max) : dayjs()}
+        slotProps={{
+          textField: {
+            fullWidth: true,
+            error: !!error,
+            helperText: error || helper,
+
+            onClick: () => setOpen(true),
+
+            sx: {
+              cursor: "pointer",
+
+              "& .MuiInputBase-input": {
+                cursor: "pointer",
+              },
+
+              "& .MuiOutlinedInput-root": {
+                height: 52,
+                borderRadius: "12px",
+
+                "& fieldset": {
+                  borderColor: "#d1d5db",
+                },
+
+                "&:hover fieldset": {
+                  borderColor: "#003399",
+                },
+
+                "&.Mui-focused fieldset": {
+                  borderColor: "#003399",
+                },
+              },
+            },
+          },
+        }}
       />
-
-      {helper && !error && (
-        <small className="date-helper">{helper}</small>
-      )}
-
-      {error && (
-        <small className="date-error">{error}</small>
-      )}
     </div>
   );
 }

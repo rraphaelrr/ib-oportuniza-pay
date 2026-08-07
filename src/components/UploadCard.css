@@ -1,117 +1,118 @@
-.upload-card{
+.upload-card {
+    width: 100%;
+    min-width: 0;
+    min-height: 320px;
 
-    border:2px dashed #cbd5e1;
+    box-sizing: border-box;
 
-    border-radius:18px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 18px;
+    padding: 24px;
 
-    padding:30px;
+    background: #fff;
 
-    background:#fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-    display:flex;
+    gap: 14px;
+    text-align: center;
 
-    flex-direction:column;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:12px;
-
-    text-align:center;
-
-    transition:.25s;
-
+    transition: .25s;
 }
 
-.upload-card:hover{
-
-    border-color:#003399;
-
-    background:#f8fbff;
-
+.upload-card:hover {
+    border-color: #003399;
+    background: #f8fbff;
 }
 
-.upload-card h3{
+.upload-card h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 16px;
 
-    margin:0;
+    width: 100%;
 
-    color:#111827;
-
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
-.upload-card p{
-
-    margin:0;
-
-    color:#6b7280;
-
-    font-size:.9rem;
-
+.upload-card p {
+    margin: 0;
+    color: #6b7280;
+    font-size: .9rem;
 }
 
-.upload-card small{
-
-    color:#6b7280;
-
+.upload-card small {
+    color: #6b7280;
 }
 
-.upload-card button{
+.upload-preview {
+    width: 100%;
+    max-width: 220px;
+    height: 170px;
 
-    border:none;
+    object-fit: cover;
 
-    background:#003399;
-
-    color:#fff;
-
-    padding:12px 24px;
-
-    border-radius:10px;
-
-    cursor:pointer;
-
-    font-weight:600;
-
-    transition:.2s;
-
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
 }
 
-.upload-card button:hover{
+.upload-card button {
+    width: 100%;
 
-    transform:translateY(-2px);
+    border: none;
+    background: #003399;
+    color: white;
 
+    padding: 12px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+    font-weight: 600;
+
+    transition: .2s;
 }
 
-.upload-actions{
-
-    display:flex;
-
-    gap:12px;
-
-    margin-top:10px;
-
+.upload-card button:hover {
+    transform: translateY(-2px);
 }
 
-.remove{
+.upload-actions {
+    width: 100%;
 
-    background:#dc2626 !important;
-
+    display: flex;
+    gap: 10px;
 }
 
-@media(max-width:768px){
+.upload-actions button {
+    flex: 1;
+}
 
-    .upload-actions{
+.remove {
+    background: #dc2626 !important;
+}
 
-        width:100%;
+@media (max-width: 768px) {
 
-        flex-direction:column;
-
+    .upload-card {
+        min-height: auto;
+        padding: 18px;
     }
 
-    .upload-actions button{
+    .upload-preview {
+        max-width: 100%;
+        height: 160px;
+    }
 
-        width:100%;
+    .upload-actions {
+        flex-direction: column;
+    }
 
+    .upload-actions button {
+        width: 100%;
     }
 
 }
