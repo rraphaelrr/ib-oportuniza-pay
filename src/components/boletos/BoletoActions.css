@@ -1,0 +1,69 @@
+.boleto-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.boleto-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 34px;
+  padding: 0 9px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.boleto-action:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.boleto-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.boleto-action-danger:hover:not(:disabled) {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Versão compacta para tabela */
+
+.boleto-actions-compact {
+  gap: 2px;
+}
+
+.boleto-actions-compact .boleto-action {
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+  .boleto-actions:not(.boleto-actions-compact) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}

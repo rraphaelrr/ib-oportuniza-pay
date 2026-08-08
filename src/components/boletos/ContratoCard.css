@@ -1,0 +1,493 @@
+.contrato-card {
+  width: 100%;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #fff;
+
+  overflow: hidden;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.contrato-card:hover {
+  border-color: #cbd5e1;
+}
+
+/* Header */
+
+.contrato-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 17px 18px;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.contrato-card-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.contrato-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 9px;
+
+  background: #f1f5f9;
+
+  color: #475569;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.contrato-card-title > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.contrato-card-title span {
+  color: #94a3b8;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.contrato-card-title strong {
+  color: #0f172a;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Status */
+
+.contrato-card-status {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 24px;
+  padding: 0 9px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.contrato-card-status-active {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.contrato-card-status-overdue {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.contrato-card-status-completed {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.contrato-card-status-cancelled {
+  background: #f8fafc;
+  color: #94a3b8;
+}
+
+.contrato-card-status-pending {
+  background: #fffbeb;
+  color: #a16207;
+}
+
+.contrato-card-status-suspended {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+/* Cliente */
+
+.contrato-card-client {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 12px;
+
+  padding: 16px 18px;
+
+  border: 0;
+  border-bottom: 1px solid #f1f5f9;
+
+  background: #fff;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.contrato-card-client:hover {
+  background: #f8fafc;
+}
+
+.contrato-card-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #f1f5f9;
+
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.contrato-card-client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.contrato-card-client-info span {
+  color: #94a3b8;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.contrato-card-client-info strong {
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contrato-card-client-info small {
+  color: #94a3b8;
+
+  font-size: 10px;
+}
+
+/* Valores */
+
+.contrato-card-value {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  padding: 17px 18px;
+
+  gap: 16px;
+}
+
+.contrato-card-value > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.contrato-card-value span {
+  color: #94a3b8;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.contrato-card-value strong {
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.contrato-card-value .contrato-card-overdue strong {
+  color: #dc2626;
+}
+
+/* Progresso */
+
+.contrato-card-progress {
+  padding: 0 18px 17px;
+}
+
+.contrato-card-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 7px;
+}
+
+.contrato-card-progress-header span {
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.contrato-card-progress-header strong {
+  color: #475569;
+
+  font-size: 11px;
+}
+
+.contrato-card-progress-track {
+  width: 100%;
+  height: 6px;
+
+  border-radius: 999px;
+
+  background: #f1f5f9;
+
+  overflow: hidden;
+}
+
+.contrato-card-progress-bar {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #64748b;
+
+  transition: width 0.3s ease;
+}
+
+.contrato-card-progress-info {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 6px;
+}
+
+.contrato-card-progress-info span {
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+/* Parcelas */
+
+.contrato-card-installments {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.contrato-card-installments button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+
+  padding: 13px 18px;
+
+  border: 0;
+  border-right: 1px solid #f1f5f9;
+
+  background: #fff;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition: background 0.15s ease;
+}
+
+.contrato-card-installments button:last-child {
+  border-right: 0;
+}
+
+.contrato-card-installments button:hover {
+  background: #f8fafc;
+}
+
+.contrato-card-installments span {
+  color: #94a3b8;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.contrato-card-installments strong {
+  color: #334155;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.contrato-card-installments .contrato-card-paid {
+  color: #15803d;
+}
+
+.contrato-card-installments
+  .contrato-card-installment-danger
+  strong {
+  color: #dc2626;
+}
+
+/* Datas */
+
+.contrato-card-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 16px;
+
+  padding: 14px 18px;
+
+  background: #fafafa;
+}
+
+.contrato-card-dates > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contrato-card-dates span {
+  color: #94a3b8;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.contrato-card-dates strong {
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Footer */
+
+.contrato-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 11px 18px;
+}
+
+.contrato-card-footer button {
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.contrato-card-footer button:hover {
+  text-decoration: underline;
+}
+
+/* Compact */
+
+.contrato-card-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 13px 15px;
+
+  cursor: pointer;
+}
+
+.contrato-card-compact-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.contrato-card-compact-number {
+  color: #94a3b8;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.contrato-card-compact-main strong {
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contrato-card-compact-main small {
+  color: #64748b;
+
+  font-size: 10px;
+}
+
+/* Responsive */
+
+@media (max-width: 650px) {
+  .contrato-card-value {
+    grid-template-columns: 1fr;
+  }
+
+  .contrato-card-installments {
+    grid-template-columns: 1fr;
+  }
+
+  .contrato-card-installments button {
+    border-right: 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .contrato-card-installments button:last-child {
+    border-bottom: 0;
+  }
+
+  .contrato-card-dates {
+    grid-template-columns: 1fr;
+  }
+}

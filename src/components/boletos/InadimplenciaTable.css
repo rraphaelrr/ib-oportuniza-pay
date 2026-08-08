@@ -1,0 +1,285 @@
+.inadimplencia-table-wrapper {
+  width: 100%;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #fff;
+
+  overflow-x: auto;
+}
+
+.inadimplencia-table {
+  width: 100%;
+
+  min-width: 1100px;
+
+  border-collapse: collapse;
+}
+
+.inadimplencia-table thead {
+  background: #f8fafc;
+}
+
+.inadimplencia-table th {
+  height: 44px;
+
+  padding: 0 14px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+.inadimplencia-table td {
+  padding: 13px 14px;
+
+  border-bottom: 1px solid #f1f5f9;
+
+  color: #475569;
+
+  font-size: 12px;
+
+  vertical-align: middle;
+}
+
+.inadimplencia-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.inadimplencia-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.inadimplencia-row-selected {
+  background: #fff7f7;
+}
+
+/* Checkbox */
+
+.inadimplencia-checkbox {
+  width: 38px;
+
+  text-align: center !important;
+}
+
+.inadimplencia-checkbox input {
+  width: 14px;
+  height: 14px;
+
+  margin: 0;
+
+  cursor: pointer;
+}
+
+/* Cliente */
+
+.inadimplencia-client {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  max-width: 190px;
+
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.inadimplencia-client strong {
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inadimplencia-client span {
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.inadimplencia-client:hover strong {
+  text-decoration: underline;
+}
+
+/* Links */
+
+.inadimplencia-link {
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.inadimplencia-link:hover {
+  text-decoration: underline;
+}
+
+.inadimplencia-muted {
+  color: #94a3b8;
+}
+
+/* Parcela */
+
+.inadimplencia-installment {
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Date */
+
+.inadimplencia-date {
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+/* Aging */
+
+.inadimplencia-aging {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inadimplencia-aging strong {
+  color: #dc2626;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inadimplencia-aging-badge {
+  width: fit-content;
+
+  padding: 3px 6px;
+
+  border-radius: 5px;
+
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.inadimplencia-aging-0_15 {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.inadimplencia-aging-16_30 {
+  background: #fffbeb;
+  color: #a16207;
+}
+
+.inadimplencia-aging-31_60 {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.inadimplencia-aging-61_90 {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.inadimplencia-aging-90_plus {
+  background: #450a0a;
+  color: #fff;
+}
+
+/* Amount */
+
+.inadimplencia-amount {
+  color: #dc2626;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Actions */
+
+.inadimplencia-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.inadimplencia-actions button {
+  padding: 5px 8px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+
+  background: #fff;
+
+  color: #475569;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.inadimplencia-actions button:hover {
+  background: #f8fafc;
+}
+
+.inadimplencia-actions
+  .inadimplencia-action-primary {
+  border-color: #cbd5e1;
+
+  color: #334155;
+}
+
+/* Empty */
+
+.inadimplencia-table-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 180px;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+}
+
+/* Loading */
+
+.inadimplencia-table-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 180px;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+}

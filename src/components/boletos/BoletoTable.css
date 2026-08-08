@@ -1,0 +1,284 @@
+.boleto-table-container {
+  width: 100%;
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  background: #fff;
+}
+
+.boleto-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.boleto-table {
+  width: 100%;
+  min-width: 850px;
+
+  border-collapse: collapse;
+}
+
+.boleto-table thead {
+  background: #f8fafc;
+}
+
+.boleto-table th {
+  padding: 13px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  text-align: left;
+
+  color: #64748b;
+
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+
+  white-space: nowrap;
+}
+
+.boleto-table td {
+  padding: 15px 18px;
+
+  border-bottom: 1px solid #f1f5f9;
+
+  color: #334155;
+
+  font-size: 14px;
+}
+
+.boleto-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.boleto-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.boleto-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Cliente */
+
+.boleto-client {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.boleto-client-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #f1f5f9;
+
+  color: #475569;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.boleto-client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.boleto-client-info strong {
+  color: #0f172a;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.boleto-client-info small {
+  color: #94a3b8;
+
+  font-size: 11px;
+}
+
+/* Contrato */
+
+.boleto-contract {
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #475569;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.boleto-contract:hover {
+  text-decoration: underline;
+}
+
+/* Valor */
+
+.boleto-value {
+  color: #0f172a;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.boleto-date {
+  color: #475569;
+
+  font-size: 13px;
+}
+
+/* Ações */
+
+.boleto-table-actions-header {
+  width: 120px;
+
+  text-align: right !important;
+}
+
+.boleto-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.boleto-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.boleto-actions button:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.boleto-actions .boleto-action-danger:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Loading */
+
+.boleto-table-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 280px;
+
+  gap: 12px;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+.boleto-loading-spinner {
+  width: 24px;
+  height: 24px;
+
+  border: 2px solid #e2e8f0;
+  border-top-color: #64748b;
+
+  border-radius: 50%;
+
+  animation: boleto-spinner 0.7s linear infinite;
+}
+
+@keyframes boleto-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty */
+
+.boleto-table-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 60px 20px;
+
+  text-align: center;
+}
+
+.boleto-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 54px;
+  height: 54px;
+
+  margin-bottom: 14px;
+
+  border-radius: 12px;
+
+  background: #f8fafc;
+
+  color: #94a3b8;
+}
+
+.boleto-table-empty h3 {
+  margin: 0 0 6px;
+
+  color: #334155;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.boleto-table-empty p {
+  margin: 0;
+
+  color: #94a3b8;
+
+  font-size: 13px;
+}

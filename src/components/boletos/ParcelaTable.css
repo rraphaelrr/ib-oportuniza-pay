@@ -1,0 +1,388 @@
+.parcela-table-wrapper {
+  width: 100%;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #fff;
+
+  overflow-x: auto;
+}
+
+/* Table */
+
+.parcela-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 980px;
+}
+
+.parcela-table thead {
+  background: #f8fafc;
+}
+
+.parcela-table th {
+  height: 44px;
+
+  padding: 0 14px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+.parcela-table td {
+  padding: 13px 14px;
+
+  border-bottom: 1px solid #f1f5f9;
+
+  color: #475569;
+
+  font-size: 12px;
+
+  vertical-align: middle;
+}
+
+.parcela-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.parcela-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.parcela-row-selected {
+  background: #f8fafc;
+}
+
+/* Checkbox */
+
+.parcela-table-checkbox {
+  width: 38px;
+
+  text-align: center !important;
+}
+
+.parcela-table-checkbox input {
+  width: 14px;
+  height: 14px;
+
+  margin: 0;
+
+  cursor: pointer;
+}
+
+/* Parcela */
+
+.parcela-number {
+  display: block;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #334155;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.parcela-number:hover {
+  text-decoration: underline;
+}
+
+.parcela-description {
+  display: block;
+
+  max-width: 150px;
+
+  margin-top: 3px;
+
+  overflow: hidden;
+
+  color: #94a3b8;
+
+  font-size: 10px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Date */
+
+.parcela-date {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.parcela-date strong {
+  color: #475569;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.parcela-late {
+  color: #dc2626;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+/* Amount */
+
+.parcela-amount {
+  color: #334155;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.parcela-discount {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #15803d;
+
+  font-size: 9px;
+}
+
+/* Boleto */
+
+.parcela-boleto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.parcela-boleto-number {
+  width: fit-content;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.parcela-boleto-number:hover {
+  text-decoration: underline;
+}
+
+.parcela-boleto span {
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.parcela-generate {
+  padding: 5px 8px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+
+  background: #fff;
+
+  color: #475569;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.parcela-generate:hover {
+  background: #f8fafc;
+}
+
+/* Payment */
+
+.parcela-payment {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.parcela-payment strong {
+  color: #15803d;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.parcela-payment span {
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.parcela-payment button {
+  width: fit-content;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #475569;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.parcela-payment button:hover {
+  text-decoration: underline;
+}
+
+.parcela-not-paid {
+  color: #94a3b8;
+
+  font-size: 10px;
+}
+
+/* Status */
+
+.parcela-status {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 23px;
+
+  padding: 0 8px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.parcela-status-paid {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.parcela-status-open {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.parcela-status-pending {
+  background: #fffbeb;
+  color: #a16207;
+}
+
+.parcela-status-overdue {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.parcela-status-cancelled {
+  background: #f8fafc;
+  color: #94a3b8;
+}
+
+.parcela-status-processing {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* Actions */
+
+.parcela-table-actions {
+  text-align: right !important;
+}
+
+.parcela-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 6px;
+}
+
+.parcela-actions button {
+  padding: 5px 8px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+
+  background: #fff;
+
+  color: #475569;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.parcela-actions button:hover {
+  background: #f8fafc;
+}
+
+.parcela-actions .parcela-action-danger {
+  border-color: #fecaca;
+
+  background: #fff;
+
+  color: #dc2626;
+}
+
+.parcela-actions .parcela-action-danger:hover {
+  background: #fef2f2;
+}
+
+/* Empty */
+
+.parcela-table-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 180px;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+}
+
+/* Loading */
+
+.parcela-table-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 180px;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+}

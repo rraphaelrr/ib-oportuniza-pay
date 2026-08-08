@@ -1,0 +1,812 @@
+
+/* =========================================================
+   INADIMPLÊNCIA
+========================================================= */
+
+.inadimplencia {
+  width: 100%;
+  min-height: 100%;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.inadimplencia-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 28px;
+}
+
+.inadimplencia-eyebrow {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #7565ff;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.inadimplencia-header h1 {
+  margin: 0;
+
+  color: #17233f;
+
+  font-size: 30px;
+  font-weight: 750;
+
+  line-height: 1.2;
+}
+
+.inadimplencia-header p {
+  margin: 8px 0 0;
+
+  color: #71809f;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.inadimplencia-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.inadimplencia-action {
+  height: 44px;
+
+  padding: 0 16px;
+
+  border:
+    1px solid #dfe5f2;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  color: #34415f;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  font-size: 13px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.inadimplencia-action:hover {
+  background: #f7f8fc;
+
+  border-color: #cfd7e9;
+}
+
+.inadimplencia-action:active {
+  transform: translateY(1px);
+}
+
+.inadimplencia-action-primary {
+  border-color: transparent;
+
+  background:
+    linear-gradient(
+      90deg,
+      #7565ff,
+      #8248ff
+    );
+
+  color: #ffffff;
+}
+
+.inadimplencia-action-primary:hover {
+  border-color: transparent;
+
+  background:
+    linear-gradient(
+      90deg,
+      #6958ef,
+      #773ff0
+    );
+}
+
+
+/* =========================================================
+   RESUMO
+========================================================= */
+
+.inadimplencia-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 15px;
+
+  margin-bottom: 22px;
+}
+
+.inadimplencia-summary-card {
+  min-height: 105px;
+
+  padding: 17px;
+
+  box-sizing: border-box;
+
+  border:
+    1px solid #e7ebf4;
+
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  box-shadow:
+    0 4px 14px
+    rgba(26, 43, 79, 0.035);
+}
+
+.inadimplencia-summary-icon {
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  border-radius: 13px;
+
+  background:
+    rgba(192, 75, 85, 0.10);
+
+  color: #c04b55;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.inadimplencia-summary-content {
+  min-width: 0;
+}
+
+.inadimplencia-summary-content span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #7d89a1;
+
+  font-size: 12px;
+}
+
+.inadimplencia-summary-content strong {
+  display: block;
+
+  color: #17233f;
+
+  font-size: 20px;
+  font-weight: 750;
+}
+
+.inadimplencia-summary-content small {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #9aa4b7;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   INDICADORES DE AGING
+========================================================= */
+
+.inadimplencia-aging {
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 12px;
+
+  margin-bottom: 22px;
+}
+
+.inadimplencia-aging-card {
+  padding: 15px;
+
+  border:
+    1px solid #e7ebf4;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 4px 14px
+    rgba(26, 43, 79, 0.025);
+}
+
+.inadimplencia-aging-card span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #7d89a1;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.inadimplencia-aging-card strong {
+  display: block;
+
+  color: #263451;
+
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.inadimplencia-aging-card small {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #99a3b6;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   DESTAQUES DE ATRASO
+========================================================= */
+
+.inadimplencia-aging-card.warning {
+  border-color:
+    rgba(218, 163, 56, 0.20);
+}
+
+.inadimplencia-aging-card.warning strong {
+  color: #b27816;
+}
+
+.inadimplencia-aging-card.danger {
+  border-color:
+    rgba(192, 75, 85, 0.20);
+}
+
+.inadimplencia-aging-card.danger strong {
+  color: #c04b55;
+}
+
+.inadimplencia-aging-card.critical {
+  border-color:
+    rgba(143, 53, 67, 0.22);
+}
+
+.inadimplencia-aging-card.critical strong {
+  color: #963b4b;
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.inadimplencia-filters {
+  display: flex;
+  align-items: flex-end;
+
+  gap: 12px;
+
+  padding: 17px;
+
+  margin-bottom: 18px;
+
+  border:
+    1px solid #e7ebf4;
+
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 4px 14px
+    rgba(26, 43, 79, 0.03);
+}
+
+.inadimplencia-search {
+  position: relative;
+
+  flex: 1;
+
+  min-width: 260px;
+}
+
+.inadimplencia-search svg {
+  position: absolute;
+
+  left: 13px;
+  top: 50%;
+
+  transform:
+    translateY(-50%);
+
+  color: #8c99b1;
+
+  pointer-events: none;
+}
+
+.inadimplencia-search input {
+  width: 100%;
+  height: 43px;
+
+  box-sizing: border-box;
+
+  padding:
+    0 13px 0 40px;
+
+  border:
+    1px solid #dfe5f0;
+
+  border-radius: 11px;
+
+  outline: none;
+
+  background: #fdfdff;
+
+  color: #263451;
+
+  font-size: 13px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.inadimplencia-search input::placeholder {
+  color: #9aa5b9;
+}
+
+.inadimplencia-search input:focus {
+  border-color: #7565ff;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(117, 101, 255, 0.09);
+}
+
+
+/* =========================================================
+   SELECTS
+========================================================= */
+
+.inadimplencia-filter {
+  width: 155px;
+
+  flex-shrink: 0;
+}
+
+.inadimplencia-filter label {
+  display: block;
+
+  margin:
+    0 0 6px 2px;
+
+  color: #687690;
+
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.inadimplencia-filter select {
+  width: 100%;
+  height: 43px;
+
+  padding:
+    0 12px;
+
+  border:
+    1px solid #dfe5f0;
+
+  border-radius: 11px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #35425e;
+
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.inadimplencia-filter select:focus {
+  border-color: #7565ff;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(117, 101, 255, 0.09);
+}
+
+
+/* =========================================================
+   LIMPAR FILTROS
+========================================================= */
+
+.inadimplencia-clear {
+  height: 43px;
+
+  padding: 0 13px;
+
+  flex-shrink: 0;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #f1efff;
+
+  color: #6957ef;
+
+  font-size: 12px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease;
+}
+
+.inadimplencia-clear:hover {
+  background: #e7e3ff;
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.inadimplencia-table-card {
+  overflow: hidden;
+
+  border:
+    1px solid #e7ebf4;
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 5px 18px
+    rgba(26, 43, 79, 0.035);
+}
+
+.inadimplencia-table-header {
+  min-height: 76px;
+
+  padding:
+    16px 20px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-bottom:
+    1px solid #edf0f6;
+}
+
+.inadimplencia-table-header h2 {
+  margin: 0;
+
+  color: #1c2944;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.inadimplencia-table-header p {
+  margin: 5px 0 0;
+
+  color: #8994a9;
+
+  font-size: 12px;
+}
+
+.inadimplencia-table-total {
+  text-align: right;
+}
+
+.inadimplencia-table-total span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #8994a9;
+
+  font-size: 11px;
+}
+
+.inadimplencia-table-total strong {
+  color: #c04b55;
+
+  font-size: 17px;
+  font-weight: 750;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.inadimplencia-empty {
+  min-height: 310px;
+
+  padding: 45px 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.inadimplencia-empty-icon {
+  width: 58px;
+  height: 58px;
+
+  margin-bottom: 15px;
+
+  border-radius: 17px;
+
+  background:
+    rgba(117, 101, 255, 0.09);
+
+  color: #7565ff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.inadimplencia-empty h3 {
+  margin: 0;
+
+  color: #263451;
+
+  font-size: 16px;
+}
+
+.inadimplencia-empty p {
+  max-width: 390px;
+
+  margin: 7px 0 18px;
+
+  color: #8994a9;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+.inadimplencia-empty button {
+  height: 38px;
+
+  padding: 0 15px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #7565ff,
+      #8248ff
+    );
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.inadimplencia-loading {
+  min-height: 400px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 13px;
+
+  color: #7c89a3;
+
+  font-size: 14px;
+}
+
+.inadimplencia-spinner {
+  width: 30px;
+  height: 30px;
+
+  border:
+    3px solid #e7e9f2;
+
+  border-top-color: #c04b55;
+
+  border-radius: 50%;
+
+  animation:
+    inadimplencia-spin
+    0.8s linear infinite;
+}
+
+@keyframes inadimplencia-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1250px) {
+  .inadimplencia-summary {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .inadimplencia-aging {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .inadimplencia-filters {
+    flex-wrap: wrap;
+  }
+
+  .inadimplencia-search {
+    flex-basis: 100%;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .inadimplencia {
+    padding: 22px;
+  }
+
+  .inadimplencia-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .inadimplencia-actions {
+    width: 100%;
+  }
+
+  .inadimplencia-aging {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .inadimplencia-filter {
+    flex: 1;
+
+    min-width: 140px;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .inadimplencia {
+    padding: 16px;
+  }
+
+  .inadimplencia-header h1 {
+    font-size: 25px;
+  }
+
+  .inadimplencia-actions {
+    flex-direction: column;
+  }
+
+  .inadimplencia-action {
+    width: 100%;
+  }
+
+  .inadimplencia-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .inadimplencia-aging {
+    grid-template-columns: 1fr;
+  }
+
+  .inadimplencia-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inadimplencia-search {
+    min-width: 0;
+  }
+
+  .inadimplencia-filter {
+    width: 100%;
+  }
+
+  .inadimplencia-clear {
+    width: 100%;
+  }
+
+  .inadimplencia-table-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .inadimplencia-table-total {
+    text-align: left;
+  }
+}

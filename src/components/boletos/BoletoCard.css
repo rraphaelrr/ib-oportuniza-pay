@@ -1,0 +1,255 @@
+.boleto-card {
+  width: 100%;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #fff;
+
+  overflow: hidden;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.boleto-card:hover {
+  border-color: #cbd5e1;
+}
+
+/* Header */
+
+.boleto-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 16px 18px;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.boleto-card-client {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  min-width: 0;
+
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.boleto-card-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #f1f5f9;
+
+  color: #475569;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.boleto-card-client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.boleto-card-client-info strong {
+  max-width: 220px;
+
+  overflow: hidden;
+
+  color: #0f172a;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boleto-card-client-info small {
+  color: #94a3b8;
+
+  font-size: 11px;
+}
+
+/* Body */
+
+.boleto-card-body {
+  padding: 18px;
+}
+
+.boleto-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  margin-bottom: 18px;
+}
+
+.boleto-card-label {
+  color: #64748b;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.boleto-card-value {
+  color: #0f172a;
+
+  font-size: 21px;
+  font-weight: 700;
+}
+
+/* Informações */
+
+.boleto-card-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 16px;
+
+  padding-top: 16px;
+
+  border-top: 1px solid #f1f5f9;
+}
+
+.boleto-card-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.boleto-card-info span,
+.boleto-card-description span {
+  color: #94a3b8;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.boleto-card-info strong {
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.boleto-card-contract {
+  width: fit-content;
+
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #475569;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.boleto-card-contract:hover {
+  text-decoration: underline;
+}
+
+/* Descrição */
+
+.boleto-card-description {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  margin-top: 16px;
+  padding-top: 16px;
+
+  border-top: 1px solid #f1f5f9;
+}
+
+.boleto-card-description p {
+  margin: 0;
+
+  overflow: hidden;
+
+  color: #475569;
+
+  font-size: 13px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Footer */
+
+.boleto-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 10px 14px;
+
+  border-top: 1px solid #f1f5f9;
+
+  background: #fafafa;
+}
+
+.boleto-card-number {
+  overflow: hidden;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .boleto-card-header {
+    align-items: flex-start;
+  }
+
+  .boleto-card-info {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .boleto-card-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .boleto-card-footer .boleto-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

@@ -1,0 +1,1496 @@
+
+/* =========================================================
+   GERAR BOLETO
+========================================================= */
+
+.gerar-boleto {
+  width: 100%;
+  min-height: 100%;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.gerar-boleto-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.gerar-boleto-header-main {
+  min-width: 0;
+}
+
+.gerar-boleto-back {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 12px;
+  padding: 0;
+
+  border: none;
+  background: none;
+
+  color: #7565ff;
+
+  font-size: 12px;
+  font-weight: 650;
+
+  cursor: pointer;
+}
+
+.gerar-boleto-back:hover {
+  text-decoration: underline;
+}
+
+.gerar-boleto-eyebrow {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #7565ff;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.gerar-boleto-header h1 {
+  margin: 0;
+
+  color: #17233f;
+
+  font-size: 29px;
+  font-weight: 750;
+
+  line-height: 1.2;
+}
+
+.gerar-boleto-header p {
+  margin: 7px 0 0;
+
+  color: #71809f;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.gerar-boleto-content {
+  width: 100%;
+  max-width: 1180px;
+
+  margin: 0 auto;
+}
+
+.gerar-boleto-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.35fr)
+    minmax(300px, 0.65fr);
+
+  gap: 20px;
+
+  align-items: start;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.gerar-boleto-card {
+  overflow: hidden;
+
+  border:
+    1px solid #e7ebf4;
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 5px 18px
+    rgba(26, 43, 79, 0.035);
+}
+
+.gerar-boleto-card + .gerar-boleto-card {
+  margin-top: 18px;
+}
+
+.gerar-boleto-card-header {
+  padding: 20px 23px;
+
+  border-bottom:
+    1px solid #edf0f6;
+}
+
+.gerar-boleto-card-header h2 {
+  margin: 0;
+
+  color: #1c2944;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.gerar-boleto-card-header p {
+  margin: 5px 0 0;
+
+  color: #8994a9;
+
+  font-size: 11px;
+}
+
+.gerar-boleto-card-body {
+  padding: 23px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.gerar-boleto-form {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 17px;
+}
+
+.gerar-boleto-form-group {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.gerar-boleto-form-group.full {
+  grid-column: 1 / -1;
+}
+
+.gerar-boleto-form-group label {
+  color: #68758e;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.gerar-boleto-form-group input,
+.gerar-boleto-form-group select,
+.gerar-boleto-form-group textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  outline: none;
+
+  border:
+    1px solid #dfe5f0;
+
+  border-radius: 10px;
+
+  background: #fafbfe;
+
+  color: #35415b;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.gerar-boleto-form-group input,
+.gerar-boleto-form-group select {
+  height: 43px;
+
+  padding: 0 12px;
+}
+
+.gerar-boleto-form-group textarea {
+  min-height: 90px;
+
+  padding: 12px;
+
+  resize: vertical;
+}
+
+.gerar-boleto-form-group input::placeholder,
+.gerar-boleto-form-group textarea::placeholder {
+  color: #a1aabd;
+}
+
+.gerar-boleto-form-group input:focus,
+.gerar-boleto-form-group select:focus,
+.gerar-boleto-form-group textarea:focus {
+  border-color: #7565ff;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(117, 101, 255, 0.07);
+}
+
+.gerar-boleto-form-group input:disabled,
+.gerar-boleto-form-group select:disabled {
+  background: #f3f5f9;
+
+  color: #98a2b4;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   INPUT COM PREFIXO / SUFIXO
+========================================================= */
+
+.gerar-boleto-input-wrapper {
+  position: relative;
+}
+
+.gerar-boleto-input-wrapper input {
+  padding-left: 43px;
+}
+
+.gerar-boleto-input-prefix {
+  position: absolute;
+
+  left: 13px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #8b96aa;
+
+  font-size: 12px;
+
+  pointer-events: none;
+}
+
+.gerar-boleto-input-suffix {
+  position: absolute;
+
+  right: 13px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #8b96aa;
+
+  font-size: 11px;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   SELEÇÃO DE CLIENTE
+========================================================= */
+
+.gerar-boleto-client-selector {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 13px;
+
+  border:
+    1px solid #e1e6f0;
+
+  border-radius: 12px;
+
+  background: #fafbfe;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.gerar-boleto-client-selector:hover {
+  border-color: #cfc9ff;
+
+  background: #fbfaff;
+}
+
+.gerar-boleto-client-selector.selected {
+  border-color: #7565ff;
+
+  background:
+    rgba(117, 101, 255, 0.035);
+}
+
+.gerar-boleto-client-avatar {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background:
+    rgba(117, 101, 255, 0.10);
+
+  color: #7565ff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.gerar-boleto-client-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.gerar-boleto-client-info strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #35415b;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gerar-boleto-client-info span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8994a9;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   CONTRATO
+========================================================= */
+
+.gerar-boleto-contract {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 13px 14px;
+
+  border:
+    1px solid #e4e8f0;
+
+  border-radius: 11px;
+
+  background: #ffffff;
+}
+
+.gerar-boleto-contract-info {
+  min-width: 0;
+}
+
+.gerar-boleto-contract-info span {
+  display: block;
+
+  color: #8b96aa;
+
+  font-size: 9px;
+
+  text-transform: uppercase;
+}
+
+.gerar-boleto-contract-info strong {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #39455f;
+
+  font-size: 12px;
+}
+
+.gerar-boleto-contract-status {
+  flex-shrink: 0;
+
+  padding: 5px 8px;
+
+  border-radius: 7px;
+
+  background:
+    rgba(35, 132, 91, 0.08);
+
+  color: #23845b;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   RESUMO
+========================================================= */
+
+.gerar-boleto-summary {
+  padding: 18px;
+
+  border:
+    1px solid #e5e1ff;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(117, 101, 255, 0.065),
+      rgba(130, 72, 255, 0.025)
+    );
+}
+
+.gerar-boleto-summary h3 {
+  margin: 0 0 15px;
+
+  color: #34415c;
+
+  font-size: 13px;
+}
+
+.gerar-boleto-summary-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 10px 0;
+
+  border-bottom:
+    1px solid rgba(117, 101, 255, 0.10);
+}
+
+.gerar-boleto-summary-item:last-child {
+  border-bottom: none;
+}
+
+.gerar-boleto-summary-item span {
+  color: #7d89a1;
+
+  font-size: 10px;
+}
+
+.gerar-boleto-summary-item strong {
+  color: #34415c;
+
+  font-size: 12px;
+
+  text-align: right;
+}
+
+.gerar-boleto-summary-item.total {
+  margin-top: 5px;
+
+  padding-top: 14px;
+
+  border-top:
+    1px solid rgba(117, 101, 255, 0.18);
+}
+
+.gerar-boleto-summary-item.total strong {
+  color: #7565ff;
+
+  font-size: 18px;
+}
+
+
+/* =========================================================
+   INFORMAÇÕES DO BOLETO
+========================================================= */
+
+.gerar-boleto-info-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.gerar-boleto-info-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 12px 0;
+
+  border-bottom:
+    1px solid #edf0f5;
+}
+
+.gerar-boleto-info-item:first-child {
+  padding-top: 0;
+}
+
+.gerar-boleto-info-item:last-child {
+  padding-bottom: 0;
+
+  border-bottom: none;
+}
+
+.gerar-boleto-info-item span {
+  color: #7d89a1;
+
+  font-size: 10px;
+}
+
+.gerar-boleto-info-item strong {
+  color: #35415b;
+
+  font-size: 11px;
+
+  text-align: right;
+}
+
+
+/* =========================================================
+   CHECKBOX / OPÇÕES
+========================================================= */
+
+.gerar-boleto-options {
+  display: flex;
+  flex-direction: column;
+
+  gap: 11px;
+
+  margin-top: 17px;
+}
+
+.gerar-boleto-option {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  cursor: pointer;
+}
+
+.gerar-boleto-option input {
+  width: 16px;
+  height: 16px;
+
+  margin-top: 1px;
+
+  accent-color: #7565ff;
+}
+
+.gerar-boleto-option-content strong {
+  display: block;
+
+  color: #45516a;
+
+  font-size: 11px;
+}
+
+.gerar-boleto-option-content span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #929caf;
+
+  font-size: 10px;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   ALERTAS
+========================================================= */
+
+.gerar-boleto-alert {
+  margin-bottom: 18px;
+
+  padding: 13px 15px;
+
+  border:
+    1px solid rgba(178, 120, 22, 0.18);
+
+  border-radius: 12px;
+
+  background:
+    rgba(178, 120, 22, 0.055);
+
+  color: #9b6c1c;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+}
+
+.gerar-boleto-alert.error {
+  border-color:
+    rgba(192, 75, 85, 0.18);
+
+  background:
+    rgba(192, 75, 85, 0.055);
+
+  color: #a94450;
+}
+
+.gerar-boleto-alert.success {
+  border-color:
+    rgba(35, 132, 91, 0.18);
+
+  background:
+    rgba(35, 132, 91, 0.055);
+
+  color: #23734f;
+}
+
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+.gerar-boleto-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 9px;
+
+  margin-top: 22px;
+}
+
+.gerar-boleto-button {
+  min-height: 41px;
+
+  padding: 0 16px;
+
+  border:
+    1px solid #dfe5f0;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #56637c;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  font-family: inherit;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.gerar-boleto-button:hover {
+  background: #f7f8fc;
+
+  border-color: #d1d8e5;
+}
+
+.gerar-boleto-button:active {
+  transform: translateY(1px);
+}
+
+.gerar-boleto-button-primary {
+  border-color: transparent;
+
+  background:
+    linear-gradient(
+      90deg,
+      #7565ff,
+      #8248ff
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 4px 10px
+    rgba(117, 101, 255, 0.15);
+}
+
+.gerar-boleto-button-primary:hover {
+  border-color: transparent;
+
+  background:
+    linear-gradient(
+      90deg,
+      #6958ef,
+      #773ff0
+    );
+}
+
+.gerar-boleto-button-danger {
+  border-color:
+    rgba(192, 75, 85, 0.18);
+
+  background:
+    rgba(192, 75, 85, 0.05);
+
+  color: #c04b55;
+}
+
+.gerar-boleto-button-danger:hover {
+  background:
+    rgba(192, 75, 85, 0.09);
+}
+
+.gerar-boleto-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.gerar-boleto-loading {
+  min-height: 250px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  color: #8994a9;
+
+  font-size: 12px;
+}
+
+.gerar-boleto-spinner {
+  width: 27px;
+  height: 27px;
+
+  border:
+    3px solid #e8e5ff;
+
+  border-top-color: #7565ff;
+
+  border-radius: 50%;
+
+  animation:
+    gerar-boleto-spin 0.75s linear infinite;
+}
+
+@keyframes gerar-boleto-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   SUCESSO
+========================================================= */
+
+.gerar-boleto-success {
+  padding: 35px 25px;
+
+  text-align: center;
+}
+
+.gerar-boleto-success-icon {
+  width: 62px;
+  height: 62px;
+
+  margin: 0 auto 16px;
+
+  border-radius: 19px;
+
+  background:
+    rgba(35, 132, 91, 0.10);
+
+  color: #23845b;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+}
+
+.gerar-boleto-success h2 {
+  margin: 0;
+
+  color: #25324d;
+
+  font-size: 20px;
+}
+
+.gerar-boleto-success p {
+  max-width: 500px;
+
+  margin: 8px auto 0;
+
+  color: #8994a9;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1000px) {
+  .gerar-boleto-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+  .gerar-boleto {
+    padding: 22px;
+  }
+
+  .gerar-boleto-header {
+    flex-direction: column;
+  }
+
+  .gerar-boleto-form {
+    grid-template-columns: 1fr;
+  }
+
+  .gerar-boleto-form-group.full {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .gerar-boleto {
+    padding: 16px;
+  }
+
+  .gerar-boleto-header h1 {
+    font-size: 25px;
+  }
+
+  .gerar-boleto-card-body {
+    padding: 17px;
+  }
+
+  .gerar-boleto-card-header {
+    padding: 17px;
+  }
+
+  .gerar-boleto-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .gerar-boleto-button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   GERAR BOLETO
+========================================================= */
+
+.gerar-boleto {
+  width: 100%;
+  min-height: 100%;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.gerar-boleto-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.gerar-boleto-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.gerar-boleto-back {
+  width: 30px;
+  height: 30px;
+  margin-top: 3px;
+  padding: 0;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #7565ff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.gerar-boleto-back:hover {
+  background: rgba(117, 101, 255, 0.08);
+}
+
+.gerar-boleto-header h1 {
+  margin: 0;
+
+  color: #17233f;
+
+  font-size: 30px;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.gerar-boleto-header p {
+  margin: 7px 0 0;
+
+  color: #71809f;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   FORMULÁRIO
+========================================================= */
+
+.gerar-boleto-form {
+  width: 100%;
+  max-width: 1330px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+
+  gap: 18px;
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.gerar-boleto-card {
+  overflow: hidden;
+
+  border: 1px solid #e3e8f2;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 5px 18px rgba(26, 43, 79, 0.035);
+}
+
+.gerar-boleto-card-header {
+  padding: 20px 26px;
+
+  border-bottom: 1px solid #edf0f6;
+}
+
+.gerar-boleto-card-header h2 {
+  margin: 0;
+
+  color: #1c2944;
+
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.gerar-boleto-card-header p {
+  margin: 6px 0 0;
+
+  color: #8994a9;
+
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   GRID DOS CAMPOS
+========================================================= */
+
+.gerar-boleto-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+
+  padding: 22px 26px;
+}
+
+/* =========================================================
+   CAMPOS
+========================================================= */
+
+.gerar-boleto-field {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.gerar-boleto-field label {
+  color: #52617a;
+
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.gerar-boleto-field input,
+.gerar-boleto-field select,
+.gerar-boleto-field textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  outline: none;
+
+  border: 1px solid #dfe5f0;
+  border-radius: 10px;
+
+  background: #fafbfe;
+  color: #35415b;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.gerar-boleto-field input,
+.gerar-boleto-field select {
+  height: 43px;
+  padding: 0 12px;
+}
+
+.gerar-boleto-field textarea {
+  min-height: 105px;
+  padding: 11px 12px;
+
+  resize: vertical;
+}
+
+.gerar-boleto-field input::placeholder,
+.gerar-boleto-field textarea::placeholder {
+  color: #a1aabd;
+}
+
+.gerar-boleto-field input:focus,
+.gerar-boleto-field select:focus,
+.gerar-boleto-field textarea:focus {
+  border-color: #7565ff;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px rgba(117, 101, 255, 0.07);
+}
+
+.gerar-boleto-field input:disabled,
+.gerar-boleto-field select:disabled {
+  background: #f3f5f9;
+
+  color: #98a2b4;
+
+  cursor: not-allowed;
+}
+
+.gerar-boleto-field small {
+  color: #8994a9;
+  font-size: 11px;
+}
+
+/* =========================================================
+   ERROS
+========================================================= */
+
+.gerar-boleto-error {
+  color: #c04b55;
+
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/* =========================================================
+   CLIENTE SELECIONADO
+========================================================= */
+
+.gerar-boleto-selected {
+  margin: 0 26px 22px;
+  padding: 12px 14px;
+
+  border: 1px solid #e4e1ff;
+  border-radius: 12px;
+
+  background: rgba(117, 101, 255, 0.035);
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+}
+
+.gerar-boleto-avatar {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: rgba(117, 101, 255, 0.10);
+  color: #7565ff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.gerar-boleto-selected strong {
+  display: block;
+
+  color: #35415b;
+
+  font-size: 13px;
+}
+
+.gerar-boleto-selected span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8994a9;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   CONTRATO SELECIONADO
+========================================================= */
+
+.gerar-boleto-contract {
+  margin: 0 26px 22px;
+  padding: 12px 14px;
+
+  border: 1px solid #e4e8f0;
+  border-radius: 11px;
+
+  background: #fafbfe;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+.gerar-boleto-contract > span {
+  color: #8994a9;
+
+  font-size: 11px;
+}
+
+.gerar-boleto-contract > strong {
+  color: #39455f;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   CAMPOS DE DESCRIÇÃO
+========================================================= */
+
+.gerar-boleto-card > .gerar-boleto-field {
+  padding: 0 26px 22px;
+}
+
+/* =========================================================
+   REVIEW / RESUMO
+========================================================= */
+
+.gerar-boleto-review {
+  grid-column: 1 / -1;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 0;
+
+  overflow: hidden;
+
+  border: 1px solid #e4e1ff;
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(117, 101, 255, 0.065),
+      rgba(130, 72, 255, 0.025)
+    );
+}
+
+.gerar-boleto-review > div {
+  padding: 15px 18px;
+
+  border-right: 1px solid rgba(117, 101, 255, 0.10);
+}
+
+.gerar-boleto-review > div:last-child {
+  border-right: none;
+}
+
+.gerar-boleto-review span {
+  display: block;
+
+  color: #7d89a1;
+
+  font-size: 11px;
+}
+
+.gerar-boleto-review strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #34415c;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   FOOTER / BOTÕES
+========================================================= */
+
+.gerar-boleto-footer {
+  grid-column: 1 / -1;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 2px;
+}
+
+.gerar-boleto-button-secondary,
+.gerar-boleto-button-primary {
+  min-height: 42px;
+
+  padding: 0 18px;
+
+  border-radius: 10px;
+
+  font-family: inherit;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.gerar-boleto-button-secondary {
+  border: 1px solid #dfe5f0;
+
+  background: #ffffff;
+  color: #56637c;
+}
+
+.gerar-boleto-button-secondary:hover {
+  background: #f7f8fc;
+  border-color: #d1d8e5;
+}
+
+.gerar-boleto-button-primary {
+  border: 1px solid transparent;
+
+  background:
+    linear-gradient(
+      90deg,
+      #7565ff,
+      #8248ff
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 4px 10px rgba(117, 101, 255, 0.15);
+}
+
+.gerar-boleto-button-primary:hover {
+  background:
+    linear-gradient(
+      90deg,
+      #6958ef,
+      #773ff0
+    );
+}
+
+.gerar-boleto-button-primary:disabled,
+.gerar-boleto-button-secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1100px) {
+  .gerar-boleto-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .gerar-boleto {
+    padding: 22px;
+  }
+
+  .gerar-boleto-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gerar-boleto-review {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .gerar-boleto-review > div:nth-child(2) {
+    border-right: none;
+  }
+
+  .gerar-boleto-review > div:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(117, 101, 255, 0.10);
+  }
+}
+
+@media (max-width: 500px) {
+  .gerar-boleto {
+    padding: 16px;
+  }
+
+  .gerar-boleto-header h1 {
+    font-size: 26px;
+  }
+
+  .gerar-boleto-card-header {
+    padding: 17px;
+  }
+
+  .gerar-boleto-grid {
+    padding: 18px 17px;
+  }
+
+  .gerar-boleto-card > .gerar-boleto-field {
+    padding: 0 17px 18px;
+  }
+
+  .gerar-boleto-selected,
+  .gerar-boleto-contract {
+    margin-left: 17px;
+    margin-right: 17px;
+  }
+
+  .gerar-boleto-review {
+    grid-template-columns: 1fr;
+  }
+
+  .gerar-boleto-review > div {
+    border-right: none;
+    border-bottom: 1px solid rgba(117, 101, 255, 0.10);
+  }
+
+  .gerar-boleto-review > div:last-child {
+    border-bottom: none;
+  }
+
+  .gerar-boleto-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .gerar-boleto-button-secondary,
+  .gerar-boleto-button-primary {
+    width: 100%;
+  }
+}

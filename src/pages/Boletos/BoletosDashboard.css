@@ -1,0 +1,937 @@
+/* =========================================================
+   BOLETOS DASHBOARD
+========================================================= */
+
+.boletos-dashboard {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px 36px 48px;
+  box-sizing: border-box;
+
+  color: #17233f;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.boletos-dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+
+  margin-bottom: 28px;
+}
+
+.boletos-dashboard-header-content {
+  min-width: 0;
+}
+
+.boletos-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 8px;
+
+  color: #8994aa;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.boletos-breadcrumb span {
+  color: #c4cad6;
+}
+
+.boletos-dashboard-header h1 {
+  margin: 0;
+
+  color: #17233f;
+  font-size: 30px;
+  font-weight: 750;
+  line-height: 1.15;
+  letter-spacing: -0.6px;
+}
+
+.boletos-dashboard-header p {
+  margin: 7px 0 0;
+
+  color: #7d899f;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   HEADER ACTIONS
+========================================================= */
+
+.boletos-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  flex-shrink: 0;
+}
+
+.boletos-button {
+  min-height: 42px;
+
+  padding: 0 16px;
+
+  border: 1px solid #e0e5ef;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #4b5872;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.boletos-button:hover {
+  background: #f8f9fc;
+  border-color: #d3d9e6;
+}
+
+.boletos-button:active {
+  transform: translateY(1px);
+}
+
+.boletos-button.primary {
+  border-color: transparent;
+
+  background: linear-gradient(
+    135deg,
+    #7657f5 0%,
+    #6841e9 100%
+  );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 5px 14px rgba(105, 73, 231, 0.20);
+}
+
+.boletos-button.primary:hover {
+  background: linear-gradient(
+    135deg,
+    #6e50ed 0%,
+    #5f39dc 100%
+  );
+
+  box-shadow:
+    0 7px 18px rgba(105, 73, 231, 0.26);
+}
+
+.boletos-button.primary svg {
+  stroke-width: 2.5;
+}
+
+
+/* =========================================================
+   RESUMO
+========================================================= */
+
+.boletos-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+
+  margin-bottom: 22px;
+}
+
+.boletos-summary-card {
+  position: relative;
+
+  min-width: 0;
+
+  padding: 18px;
+
+  border: 1px solid #e7ebf3;
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 3px 12px rgba(25, 42, 76, 0.035);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.boletos-summary-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #dfe4ee;
+
+  box-shadow:
+    0 8px 22px rgba(25, 42, 76, 0.065);
+}
+
+.summary-icon {
+  width: 38px;
+  height: 38px;
+
+  margin-bottom: 14px;
+
+  border-radius: 11px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f0edff;
+  color: #7155ed;
+}
+
+.summary-icon.open {
+  background: #f0edff;
+  color: #7155ed;
+}
+
+.summary-icon.paid {
+  background: #eaf8f1;
+  color: #22865b;
+}
+
+.summary-icon.overdue {
+  background: #fff0f1;
+  color: #c04b55;
+}
+
+.summary-content {
+  min-width: 0;
+}
+
+.summary-label {
+  display: block;
+
+  color: #8792a7;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.summary-content strong {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #26334d;
+
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.35px;
+
+  line-height: 1.2;
+}
+
+.summary-content small {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #9ba4b5;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   SEÇÕES
+========================================================= */
+
+.boletos-section {
+  margin-top: 22px;
+
+  border: 1px solid #e7ebf3;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 3px 12px rgba(25, 42, 76, 0.035);
+
+  overflow: hidden;
+}
+
+.boletos-section-header {
+  min-height: 68px;
+
+  padding: 0 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-bottom: 1px solid #edf0f5;
+}
+
+.boletos-section-header h2 {
+  margin: 0;
+
+  color: #2c3952;
+
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: -0.2px;
+}
+
+.boletos-section-header p {
+  margin: 4px 0 0;
+
+  color: #909bad;
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   ACESSO RÁPIDO
+========================================================= */
+
+.boletos-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.boletos-shortcut {
+  min-width: 0;
+
+  padding: 19px;
+
+  border: 0;
+  border-right: 1px solid #edf0f5;
+
+  background: #ffffff;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  text-align: left;
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease;
+}
+
+.boletos-shortcut:last-child {
+  border-right: none;
+}
+
+.boletos-shortcut:hover {
+  background: #fafaff;
+}
+
+.shortcut-icon {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: #f1eeff;
+  color: #7054ed;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boletos-shortcut > div:nth-child(2) {
+  min-width: 0;
+  flex: 1;
+}
+
+.boletos-shortcut strong {
+  display: block;
+
+  color: #35415a;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.boletos-shortcut span {
+  display: block;
+
+  margin-top: 4px;
+
+  overflow: hidden;
+
+  color: #9aa3b4;
+
+  font-size: 9px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boletos-shortcut > svg {
+  flex-shrink: 0;
+
+  color: #a1a9b8;
+
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.boletos-shortcut:hover > svg {
+  color: #7054ed;
+  transform: translate(2px, -2px);
+}
+
+
+/* =========================================================
+   LINK BUTTON
+========================================================= */
+
+.boletos-link-button {
+  padding: 7px 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #7054ed;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  font-family: inherit;
+
+  font-size: 11px;
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+.boletos-link-button:hover {
+  color: #5e42d6;
+}
+
+.boletos-link-button svg {
+  transition: transform 0.18s ease;
+}
+
+.boletos-link-button:hover svg {
+  transform: translateX(3px);
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.boletos-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+.boletos-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  table-layout: auto;
+}
+
+.boletos-table thead {
+  background: #fafbfe;
+}
+
+.boletos-table th {
+  height: 42px;
+
+  padding: 0 20px;
+
+  border-bottom: 1px solid #edf0f5;
+
+  color: #8b95a8;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+.boletos-table td {
+  height: 66px;
+
+  padding: 0 20px;
+
+  border-bottom: 1px solid #f0f2f6;
+
+  color: #68758b;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+}
+
+.boletos-table tbody tr {
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease;
+}
+
+.boletos-table tbody tr:hover {
+  background: #fafaff;
+}
+
+.boletos-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.boletos-table td strong {
+  color: #39455e;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   CLIENTE
+========================================================= */
+
+.boleto-client {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  min-width: 190px;
+}
+
+.boleto-client-avatar {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #f0edff,
+    #e8e2ff
+  );
+
+  color: #7054ed;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.boleto-client > div:last-child {
+  min-width: 0;
+}
+
+.boleto-client strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #35415a;
+
+  font-size: 11px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boleto-client span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #9ba4b5;
+
+  font-size: 9px;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.boleto-status {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 25px;
+
+  padding: 0 9px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  line-height: 1;
+}
+
+.status-open {
+  background: #f0edff;
+  color: #6b4de6;
+}
+
+.status-paid {
+  background: #eaf8f1;
+  color: #21865a;
+}
+
+.status-overdue {
+  background: #fff0f1;
+  color: #bd4853;
+}
+
+.status-cancelled {
+  background: #f0f1f4;
+  color: #7c8493;
+}
+
+
+/* =========================================================
+   INADIMPLÊNCIA
+========================================================= */
+
+.boletos-inadimplencia-card {
+  margin-top: 22px;
+
+  padding: 17px 20px;
+
+  border: 1px solid #f0dadd;
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #fffafa 0%,
+      #fffdfd 100%
+    );
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.inadimplencia-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: #fff0f1;
+  color: #c04b55;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inadimplencia-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.inadimplencia-content h3 {
+  margin: 0;
+
+  color: #7d4148;
+
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.inadimplencia-content p {
+  margin: 4px 0 0;
+
+  color: #9a777c;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   FOCUS / ACESSIBILIDADE
+========================================================= */
+
+.boletos-button:focus-visible,
+.boletos-shortcut:focus-visible,
+.boletos-link-button:focus-visible {
+  outline: 3px solid rgba(112, 84, 237, 0.18);
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1100px) {
+  .boletos-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .boletos-shortcuts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .boletos-shortcut:nth-child(2) {
+    border-right: none;
+  }
+
+  .boletos-shortcut:nth-child(-n + 2) {
+    border-bottom: 1px solid #edf0f5;
+  }
+}
+
+
+@media (max-width: 800px) {
+  .boletos-dashboard {
+    padding: 24px 20px 40px;
+  }
+
+  .boletos-dashboard-header {
+    flex-direction: column;
+  }
+
+  .boletos-header-actions {
+    width: 100%;
+  }
+
+  .boletos-header-actions .boletos-button {
+    flex: 1;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .boletos-dashboard {
+    padding: 18px 14px 32px;
+  }
+
+  .boletos-dashboard-header {
+    margin-bottom: 20px;
+  }
+
+  .boletos-dashboard-header h1 {
+    font-size: 25px;
+  }
+
+  .boletos-dashboard-header p {
+    font-size: 12px;
+  }
+
+  .boletos-header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .boletos-header-actions .boletos-button {
+    width: 100%;
+  }
+
+  .boletos-summary {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .boletos-summary-card {
+    padding: 16px;
+  }
+
+  .boletos-section {
+    border-radius: 13px;
+  }
+
+  .boletos-section-header {
+    min-height: 62px;
+    padding: 0 16px;
+  }
+
+  .boletos-shortcuts {
+    grid-template-columns: 1fr;
+  }
+
+  .boletos-shortcut {
+    border-right: none;
+    border-bottom: 1px solid #edf0f5;
+  }
+
+  .boletos-shortcut:last-child {
+    border-bottom: none;
+  }
+
+  .boletos-table {
+    min-width: 680px;
+  }
+
+  .boletos-inadimplencia-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .inadimplencia-content {
+    flex-basis: calc(100% - 54px);
+  }
+
+  .boletos-inadimplencia-card .boletos-link-button {
+    margin-left: 54px;
+  }
+}
+
+/* =========================================================
+   AJUSTE DE LEITURA — TIPOGRAFIA
+========================================================= */
+
+/* Breadcrumb */
+.boletos-breadcrumb {
+  font-size: 13px;
+}
+
+/* Título */
+.boletos-dashboard-header h1 {
+  font-size: 32px;
+}
+
+/* Descrição do header */
+.boletos-dashboard-header p {
+  font-size: 14px;
+}
+
+/* Botões */
+.boletos-button {
+  font-size: 13px;
+}
+
+/* =========================================================
+   CARDS DE RESUMO
+========================================================= */
+
+.summary-label {
+  font-size: 12px;
+}
+
+.summary-content strong {
+  font-size: 22px;
+}
+
+.summary-content small {
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   ACESSO RÁPIDO
+========================================================= */
+
+.boletos-section-header h2 {
+  font-size: 17px;
+}
+
+.boletos-section-header p {
+  font-size: 12px;
+}
+
+.boletos-shortcut strong {
+  font-size: 12px;
+}
+
+.boletos-shortcut span {
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   ÚLTIMOS BOLETOS
+========================================================= */
+
+.boletos-table th {
+  font-size: 11px;
+}
+
+.boletos-table td {
+  font-size: 12px;
+}
+
+.boletos-table td strong {
+  font-size: 12px;
+}
+
+.boleto-client strong {
+  font-size: 12px;
+}
+
+.boleto-client span {
+  font-size: 10px;
+}
+
+.boleto-status {
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+.boletos-link-button {
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   INADIMPLÊNCIA
+========================================================= */
+
+.inadimplencia-content h3 {
+  font-size: 13px;
+}
+
+.inadimplencia-content p {
+  font-size: 11px;
+}

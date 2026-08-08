@@ -1,0 +1,282 @@
+.pagamentos-table-wrapper {
+  width: 100%;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #fff;
+
+  overflow-x: auto;
+}
+
+.pagamentos-table {
+  width: 100%;
+
+  min-width: 1100px;
+
+  border-collapse: collapse;
+}
+
+.pagamentos-table thead {
+  background: #f8fafc;
+}
+
+.pagamentos-table th {
+  height: 44px;
+
+  padding: 0 14px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+.pagamentos-table td {
+  padding: 13px 14px;
+
+  border-bottom: 1px solid #f1f5f9;
+
+  color: #475569;
+
+  font-size: 12px;
+
+  vertical-align: middle;
+}
+
+.pagamentos-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.pagamentos-table tbody tr:hover {
+  background: #fafafa;
+}
+
+/* Data */
+
+.pagamento-date {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pagamento-date strong {
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pagamento-date span {
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+/* Cliente */
+
+.pagamento-client {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  max-width: 180px;
+
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.pagamento-client strong {
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pagamento-client span {
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.pagamento-client:hover strong {
+  text-decoration: underline;
+}
+
+/* Links */
+
+.pagamento-link {
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.pagamento-link:hover {
+  text-decoration: underline;
+}
+
+.pagamento-muted {
+  color: #94a3b8;
+}
+
+/* Valor */
+
+.pagamento-amount {
+  color: #15803d;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pagamento-fee {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+/* Status */
+
+.pagamento-status {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 23px;
+
+  padding: 0 8px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.pagamento-status-paid,
+.pagamento-status-settled,
+.pagamento-status-confirmed {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.pagamento-status-pending {
+  background: #fffbeb;
+  color: #a16207;
+}
+
+.pagamento-status-failed {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.pagamento-status-refunded,
+.pagamento-status-reversed {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* Liquidação */
+
+.pagamento-settlement {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pagamento-settlement strong {
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pagamento-settlement span {
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+/* Actions */
+
+.pagamento-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pagamento-actions button {
+  padding: 5px 8px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+
+  background: #fff;
+
+  color: #475569;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.pagamento-actions button:hover {
+  background: #f8fafc;
+}
+
+/* Empty */
+
+.pagamentos-table-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 180px;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+}
+
+/* Loading */
+
+.pagamentos-table-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 180px;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+}

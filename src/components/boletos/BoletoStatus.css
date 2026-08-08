@@ -1,0 +1,114 @@
+.boleto-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  width: fit-content;
+
+  padding: 6px 10px;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+.boleto-status-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  flex-shrink: 0;
+}
+
+/* Pendente */
+
+.status-pending {
+  color: #8a6100;
+  background: #fff7db;
+}
+
+.status-pending .boleto-status-dot {
+  background: #d99a00;
+}
+
+/* Processando */
+
+.status-processing {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.status-processing .boleto-status-dot {
+  background: #3b82f6;
+}
+
+/* Em aberto */
+
+.status-open {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.status-open .boleto-status-dot {
+  background: #3b82f6;
+}
+
+/* Pago */
+
+.status-paid {
+  color: #15803d;
+  background: #ecfdf3;
+}
+
+.status-paid .boleto-status-dot {
+  background: #22c55e;
+}
+
+/* Vencido */
+
+.status-overdue {
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.status-overdue .boleto-status-dot {
+  background: #ef4444;
+}
+
+/* Cancelado */
+
+.status-cancelled {
+  color: #64748b;
+  background: #f1f5f9;
+}
+
+.status-cancelled .boleto-status-dot {
+  background: #94a3b8;
+}
+
+/* Falhou */
+
+.status-failed {
+  color: #c2410c;
+  background: #fff7ed;
+}
+
+.status-failed .boleto-status-dot {
+  background: #f97316;
+}
+
+/* Desconhecido */
+
+.status-unknown {
+  color: #475569;
+  background: #f8fafc;
+}
+
+.status-unknown .boleto-status-dot {
+  background: #94a3b8;
+}
