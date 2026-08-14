@@ -9,7 +9,6 @@
   box-sizing: border-box;
 }
 
-
 /* =========================================================
    HEADER
 ========================================================= */
@@ -53,7 +52,6 @@
   font-size: 14px;
 }
 
-
 /* =========================================================
    EXPORTAR
 ========================================================= */
@@ -96,6 +94,15 @@
   transform: translateY(1px);
 }
 
+.pagamentos-export:focus-visible {
+  outline: none;
+
+  border-color: #7565ff;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(117, 101, 255, 0.1);
+}
 
 /* =========================================================
    SUMMARY
@@ -145,7 +152,7 @@
   border-radius: 12px;
 
   background:
-    rgba(117, 101, 255, 0.10);
+    rgba(117, 101, 255, 0.1);
 
   color: #7565ff;
 
@@ -155,6 +162,10 @@
 
   font-size: 15px;
   font-weight: 800;
+}
+
+.pagamentos-summary-card > div:last-child {
+  min-width: 0;
 }
 
 .pagamentos-summary-card span {
@@ -175,8 +186,26 @@
 
   font-size: 18px;
   font-weight: 750;
+
+  white-space: nowrap;
 }
 
+.pagamentos-summary-warning {
+  border-color:
+    rgba(218, 163, 56, 0.22);
+}
+
+.pagamentos-summary-warning
+  .pagamentos-summary-icon {
+  background:
+    rgba(218, 163, 56, 0.1);
+
+  color: #b27816;
+}
+
+.pagamentos-summary-warning strong {
+  color: #b27816;
+}
 
 /* =========================================================
    FILTROS
@@ -203,7 +232,6 @@
     0 4px 14px
     rgba(26, 43, 79, 0.03);
 }
-
 
 /* =========================================================
    SEARCH
@@ -270,13 +298,13 @@
     rgba(117, 101, 255, 0.09);
 }
 
-
 /* =========================================================
    FILTER
 ========================================================= */
 
 .pagamentos-filter {
   width: 155px;
+
   flex-shrink: 0;
 }
 
@@ -327,7 +355,6 @@
     rgba(117, 101, 255, 0.09);
 }
 
-
 /* =========================================================
    LIMPAR
 ========================================================= */
@@ -340,6 +367,7 @@
   flex-shrink: 0;
 
   border: none;
+
   border-radius: 10px;
 
   background: #f1efff;
@@ -352,13 +380,17 @@
   cursor: pointer;
 
   transition:
-    background 0.2s ease;
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .pagamentos-clear:hover {
   background: #e7e3ff;
 }
 
+.pagamentos-clear:active {
+  transform: translateY(1px);
+}
 
 /* =========================================================
    CARD DA TABELA
@@ -378,7 +410,6 @@
     0 5px 18px
     rgba(26, 43, 79, 0.035);
 }
-
 
 /* =========================================================
    TABLE HEADER
@@ -440,7 +471,6 @@
   font-weight: 750;
 }
 
-
 /* =========================================================
    EMPTY STATE
 ========================================================= */
@@ -496,6 +526,7 @@
   color: #8994a9;
 
   font-size: 13px;
+
   line-height: 1.5;
 }
 
@@ -505,6 +536,7 @@
   padding: 0 15px;
 
   border: none;
+
   border-radius: 10px;
 
   background:
@@ -520,8 +552,21 @@
   font-weight: 600;
 
   cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
+.pagamentos-empty button:hover {
+  box-shadow:
+    0 5px 14px
+    rgba(117, 101, 255, 0.2);
+}
+
+.pagamentos-empty button:active {
+  transform: translateY(1px);
+}
 
 /* =========================================================
    LOADING
@@ -565,12 +610,11 @@
   }
 }
 
-
 /* =========================================================
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 1250px) {
+@media (max-width: 1400px) {
   .pagamentos-summary {
     grid-template-columns:
       repeat(3, minmax(0, 1fr));
@@ -585,10 +629,13 @@
   }
 }
 
-
 @media (max-width: 900px) {
   .pagamentos {
     padding: 22px;
+  }
+
+  .pagamentos-header {
+    align-items: flex-start;
   }
 
   .pagamentos-summary {
@@ -598,10 +645,10 @@
 
   .pagamentos-filter {
     flex: 1;
+
     min-width: 140px;
   }
 }
-
 
 @media (max-width: 600px) {
   .pagamentos {
@@ -610,11 +657,16 @@
 
   .pagamentos-header {
     align-items: flex-start;
+
     flex-direction: column;
   }
 
   .pagamentos-header h1 {
     font-size: 25px;
+  }
+
+  .pagamentos-header p {
+    max-width: 100%;
   }
 
   .pagamentos-export {
@@ -625,13 +677,20 @@
     grid-template-columns: 1fr;
   }
 
+  .pagamentos-summary-card {
+    min-height: 88px;
+  }
+
   .pagamentos-filters {
     flex-direction: column;
+
     align-items: stretch;
   }
 
   .pagamentos-search {
     min-width: 0;
+
+    width: 100%;
   }
 
   .pagamentos-filter {
@@ -644,6 +703,7 @@
 
   .pagamentos-table-header {
     align-items: flex-start;
+
     flex-direction: column;
   }
 

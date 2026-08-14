@@ -343,3 +343,24 @@
         width: 100%;
     }
 }
+
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 4px;
+  z-index: 2;
+}
+
+.password-toggle:hover {
+  opacity: 0.7;
+}

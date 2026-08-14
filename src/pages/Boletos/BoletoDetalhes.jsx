@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import BoletoStatus from "../../components/boletos/BoletoStatus";
 import BoletoActions from "../../components/boletos/BoletoActions";
@@ -6,8 +6,14 @@ import ClienteCard from "../../components/boletos/ClienteCard";
 import ContratoCard from "../../components/boletos/ContratoCard";
 import ParcelaTable from "../../components/boletos/ParcelaTable";
 
+import boletoService from "../../services/boletoService";
+
 import "./BoletoDetalhes.css";
 import DashboardLayout from "../../layout/DashboardLayout";
+
+// =========================================================
+// FORMATADORES
+// =========================================================
 
 function formatCurrency(value) {
   const number = Number(value);
@@ -46,10 +52,20 @@ function formatDateTime(date) {
   return parsedDate.toLocaleString("pt-BR");
 }
 
-function InfoItem({ label, value, highlight = false }) {
+// =========================================================
+// INFO ITEM
+// =========================================================
+
+function InfoItem({
+  label,
+  value,
+  highlight = false,
+}) {
   return (
     <div className="boleto-detail-info-item">
-      <span className="boleto-detail-info-label">{label}</span>
+      <span className="boleto-detail-info-label">
+        {label}
+      </span>
 
       <strong
         className={
@@ -64,9 +80,15 @@ function InfoItem({ label, value, highlight = false }) {
   );
 }
 
+// =========================================================
+// COMPONENTE
+// =========================================================
+
 export default function BoletoDetalhes({
-  boleto,
-  loading = false,
+  boleto: boletoProp,
+  boletoId,
+
+  loading: externalLoading = false,
 
   onBack,
 
@@ -82,80 +104,305 @@ export default function BoletoDetalhes({
 
   cliente,
   contrato,
-  parcelas = [],
+  parcelas: parcelasProp,
 }) {
-  if (loading) {
-    return (
-      <div className="boleto-detalhes">
-        <div className="boleto-detalhes-loading">
-          <div className="boleto-detalhes-spinner" />
+  // =======================================================
+  // ESTADOS
+  // =======================================================
 
-          <span>Carregando boleto...</span>
+  const [boleto, setBoleto] = useState(
+    boletoProp || null
+  );
+
+  const [loading, setLoading] = useState(
+    !boletoProp
+  );
+
+  const [error, setError] = useState("");
+
+  const [parcelas, setParcelas] = useState(
+    Array.isArray(parcelasProp)
+      ? parcelasProp
+      : []
+  );
+
+  // =======================================================
+  // BUSCAR BOLETO
+  // =======================================================
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadBoleto() {
+      // Se o boleto já foi enviado por props,
+      // não precisa buscar novamente.
+      if (boletoProp) {
+        setBoleto(boletoProp);
+        setLoading(false);
+        return;
+      }
+
+      if (!boletoId) {
+        setLoading(false);
+        setError("ID do boleto não informado.");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError("");
+
+        const response =
+          await boletoService.getBoletoById(
+            boletoId
+          );
+
+        if (!mounted) return;
+
+        /*
+         * O service pode retornar:
+         *
+         * {
+         *   data: {...}
+         * }
+         *
+         * ou diretamente:
+         *
+         * {...}
+         */
+
+        const data =
+          response?.data ||
+          response?.boleto ||
+          response;
+
+        setBoleto(data || null);
+
+        // -------------------------------------------------
+        // Parcelas
+        // -------------------------------------------------
+
+        if (
+          Array.isArray(data?.parcelas)
+        ) {
+          setParcelas(data.parcelas);
+        } else if (
+          Array.isArray(data?.installments)
+        ) {
+          setParcelas(data.installments);
+        }
+      } catch (err) {
+        console.error(
+          "Erro ao carregar boleto:",
+          err
+        );
+
+        if (!mounted) return;
+
+        setError(
+          err?.message ||
+            "Não foi possível carregar o boleto."
+        );
+
+        setBoleto(null);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadBoleto();
+
+    return () => {
+      mounted = false;
+    };
+  }, [boletoId, boletoProp]);
+
+  // =======================================================
+  // LOADING
+  // =======================================================
+
+  if (loading || externalLoading) {
+    return (
+      <DashboardLayout>
+        <div className="boleto-detalhes">
+          <div className="boleto-detalhes-loading">
+            <div className="boleto-detalhes-spinner" />
+
+            <span>
+              Carregando boleto...
+            </span>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
+
+  // =======================================================
+  // ERRO / NÃO ENCONTRADO
+  // =======================================================
 
   if (!boleto) {
     return (
-      <div className="boleto-detalhes">
-        <div className="boleto-detalhes-empty">
-          <div className="boleto-detalhes-empty-icon">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.7"
+      <DashboardLayout>
+        <div className="boleto-detalhes">
+          <div className="boleto-detalhes-empty">
+            <div className="boleto-detalhes-empty-icon">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+              >
+                <rect
+                  x="4"
+                  y="3"
+                  width="16"
+                  height="18"
+                  rx="2"
+                />
+
+                <path d="M8 8h8" />
+                <path d="M8 12h8" />
+                <path d="M8 16h5" />
+              </svg>
+            </div>
+
+            <h2>
+              Boleto não encontrado
+            </h2>
+
+            <p>
+              {error ||
+                "Não foi possível localizar as informações deste boleto."}
+            </p>
+
+            <button
+              type="button"
+              className="boleto-detalhes-back-button"
+              onClick={onBack}
             >
-              <rect x="4" y="3" width="16" height="18" rx="2" />
-
-              <path d="M8 8h8" />
-              <path d="M8 12h8" />
-              <path d="M8 16h5" />
-            </svg>
+              Voltar para boletos
+            </button>
           </div>
-
-          <h2>Boleto não encontrado</h2>
-
-          <p>Não foi possível localizar as informações deste boleto.</p>
-
-          <button
-            type="button"
-            className="boleto-detalhes-back-button"
-            onClick={onBack}
-          >
-            Voltar para boletos
-          </button>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
+  // =======================================================
+  // DADOS RELACIONADOS
+  // =======================================================
+
   const clientData =
-    cliente || boleto.client || boleto.payer || boleto.customer;
+    cliente ||
+    boleto.client ||
+    boleto.payer ||
+    boleto.customer;
 
-  const contractData = contrato || boleto.contract;
+  const contractData =
+    contrato ||
+    boleto.contract;
 
-  const boletoStatus = String(boleto.status || "").toUpperCase();
+  // =======================================================
+  // STATUS
+  // =======================================================
 
-  const isPaid = boletoStatus === "PAID";
-  const isOverdue = boletoStatus === "OVERDUE";
-  const isCancelled = boletoStatus === "CANCELLED";
+  const boletoStatus = String(
+    boleto.status || ""
+  ).toUpperCase();
+
+  const isPaid =
+    boletoStatus === "PAID" ||
+    boletoStatus === "PAGO";
+
+  const isOverdue =
+    boletoStatus === "OVERDUE" ||
+    boletoStatus === "VENCIDO";
+
+  const isCancelled =
+    boletoStatus === "CANCELLED" ||
+    boletoStatus === "CANCELADO";
+
+  // =======================================================
+  // LINHA DIGITÁVEL
+  // =======================================================
 
   const digitableLine =
-    boleto.digitable_line || boleto.barcode || boleto.pix_copy_paste;
+    boleto.digitable_line ||
+    boleto.digitableLine ||
+    boleto.barcode ||
+    boleto.pix_copy_paste ||
+    boleto.linha_digitavel;
+
+  // =======================================================
+  // VALORES
+  // =======================================================
+
+  const amount =
+    boleto.amount ??
+    boleto.valor ??
+    boleto.original_amount ??
+    0;
+
+  const paidAmount =
+    boleto.paid_amount ??
+    boleto.paidAmount ??
+    boleto.valor_pago;
+
+  const dueDate =
+    boleto.due_date ||
+    boleto.dueDate ||
+    boleto.vencimento;
+
+  const issueDate =
+    boleto.issue_date ||
+    boleto.issueDate ||
+    boleto.created_at ||
+    boleto.createdAt;
+
+  const paidAt =
+    boleto.paid_at ||
+    boleto.paidAt ||
+    boleto.data_pagamento;
+
+  const createdAt =
+    boleto.created_at ||
+    boleto.createdAt;
+
+  const updatedAt =
+    boleto.updated_at ||
+    boleto.updatedAt;
+
+  const ourNumber =
+    boleto.our_number ||
+    boleto.ourNumber ||
+    boleto.nosso_numero;
+
+  const boletoNumber =
+    boleto.number ||
+    boleto.numero ||
+    boleto.id;
+
+  // =======================================================
+  // RENDER
+  // =======================================================
 
   return (
     <DashboardLayout>
       <div className="boleto-detalhes">
+
         {/* =================================================
-          HEADER
-      ================================================= */}
+            HEADER
+        ================================================= */}
 
         <header className="boleto-detalhes-header">
+
           <div className="boleto-detalhes-header-left">
+
             <button
               type="button"
               className="boleto-detalhes-back"
@@ -172,15 +419,21 @@ export default function BoletoDetalhes({
                 strokeWidth="2"
               >
                 <path d="M19 12H5" />
+
                 <path d="m12 19-7-7 7-7" />
               </svg>
             </button>
 
             <div>
+
               <div className="boleto-detalhes-title-row">
+
                 <h1>Boleto</h1>
 
-                <BoletoStatus status={boleto.status} />
+                <BoletoStatus
+                  status={boleto.status}
+                />
+
               </div>
 
               <p>
@@ -190,7 +443,9 @@ export default function BoletoDetalhes({
                     ? `ID: ${boleto.id}`
                     : "Detalhes da cobrança"}
               </p>
+
             </div>
+
           </div>
 
           <BoletoActions
@@ -200,121 +455,181 @@ export default function BoletoDetalhes({
             onCopy={onCopy}
             onCancel={onCancel}
           />
+
         </header>
 
         {/* =================================================
-          RESUMO
-      ================================================= */}
+            RESUMO
+        ================================================= */}
 
         <section className="boleto-detalhes-summary">
+
           <div className="boleto-detalhes-summary-main">
+
             <span className="boleto-detalhes-summary-label">
               Valor do boleto
             </span>
 
             <strong className="boleto-detalhes-summary-value">
-              {formatCurrency(boleto.amount)}
+              {formatCurrency(amount)}
             </strong>
+
           </div>
 
           <div className="boleto-detalhes-summary-item">
-            <span>Vencimento</span>
 
-            <strong className={isOverdue ? "boleto-detalhes-overdue" : ""}>
-              {formatDate(boleto.due_date)}
+            <span>
+              Vencimento
+            </span>
+
+            <strong
+              className={
+                isOverdue
+                  ? "boleto-detalhes-overdue"
+                  : ""
+              }
+            >
+              {formatDate(dueDate)}
             </strong>
+
           </div>
 
           <div className="boleto-detalhes-summary-item">
-            <span>Emissão</span>
+
+            <span>
+              Emissão
+            </span>
 
             <strong>
-              {formatDate(boleto.issue_date || boleto.created_at)}
+              {formatDate(issueDate)}
             </strong>
+
           </div>
 
           {isPaid && (
             <div className="boleto-detalhes-summary-item">
-              <span>Pagamento</span>
 
-              <strong>{formatDate(boleto.paid_at)}</strong>
+              <span>
+                Pagamento
+              </span>
+
+              <strong>
+                {formatDate(paidAt)}
+              </strong>
+
             </div>
           )}
+
         </section>
 
         {/* =================================================
-          INFORMAÇÕES DO BOLETO
-      ================================================= */}
+            INFORMAÇÕES DO BOLETO
+        ================================================= */}
 
         <section className="boleto-detalhes-card">
-          <div className="boleto-detalhes-card-header">
-            <div>
-              <h2>Informações do boleto</h2>
 
-              <p>Dados da cobrança e registro.</p>
+          <div className="boleto-detalhes-card-header">
+
+            <div>
+
+              <h2>
+                Informações do boleto
+              </h2>
+
+              <p>
+                Dados da cobrança e registro.
+              </p>
+
             </div>
+
           </div>
 
           <div className="boleto-detalhes-info-grid">
-            <InfoItem label="Nosso número" value={boleto.our_number} />
+
+            <InfoItem
+              label="Nosso número"
+              value={ourNumber}
+            />
 
             <InfoItem
               label="Número do boleto"
-              value={boleto.number || boleto.id}
+              value={boletoNumber}
             />
 
             <InfoItem
               label="Valor original"
-              value={formatCurrency(boleto.amount)}
+              value={formatCurrency(amount)}
               highlight
             />
 
             <InfoItem
               label="Valor pago"
               value={
-                boleto.paid_amount != null
-                  ? formatCurrency(boleto.paid_amount)
+                paidAmount != null
+                  ? formatCurrency(paidAmount)
                   : "-"
               }
             />
 
-            <InfoItem label="Vencimento" value={formatDate(boleto.due_date)} />
+            <InfoItem
+              label="Vencimento"
+              value={formatDate(dueDate)}
+            />
 
             <InfoItem
               label="Data de pagamento"
-              value={formatDate(boleto.paid_at)}
+              value={formatDate(paidAt)}
             />
 
             <InfoItem
               label="Criado em"
-              value={formatDateTime(boleto.created_at)}
+              value={formatDateTime(createdAt)}
             />
 
             <InfoItem
               label="Atualizado em"
-              value={formatDateTime(boleto.updated_at)}
+              value={formatDateTime(updatedAt)}
             />
+
           </div>
+
         </section>
 
         {/* =================================================
-          LINHA DIGITÁVEL
-      ================================================= */}
+            LINHA DIGITÁVEL
+        ================================================= */}
 
         {digitableLine && (
           <section className="boleto-detalhes-card">
-            <div className="boleto-detalhes-card-header">
-              <div>
-                <h2>Linha digitável</h2>
 
-                <p>Código utilizado para pagamento do boleto.</p>
+            <div className="boleto-detalhes-card-header">
+
+              <div>
+
+                <h2>
+                  Linha digitável
+                </h2>
+
+                <p>
+                  Código utilizado para pagamento do boleto.
+                </p>
+
               </div>
+
             </div>
 
             <div className="boleto-detalhes-code">
-              <span>{digitableLine}</span>
 
-              <button type="button" onClick={() => onCopy?.(boleto)}>
+              <span>
+                {digitableLine}
+              </span>
+
+              <button
+                type="button"
+                onClick={() =>
+                  onCopy?.(boleto)
+                }
+              >
                 <svg
                   width="17"
                   height="17"
@@ -323,97 +638,161 @@ export default function BoletoDetalhes({
                   stroke="currentColor"
                   strokeWidth="2"
                 >
-                  <rect x="9" y="9" width="11" height="11" rx="2" />
+                  <rect
+                    x="9"
+                    y="9"
+                    width="11"
+                    height="11"
+                    rx="2"
+                  />
 
                   <path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3" />
                 </svg>
+
                 Copiar
               </button>
+
             </div>
+
           </section>
         )}
 
         {/* =================================================
-          CLIENTE
-      ================================================= */}
+            CLIENTE
+        ================================================= */}
 
         {clientData && (
           <section className="boleto-detalhes-card">
-            <div className="boleto-detalhes-card-header">
-              <div>
-                <h2>Cliente / Pagador</h2>
 
-                <p>Pessoa responsável pelo pagamento.</p>
+            <div className="boleto-detalhes-card-header">
+
+              <div>
+
+                <h2>
+                  Cliente / Pagador
+                </h2>
+
+                <p>
+                  Pessoa responsável pelo pagamento.
+                </p>
+
               </div>
 
               {onViewClient && (
                 <button
                   type="button"
                   className="boleto-detalhes-link"
-                  onClick={() => onViewClient(boleto)}
+                  onClick={() =>
+                    onViewClient(boleto)
+                  }
                 >
                   Ver cliente
                 </button>
               )}
+
             </div>
 
-            <ClienteCard cliente={clientData} />
+            <div className="boleto-detalhes-card-body">
+
+              <ClienteCard
+                cliente={clientData}
+              />
+
+            </div>
+
           </section>
         )}
 
         {/* =================================================
-          CONTRATO
-      ================================================= */}
+            CONTRATO
+        ================================================= */}
 
         {contractData && (
           <section className="boleto-detalhes-card">
-            <div className="boleto-detalhes-card-header">
-              <div>
-                <h2>Contrato</h2>
 
-                <p>Contrato relacionado à cobrança.</p>
+            <div className="boleto-detalhes-card-header">
+
+              <div>
+
+                <h2>
+                  Contrato
+                </h2>
+
+                <p>
+                  Contrato relacionado à cobrança.
+                </p>
+
               </div>
 
               {onViewContract && (
                 <button
                   type="button"
                   className="boleto-detalhes-link"
-                  onClick={() => onViewContract(boleto)}
+                  onClick={() =>
+                    onViewContract(boleto)
+                  }
                 >
                   Ver contrato
                 </button>
               )}
+
             </div>
 
-            <ContratoCard contrato={contractData} />
+            <div className="boleto-detalhes-card-body">
+
+              <ContratoCard
+                contrato={contractData}
+              />
+
+            </div>
+
           </section>
         )}
 
         {/* =================================================
-          PARCELAS
-      ================================================= */}
+            PARCELAS
+        ================================================= */}
 
         {parcelas.length > 0 && (
           <section className="boleto-detalhes-card">
-            <div className="boleto-detalhes-card-header">
-              <div>
-                <h2>Parcelas</h2>
 
-                <p>Parcelas relacionadas ao contrato.</p>
+            <div className="boleto-detalhes-card-header">
+
+              <div>
+
+                <h2>
+                  Parcelas
+                </h2>
+
+                <p>
+                  Parcelas relacionadas ao contrato.
+                </p>
+
               </div>
+
             </div>
 
-            <ParcelaTable parcelas={parcelas} onView={onViewParcela} />
+            <div className="boleto-detalhes-card-body">
+
+              <ParcelaTable
+                parcelas={parcelas}
+                onView={onViewParcela}
+              />
+
+            </div>
+
           </section>
         )}
 
         {/* =================================================
-          CANCELAMENTO
-      ================================================= */}
+            CANCELAMENTO
+        ================================================= */}
 
         {isCancelled && (
           <section className="boleto-detalhes-alert boleto-detalhes-alert-cancelled">
+
             <div className="boleto-detalhes-alert-icon">
+
               <svg
                 width="20"
                 height="20"
@@ -422,28 +801,44 @@ export default function BoletoDetalhes({
                 stroke="currentColor"
                 strokeWidth="2"
               >
-                <circle cx="12" cy="12" r="9" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                />
 
                 <path d="M9 9l6 6" />
+
                 <path d="m15 9-6 6" />
               </svg>
+
             </div>
 
             <div>
-              <strong>Boleto cancelado</strong>
 
-              <p>Esta cobrança não está mais disponível para pagamento.</p>
+              <strong>
+                Boleto cancelado
+              </strong>
+
+              <p>
+                Esta cobrança não está mais
+                disponível para pagamento.
+              </p>
+
             </div>
+
           </section>
         )}
 
         {/* =================================================
-          PAGAMENTO
-      ================================================= */}
+            PAGAMENTO
+        ================================================= */}
 
         {isPaid && (
           <section className="boleto-detalhes-alert boleto-detalhes-alert-paid">
+
             <div className="boleto-detalhes-alert-icon">
+
               <svg
                 width="20"
                 height="20"
@@ -452,19 +847,33 @@ export default function BoletoDetalhes({
                 stroke="currentColor"
                 strokeWidth="2"
               >
-                <circle cx="12" cy="12" r="9" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                />
 
                 <path d="m8 12 2.5 2.5L16 9" />
               </svg>
+
             </div>
 
             <div>
-              <strong>Boleto pago</strong>
 
-              <p>O pagamento desta cobrança foi registrado.</p>
+              <strong>
+                Boleto pago
+              </strong>
+
+              <p>
+                O pagamento desta cobrança
+                foi registrado.
+              </p>
+
             </div>
+
           </section>
         )}
+
       </div>
     </DashboardLayout>
   );

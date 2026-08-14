@@ -1,4 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useNavigate } from "react-router-dom";
 
 import BoletoFilters from "../../components/boletos/BoletoFilters";
 import BoletoTable from "../../components/boletos/BoletoTable";
@@ -6,57 +11,161 @@ import BoletoTable from "../../components/boletos/BoletoTable";
 import "./BoletosLista.css";
 import DashboardLayout from "../../layout/DashboardLayout";
 
+import boletoService from "../../services/boletoService";
 
 export default function BoletosLista({
-  boletos = [],
-  loading = false,
-
   onViewBoleto,
   onDownloadBoleto,
   onCancelBoleto,
   onViewClient,
   onViewContract,
 }) {
+  const navigate = useNavigate();
+
+  // =========================================================
+  // ESTADOS
+  // =========================================================
+
+  const [boletos, setBoletos] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+
+  const [error, setError] = useState(null);
+
   const [search, setSearch] = useState("");
+
   const [status, setStatus] = useState("ALL");
+
   const [period, setPeriod] = useState("ALL");
 
-  /*
-   * Filtragem dos boletos.
-   *
-   * A API poderá futuramente fazer essa filtragem no backend,
-   * mas manteremos essa camada aqui para o funcionamento do front
-   * enquanto a integração não estiver fechada.
-   */
+  // =========================================================
+  // CARREGAR BOLETOS
+  // =========================================================
+
+  useEffect(() => {
+    carregarBoletos();
+  }, []);
+
+  async function carregarBoletos() {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response =
+        await boletoService.listarBoletos();
+
+      /*
+       * O service pode retornar:
+       *
+       * [
+       *   boleto,
+       *   boleto,
+       * ]
+       *
+       * ou:
+       *
+       * {
+       *   data: [...]
+       * }
+       *
+       * ou:
+       *
+       * {
+       *   boletos: [...]
+       * }
+       */
+
+      let lista = [];
+
+      if (Array.isArray(response)) {
+        lista = response;
+      } else if (
+        Array.isArray(response?.data)
+      ) {
+        lista = response.data;
+      } else if (
+        Array.isArray(response?.boletos)
+      ) {
+        lista = response.boletos;
+      }
+
+      setBoletos(lista);
+    } catch (err) {
+      console.error(
+        "Erro ao carregar boletos:",
+        err,
+      );
+
+      setError(
+        err?.message ||
+          "Não foi possível carregar os boletos.",
+      );
+
+      setBoletos([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // =========================================================
+  // NORMALIZAÇÃO
+  // =========================================================
+
+  const safeBoletos = Array.isArray(boletos)
+    ? boletos
+    : [];
+
+  // =========================================================
+  // FILTRAGEM
+  // =========================================================
+
   const filteredBoletos = useMemo(() => {
-    let result = [...boletos];
+    let result = [...safeBoletos];
 
-    // ---------------------------------------------------------
+    const normalizedSearch = search
+      .trim()
+      .toLowerCase();
+
+    // =======================================================
     // BUSCA
-    // ---------------------------------------------------------
-
-    const normalizedSearch = search.trim().toLowerCase();
+    // =======================================================
 
     if (normalizedSearch) {
       result = result.filter((boleto) => {
         const clientName =
-          boleto.client?.name ||
-          boleto.payer?.name ||
-          boleto.customer?.name ||
+          boleto?.client?.name ||
+          boleto?.payer?.name ||
+          boleto?.customer?.name ||
+          boleto?.cliente ||
           "";
 
         const document =
-          boleto.client?.document ||
-          boleto.payer?.document ||
-          boleto.customer?.document ||
+          boleto?.client?.document ||
+          boleto?.payer?.document ||
+          boleto?.customer?.document ||
+          boleto?.document ||
+          boleto?.document_number ||
           "";
 
-        const boletoId = boleto.id || "";
+        const boletoId =
+          boleto?.id ||
+          boleto?.number ||
+          boleto?.numero ||
+          boleto?.external_id ||
+          "";
 
         const contractNumber =
-          boleto.contract?.number || boleto.contract?.id || "";
+          boleto?.contract?.number ||
+          boleto?.contract?.id ||
+          boleto?.contrato ||
+          "";
 
-        const digitableLine = boleto.digitable_line || boleto.barcode || "";
+        const digitableLine =
+          boleto?.digitable_line ||
+          boleto?.digitableLine ||
+          boleto?.barcode ||
+          boleto?.linha_digitavel ||
+          "";
 
         const searchableText = [
           clientName,
@@ -68,23 +177,29 @@ export default function BoletosLista({
           .join(" ")
           .toLowerCase();
 
-        return searchableText.includes(normalizedSearch);
+        return searchableText.includes(
+          normalizedSearch,
+        );
       });
     }
 
-    // ---------------------------------------------------------
+    // =======================================================
     // STATUS
-    // ---------------------------------------------------------
+    // =======================================================
 
     if (status !== "ALL") {
-      result = result.filter(
-        (boleto) => String(boleto.status || "").toUpperCase() === status,
-      );
+      result = result.filter((boleto) => {
+        const boletoStatus = String(
+          boleto?.status || "",
+        ).toUpperCase();
+
+        return boletoStatus === status;
+      });
     }
 
-    // ---------------------------------------------------------
+    // =======================================================
     // PERÍODO
-    // ---------------------------------------------------------
+    // =======================================================
 
     if (period !== "ALL") {
       const now = new Date();
@@ -97,46 +212,65 @@ export default function BoletosLista({
           break;
 
         case "7_DAYS":
-          startDate.setDate(now.getDate() - 7);
+          startDate.setDate(
+            now.getDate() - 7,
+          );
           break;
 
         case "30_DAYS":
-          startDate.setDate(now.getDate() - 30);
+          startDate.setDate(
+            now.getDate() - 30,
+          );
           break;
 
         case "90_DAYS":
-          startDate.setDate(now.getDate() - 90);
+          startDate.setDate(
+            now.getDate() - 90,
+          );
           break;
 
         default:
           break;
       }
 
-      if (period !== "ALL") {
-        result = result.filter((boleto) => {
-          const boletoDate = boleto.due_date || boleto.created_at;
+      result = result.filter((boleto) => {
+        const boletoDate =
+          boleto?.due_date ||
+          boleto?.dueDate ||
+          boleto?.vencimento ||
+          boleto?.created_at ||
+          boleto?.createdAt;
 
-          if (!boletoDate) {
-            return false;
-          }
+        if (!boletoDate) {
+          return false;
+        }
 
-          const parsedDate = new Date(boletoDate);
+        const parsedDate =
+          new Date(boletoDate);
 
-          if (Number.isNaN(parsedDate.getTime())) {
-            return false;
-          }
+        if (
+          Number.isNaN(
+            parsedDate.getTime(),
+          )
+        ) {
+          return false;
+        }
 
-          return parsedDate >= startDate;
-        });
-      }
+        return parsedDate >= startDate;
+      });
     }
 
     return result;
-  }, [boletos, search, status, period]);
+  }, [
+    safeBoletos,
+    search,
+    status,
+    period,
+  ]);
 
-  // ---------------------------------------------------------
+  // =========================================================
   // LIMPAR FILTROS
-  // ---------------------------------------------------------
+  // =========================================================
 
   function handleClearFilters() {
     setSearch("");
@@ -144,92 +278,246 @@ export default function BoletosLista({
     setPeriod("ALL");
   }
 
-  // ---------------------------------------------------------
+  // =========================================================
   // AÇÕES
-  // ---------------------------------------------------------
+  // =========================================================
 
   function handleView(boleto) {
-    onViewBoleto?.(boleto);
+    if (typeof onViewBoleto === "function") {
+      onViewBoleto(boleto);
+      return;
+    }
+
+    const id =
+      boleto?.id ||
+      boleto?.number ||
+      boleto?.numero;
+
+    if (!id) {
+      return;
+    }
+
+    navigate(
+      `/boletos/${encodeURIComponent(id)}`,
+    );
   }
 
-  function handleDownload(boleto) {
-    onDownloadBoleto?.(boleto);
+  async function handleDownload(boleto) {
+    if (
+      typeof onDownloadBoleto ===
+      "function"
+    ) {
+      onDownloadBoleto(boleto);
+      return;
+    }
+
+    try {
+      if (
+        typeof boletoService.baixarBoleto ===
+        "function"
+      ) {
+        await boletoService.baixarBoleto(
+          boleto,
+        );
+      } else {
+        console.log(
+          "Download do boleto:",
+          boleto,
+        );
+      }
+    } catch (err) {
+      console.error(
+        "Erro ao baixar boleto:",
+        err,
+      );
+    }
   }
 
-  function handleCancel(boleto) {
-    onCancelBoleto?.(boleto);
+  async function handleCancel(boleto) {
+    if (
+      typeof onCancelBoleto ===
+      "function"
+    ) {
+      onCancelBoleto(boleto);
+      return;
+    }
+
+    const id =
+      boleto?.id ||
+      boleto?.number ||
+      boleto?.numero;
+
+    if (!id) {
+      return;
+    }
+
+    try {
+      if (
+        typeof boletoService.cancelarBoleto ===
+        "function"
+      ) {
+        await boletoService.cancelarBoleto(id);
+
+        await carregarBoletos();
+      } else {
+        console.log(
+          "Cancelar boleto:",
+          boleto,
+        );
+      }
+    } catch (err) {
+      console.error(
+        "Erro ao cancelar boleto:",
+        err,
+      );
+    }
   }
 
-  // ---------------------------------------------------------
-  // RESUMO
-  // ---------------------------------------------------------
+  // =========================================================
+  // ESTADO DOS FILTROS
+  // =========================================================
 
   const hasFilters =
-    search.trim() !== "" || status !== "ALL" || period !== "ALL";
+    search.trim() !== "" ||
+    status !== "ALL" ||
+    period !== "ALL";
+
+  // =========================================================
+  // RENDER - ERRO
+  // =========================================================
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="boletos-lista">
+          <div className="boletos-lista-header">
+            <div className="boletos-lista-header-main">
+              <span className="boletos-lista-eyebrow">
+                Cobranças
+              </span>
+
+              <h1>Boletos</h1>
+
+              <p>
+                Gerencie cobranças, vencimentos
+                e pagamentos.
+              </p>
+            </div>
+          </div>
+
+          <div
+            style={{
+              padding: "40px 20px",
+              textAlign: "center",
+            }}
+          >
+            <h2>
+              Não foi possível carregar os boletos
+            </h2>
+
+            <p>{error}</p>
+
+            <button
+              type="button"
+              className="boletos-button primary"
+              onClick={carregarBoletos}
+            >
+              Tentar novamente
+            </button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // =========================================================
+  // RENDER
+  // =========================================================
 
   return (
     <DashboardLayout>
+      <div className="boletos-lista">
 
-    <div className="boletos-lista">
-      {/* ---------------------------------------------------
-          CABEÇALHO
-          --------------------------------------------------- */}
+        {/* ===================================================
+            HEADER
+        ==================================================== */}
 
-      <div className="boletos-lista-header">
-        <div>
-          <h1>Boletos</h1>
+        <div className="boletos-lista-header">
+          <div className="boletos-lista-header-main">
 
-          <p>Gerencie cobranças, vencimentos e pagamentos.</p>
+            <span className="boletos-lista-eyebrow">
+              Cobranças
+            </span>
+
+            <h1>Boletos</h1>
+
+            <p>
+              Gerencie cobranças, vencimentos
+              e pagamentos.
+            </p>
+
+          </div>
         </div>
-      </div>
 
-      {/* ---------------------------------------------------
-          FILTROS
-      --------------------------------------------------- */}
+        {/* ===================================================
+            FILTROS
+        ==================================================== */}
 
-      <BoletoFilters
-        search={search}
-        status={status}
-        period={period}
-        onSearchChange={setSearch}
-        onStatusChange={setStatus}
-        onPeriodChange={setPeriod}
-        onClear={handleClearFilters}
-      />
+        <div className="boletos-lista-filters">
 
-      {/* ---------------------------------------------------
-          RESUMO DOS RESULTADOS
-      --------------------------------------------------- */}
+          <BoletoFilters
+            search={search}
+            status={status}
+            period={period}
+            onSearchChange={setSearch}
+            onStatusChange={setStatus}
+            onPeriodChange={setPeriod}
+            onClear={handleClearFilters}
+          />
 
-      <div className="boletos-lista-summary">
-        <span>
-          {filteredBoletos.length}{" "}
-          {filteredBoletos.length === 1
-            ? "boleto encontrado"
-            : "boletos encontrados"}
-        </span>
+        </div>
 
-        {hasFilters && (
-          <span className="boletos-lista-summary-filtered">
-            Filtros aplicados
+        {/* ===================================================
+            RESUMO
+        ==================================================== */}
+
+        <div className="boletos-lista-summary">
+
+          <span>
+
+            {loading
+              ? "Carregando..."
+              : `${filteredBoletos.length} ${
+                  filteredBoletos.length === 1
+                    ? "boleto encontrado"
+                    : "boletos encontrados"
+                }`}
+
           </span>
-        )}
+
+          {hasFilters && (
+            <span className="boletos-lista-summary-filtered">
+              Filtros aplicados
+            </span>
+          )}
+
+        </div>
+
+        {/* ===================================================
+            TABELA
+        ==================================================== */}
+
+        <BoletoTable
+          boletos={filteredBoletos}
+          loading={loading}
+          onView={handleView}
+          onDownload={handleDownload}
+          onCancel={handleCancel}
+          onViewClient={onViewClient}
+          onViewContract={onViewContract}
+        />
+
       </div>
-
-      {/* ---------------------------------------------------
-          TABELA
-      --------------------------------------------------- */}
-
-      <BoletoTable
-        boletos={filteredBoletos}
-        loading={loading}
-        onView={handleView}
-        onDownload={handleDownload}
-        onCancel={handleCancel}
-        onViewClient={onViewClient}
-        onViewContract={onViewContract}
-      />
-    </div>
-        </DashboardLayout>
+    </DashboardLayout>
   );
 }

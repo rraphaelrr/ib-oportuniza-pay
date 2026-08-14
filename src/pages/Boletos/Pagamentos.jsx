@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 
 import PagamentosTable from "../../components/boletos/PagamentosTable";
+import DashboardLayout from "../../layout/DashboardLayout";
 
 import "./Pagamentos.css";
 
@@ -18,7 +19,9 @@ function formatCurrency(value) {
 }
 
 function formatDate(date) {
-  if (!date) return "-";
+  if (!date) {
+    return "-";
+  }
 
   const parsedDate = new Date(date);
 
@@ -47,12 +50,12 @@ function getClientName(pagamento) {
 }
 
 function getContractNumber(pagamento) {
-  return (
+  return String(
     pagamento.contract?.number ||
-    pagamento.contract?.contract_number ||
-    pagamento.contract_number ||
-    pagamento.contract?.id ||
-    "-"
+      pagamento.contract?.contract_number ||
+      pagamento.contract_number ||
+      pagamento.contract?.id ||
+      "-",
   );
 }
 
@@ -61,7 +64,8 @@ function getAmount(pagamento) {
     pagamento.amount ||
       pagamento.paid_amount ||
       pagamento.value ||
-      0
+      pagamento.original_amount ||
+      0,
   );
 }
 
@@ -70,7 +74,74 @@ function getPaymentDate(pagamento) {
     pagamento.paid_at ||
     pagamento.payment_date ||
     pagamento.settled_at ||
-    pagamento.created_at
+    pagamento.created_at ||
+    null
+  );
+}
+
+function getBoletoNumber(pagamento) {
+  return String(
+    pagamento.boleto?.number ||
+      pagamento.boleto_number ||
+      pagamento.number ||
+      pagamento.boleto_id ||
+      pagamento.boleto?.id ||
+      "",
+  );
+}
+
+function getDocument(pagamento) {
+  return String(
+    pagamento.client?.document ||
+      pagamento.payer?.document ||
+      pagamento.customer?.document ||
+      pagamento.client_document ||
+      pagamento.payer_document ||
+      "",
+  );
+}
+
+function getPaymentMethod(pagamento) {
+  return normalizeStatus(
+    pagamento.method ||
+      pagamento.payment_method ||
+      pagamento.type ||
+      pagamento.boleto?.payment_method ||
+      "",
+  );
+}
+
+function getPaymentDateTimestamp(pagamento) {
+  const date = getPaymentDate(pagamento);
+
+  if (!date) {
+    return 0;
+  }
+
+  const timestamp = new Date(date).getTime();
+
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
+function getDaysDifference(date) {
+  if (!date) {
+    return null;
+  }
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return null;
+  }
+
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+  parsedDate.setHours(0, 0, 0, 0);
+
+  return Math.floor(
+    (today.getTime() - parsedDate.getTime()) /
+      (1000 * 60 * 60 * 24),
   );
 }
 
@@ -85,281 +156,218 @@ export default function Pagamentos({
 
   onExport,
 }) {
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
+  const [period, setPeriod] = useState("30_DAYS");
+  const [status, setStatus] = useState("ALL");
+  const [method, setMethod] = useState("ALL");
+  const [sortBy, setSortBy] = useState("DATE");
 
-  const [period, setPeriod] =
-    useState("30_DAYS");
+  const normalizedPagamentos = useMemo(() => {
+    if (!Array.isArray(pagamentos)) {
+      return [];
+    }
 
-  const [status, setStatus] =
-    useState("ALL");
+    return pagamentos.map((pagamento) => ({
+      ...pagamento,
+      _amount: getAmount(pagamento),
+      _paymentDate: getPaymentDate(pagamento),
+      _paymentTimestamp: getPaymentDateTimestamp(pagamento),
+    }));
+  }, [pagamentos]);
 
-  const [method, setMethod] =
-    useState("ALL");
+  const filteredPagamentos = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
 
-  const [sortBy, setSortBy] =
-    useState("DATE");
+    let result = normalizedPagamentos.filter((pagamento) => {
+      /*
+       * =====================================================
+       * BUSCA
+       * =====================================================
+       */
 
-  const normalizedPagamentos =
-    useMemo(() => {
-      return pagamentos.map(
-        (pagamento) => ({
-          ...pagamento,
-          _amount:
-            getAmount(
-              pagamento
-            ),
-          _paymentDate:
-            getPaymentDate(
-              pagamento
-            ),
-        })
+      const clientName = getClientName(pagamento).toLowerCase();
+
+      const contract = getContractNumber(pagamento).toLowerCase();
+
+      const boletoNumber = getBoletoNumber(pagamento).toLowerCase();
+
+      const document = getDocument(pagamento).toLowerCase();
+
+      const paymentId = String(
+        pagamento.id || "",
+      ).toLowerCase();
+
+      const matchesSearch =
+        !normalizedSearch ||
+        clientName.includes(normalizedSearch) ||
+        contract.includes(normalizedSearch) ||
+        boletoNumber.includes(normalizedSearch) ||
+        document.includes(normalizedSearch) ||
+        paymentId.includes(normalizedSearch);
+
+      if (!matchesSearch) {
+        return false;
+      }
+
+      /*
+       * =====================================================
+       * STATUS
+       * =====================================================
+       */
+
+      const normalizedStatus = normalizeStatus(
+        pagamento.status,
       );
-    }, [pagamentos]);
 
-  const filteredPagamentos =
-    useMemo(() => {
-      const normalizedSearch =
-        search
-          .trim()
-          .toLowerCase();
+      if (
+        status !== "ALL" &&
+        normalizedStatus !== status
+      ) {
+        return false;
+      }
 
-      const today =
-        new Date();
+      /*
+       * =====================================================
+       * FORMA DE PAGAMENTO
+       * =====================================================
+       */
 
-      let result =
-        normalizedPagamentos.filter(
-          (pagamento) => {
-            const clientName =
-              getClientName(
-                pagamento
-              ).toLowerCase();
+      const paymentMethod =
+        getPaymentMethod(pagamento);
 
-            const contract =
-              getContractNumber(
-                pagamento
-              ).toLowerCase();
+      if (
+        method !== "ALL" &&
+        paymentMethod !== method
+      ) {
+        return false;
+      }
 
-            const boletoNumber =
-              String(
-                pagamento.boleto?.number ||
-                  pagamento.boleto_number ||
-                  pagamento.number ||
-                  pagamento.boleto_id ||
-                  ""
-              ).toLowerCase();
+      /*
+       * =====================================================
+       * PERÍODO
+       * =====================================================
+       */
 
-            const document =
-              String(
-                pagamento.client?.document ||
-                  pagamento.payer?.document ||
-                  pagamento.customer?.document ||
-                  ""
-              ).toLowerCase();
-
-            const paymentId =
-              String(
-                pagamento.id ||
-                  ""
-              ).toLowerCase();
-
-            const matchesSearch =
-              !normalizedSearch ||
-              clientName.includes(
-                normalizedSearch
-              ) ||
-              contract.includes(
-                normalizedSearch
-              ) ||
-              boletoNumber.includes(
-                normalizedSearch
-              ) ||
-              document.includes(
-                normalizedSearch
-              ) ||
-              paymentId.includes(
-                normalizedSearch
-              );
-
-            if (!matchesSearch) {
-              return false;
-            }
-
-            const normalizedStatus =
-              normalizeStatus(
-                pagamento.status
-              );
-
-            if (
-              status !== "ALL" &&
-              normalizedStatus !==
-                status
-            ) {
-              return false;
-            }
-
-            const paymentMethod =
-              normalizeStatus(
-                pagamento.method ||
-                  pagamento.payment_method ||
-                  pagamento.type
-              );
-
-            if (
-              method !== "ALL" &&
-              paymentMethod !==
-                method
-            ) {
-              return false;
-            }
-
-            if (period !== "ALL") {
-              const paymentDate =
-                pagamento._paymentDate
-                  ? new Date(
-                      pagamento._paymentDate
-                    )
-                  : null;
-
-              if (
-                paymentDate &&
-                !Number.isNaN(
-                  paymentDate.getTime()
-                )
-              ) {
-                const difference =
-                  Math.floor(
-                    (
-                      today.getTime() -
-                      paymentDate.getTime()
-                    ) /
-                      (1000 *
-                        60 *
-                        60 *
-                        24)
-                  );
-
-                if (
-                  period === "TODAY" &&
-                  difference !== 0
-                ) {
-                  return false;
-                }
-
-                if (
-                  period === "7_DAYS" &&
-                  difference > 7
-                ) {
-                  return false;
-                }
-
-                if (
-                  period === "30_DAYS" &&
-                  difference > 30
-                ) {
-                  return false;
-                }
-
-                if (
-                  period === "90_DAYS" &&
-                  difference > 90
-                ) {
-                  return false;
-                }
-              }
-            }
-
-            return true;
-          }
+      if (period !== "ALL") {
+        const daysDifference = getDaysDifference(
+          pagamento._paymentDate,
         );
 
-      result.sort((a, b) => {
-        if (sortBy === "VALUE") {
-          return (
-            b._amount -
-            a._amount
-          );
+        /*
+         * Se não existir uma data válida,
+         * não conseguimos determinar o período.
+         *
+         * Nesse caso, mantemos o pagamento no resultado.
+         */
+        if (daysDifference !== null) {
+          if (
+            period === "TODAY" &&
+            daysDifference !== 0
+          ) {
+            return false;
+          }
+
+          if (
+            period === "7_DAYS" &&
+            (daysDifference < 0 ||
+              daysDifference > 7)
+          ) {
+            return false;
+          }
+
+          if (
+            period === "30_DAYS" &&
+            (daysDifference < 0 ||
+              daysDifference > 30)
+          ) {
+            return false;
+          }
+
+          if (
+            period === "90_DAYS" &&
+            (daysDifference < 0 ||
+              daysDifference > 90)
+          ) {
+            return false;
+          }
         }
+      }
 
-        if (sortBy === "CLIENT") {
-          return getClientName(
-            a
-          ).localeCompare(
-            getClientName(b),
-            "pt-BR"
-          );
-        }
+      return true;
+    });
 
-        const dateA =
-          a._paymentDate
-            ? new Date(
-                a._paymentDate
-              ).getTime()
-            : 0;
+    /*
+     * =====================================================
+     * ORDENAÇÃO
+     * =====================================================
+     */
 
-        const dateB =
-          b._paymentDate
-            ? new Date(
-                b._paymentDate
-              ).getTime()
-            : 0;
+    result.sort((a, b) => {
+      if (sortBy === "VALUE") {
+        return b._amount - a._amount;
+      }
 
-        return dateB - dateA;
-      });
+      if (sortBy === "CLIENT") {
+        return getClientName(a).localeCompare(
+          getClientName(b),
+          "pt-BR",
+        );
+      }
 
-      return result;
-    }, [
-      normalizedPagamentos,
-      search,
-      period,
-      status,
-      method,
-      sortBy,
-    ]);
+      return (
+        b._paymentTimestamp -
+        a._paymentTimestamp
+      );
+    });
+
+    return result;
+  }, [
+    normalizedPagamentos,
+    search,
+    period,
+    status,
+    method,
+    sortBy,
+  ]);
+
+  /*
+   * =======================================================
+   * RESUMO
+   * =======================================================
+   */
 
   const summary = useMemo(() => {
-    const total =
-      filteredPagamentos.reduce(
-        (sum, pagamento) =>
-          sum +
-          pagamento._amount,
-        0
-      );
+    const total = filteredPagamentos.reduce(
+      (sum, pagamento) =>
+        sum + Number(pagamento._amount || 0),
+      0,
+    );
 
-    const count =
-      filteredPagamentos.length;
+    const count = filteredPagamentos.length;
 
-    const clients =
-      new Set(
-        filteredPagamentos.map(
-          (pagamento) =>
-            pagamento.client?.id ||
-            pagamento.payer?.id ||
-            pagamento.customer?.id ||
-            getClientName(
-              pagamento
-            )
-        )
-      ).size;
+    const clients = new Set(
+      filteredPagamentos.map(
+        (pagamento) =>
+          pagamento.client?.id ||
+          pagamento.payer?.id ||
+          pagamento.customer?.id ||
+          getClientName(pagamento),
+      ),
+    ).size;
 
     const average =
-      count > 0
-        ? total / count
-        : 0;
+      count > 0 ? total / count : 0;
 
-    const pending =
-      filteredPagamentos.filter(
-        (pagamento) =>
-          [
-            "PENDING",
-            "PROCESSING",
-            "PROVIDER_UNKNOWN",
-          ].includes(
-            normalizeStatus(
-              pagamento.status
-            )
-          )
-      ).length;
+    const pending = filteredPagamentos.filter(
+      (pagamento) =>
+        [
+          "PENDING",
+          "PROCESSING",
+          "PROVIDER_UNKNOWN",
+        ].includes(
+          normalizeStatus(pagamento.status),
+        ),
+    ).length;
 
     return {
       total,
@@ -369,6 +377,12 @@ export default function Pagamentos({
       pending,
     };
   }, [filteredPagamentos]);
+
+  /*
+   * =======================================================
+   * LIMPAR FILTROS
+   * =======================================================
+   */
 
   function clearFilters() {
     setSearch("");
@@ -384,465 +398,400 @@ export default function Pagamentos({
     status !== "ALL" ||
     method !== "ALL";
 
+  /*
+   * =======================================================
+   * LOADING
+   * =======================================================
+   */
+
   if (loading) {
     return (
-      <div className="pagamentos">
+      <DashboardLayout>
+        <div className="pagamentos">
+          <div className="pagamentos-loading">
+            <div className="pagamentos-spinner" />
 
-        <div className="pagamentos-loading">
-
-          <div className="pagamentos-spinner" />
-
-          <span>
-            Carregando pagamentos...
-          </span>
-
+            <span>
+              Carregando pagamentos...
+            </span>
+          </div>
         </div>
-
-      </div>
+      </DashboardLayout>
     );
   }
 
+  /*
+   * =======================================================
+   * RENDER
+   * =======================================================
+   */
+
   return (
-    <div className="pagamentos">
+    <DashboardLayout>
+      <div className="pagamentos">
+        {/* =================================================
+            HEADER
+        ================================================= */}
 
-      {/* =================================================
-          HEADER
-      ================================================= */}
+        <header className="pagamentos-header">
+          <div>
+            <span className="pagamentos-eyebrow">
+              Financeiro
+            </span>
 
-      <header className="pagamentos-header">
+            <h1>Pagamentos</h1>
 
-        <div>
+            <p>
+              Acompanhe os boletos pagos e os
+              valores recebidos.
+            </p>
+          </div>
 
-          <span className="pagamentos-eyebrow">
-            Financeiro
-          </span>
+          {onExport && (
+            <button
+              type="button"
+              className="pagamentos-export"
+              onClick={() =>
+                onExport(filteredPagamentos)
+              }
+            >
+              <svg
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 3v12" />
+                <path d="m7 10 5 5 5-5" />
+                <path d="M5 21h14" />
+              </svg>
 
-          <h1>
-            Pagamentos
-          </h1>
+              Exportar
+            </button>
+          )}
+        </header>
 
-          <p>
-            Acompanhe os boletos pagos e os
-            valores recebidos.
-          </p>
+        {/* =================================================
+            SUMMARY
+        ================================================= */}
 
-        </div>
+        <section className="pagamentos-summary">
+          <div className="pagamentos-summary-card">
+            <div className="pagamentos-summary-icon">
+              R$
+            </div>
 
-        {onExport && (
-          <button
-            type="button"
-            className="pagamentos-export"
-            onClick={() =>
-              onExport(
-                filteredPagamentos
-              )
+            <div>
+              <span>Total recebido</span>
+
+              <strong>
+                {formatCurrency(summary.total)}
+              </strong>
+            </div>
+          </div>
+
+          <div className="pagamentos-summary-card">
+            <div className="pagamentos-summary-icon">
+              #
+            </div>
+
+            <div>
+              <span>Pagamentos</span>
+
+              <strong>{summary.count}</strong>
+            </div>
+          </div>
+
+          <div className="pagamentos-summary-card">
+            <div className="pagamentos-summary-icon">
+              C
+            </div>
+
+            <div>
+              <span>Clientes</span>
+
+              <strong>{summary.clients}</strong>
+            </div>
+          </div>
+
+          <div className="pagamentos-summary-card">
+            <div className="pagamentos-summary-icon">
+              $
+            </div>
+
+            <div>
+              <span>Ticket médio</span>
+
+              <strong>
+                {formatCurrency(summary.average)}
+              </strong>
+            </div>
+          </div>
+
+          <div
+            className={
+              summary.pending > 0
+                ? "pagamentos-summary-card pagamentos-summary-warning"
+                : "pagamentos-summary-card"
             }
           >
+            <div className="pagamentos-summary-icon">
+              !
+            </div>
+
+            <div>
+              <span>Em processamento</span>
+
+              <strong>{summary.pending}</strong>
+            </div>
+          </div>
+        </section>
+
+        {/* =================================================
+            FILTERS
+        ================================================= */}
+
+        <section className="pagamentos-filters">
+          <div className="pagamentos-search">
             <svg
-              width="17"
-              height="17"
+              width="18"
+              height="18"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
             >
-              <path d="M12 3v12" />
-              <path d="m7 10 5 5 5-5" />
-              <path d="M5 21h14" />
+              <circle
+                cx="11"
+                cy="11"
+                r="7"
+              />
+
+              <path d="m20 20-4-4" />
             </svg>
 
-            Exportar
-          </button>
-        )}
-
-      </header>
-
-      {/* =================================================
-          SUMMARY
-      ================================================= */}
-
-      <section className="pagamentos-summary">
-
-        <div className="pagamentos-summary-card">
-
-          <div className="pagamentos-summary-icon">
-            R$
-          </div>
-
-          <div>
-            <span>
-              Total recebido
-            </span>
-
-            <strong>
-              {formatCurrency(
-                summary.total
-              )}
-            </strong>
-          </div>
-
-        </div>
-
-        <div className="pagamentos-summary-card">
-
-          <div className="pagamentos-summary-icon">
-            #
-          </div>
-
-          <div>
-            <span>
-              Pagamentos
-            </span>
-
-            <strong>
-              {summary.count}
-            </strong>
-          </div>
-
-        </div>
-
-        <div className="pagamentos-summary-card">
-
-          <div className="pagamentos-summary-icon">
-            C
-          </div>
-
-          <div>
-            <span>
-              Clientes
-            </span>
-
-            <strong>
-              {summary.clients}
-            </strong>
-          </div>
-
-        </div>
-
-        <div className="pagamentos-summary-card">
-
-          <div className="pagamentos-summary-icon">
-            $
-          </div>
-
-          <div>
-            <span>
-              Ticket médio
-            </span>
-
-            <strong>
-              {formatCurrency(
-                summary.average
-              )}
-            </strong>
-          </div>
-
-        </div>
-
-        <div className="pagamentos-summary-card">
-
-          <div className="pagamentos-summary-icon">
-            !
-          </div>
-
-          <div>
-            <span>
-              Em processamento
-            </span>
-
-            <strong>
-              {summary.pending}
-            </strong>
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* =================================================
-          FILTERS
-      ================================================= */}
-
-      <section className="pagamentos-filters">
-
-        <div className="pagamentos-search">
-
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <circle
-              cx="11"
-              cy="11"
-              r="7"
+            <input
+              type="text"
+              placeholder="Buscar cliente, CPF/CNPJ, contrato, boleto..."
+              value={search}
+              onChange={(event) =>
+                setSearch(event.target.value)
+              }
             />
-
-            <path d="m20 20-4-4" />
-          </svg>
-
-          <input
-            type="text"
-            placeholder="Buscar cliente, CPF/CNPJ, contrato, boleto..."
-            value={search}
-            onChange={(event) =>
-              setSearch(
-                event.target.value
-              )
-            }
-          />
-
-        </div>
-
-        <div className="pagamentos-filter">
-
-          <label>
-            Período
-          </label>
-
-          <select
-            value={period}
-            onChange={(event) =>
-              setPeriod(
-                event.target.value
-              )
-            }
-          >
-            <option value="TODAY">
-              Hoje
-            </option>
-
-            <option value="7_DAYS">
-              Últimos 7 dias
-            </option>
-
-            <option value="30_DAYS">
-              Últimos 30 dias
-            </option>
-
-            <option value="90_DAYS">
-              Últimos 90 dias
-            </option>
-
-            <option value="ALL">
-              Todo período
-            </option>
-
-          </select>
-
-        </div>
-
-        <div className="pagamentos-filter">
-
-          <label>
-            Status
-          </label>
-
-          <select
-            value={status}
-            onChange={(event) =>
-              setStatus(
-                event.target.value
-              )
-            }
-          >
-            <option value="ALL">
-              Todos
-            </option>
-
-            <option value="PAID">
-              Pagos
-            </option>
-
-            <option value="PENDING">
-              Pendentes
-            </option>
-
-            <option value="PROCESSING">
-              Processando
-            </option>
-
-            <option value="PROVIDER_UNKNOWN">
-              Aguardando confirmação
-            </option>
-
-            <option value="FAILED">
-              Falhos
-            </option>
-
-          </select>
-
-        </div>
-
-        <div className="pagamentos-filter">
-
-          <label>
-            Forma
-          </label>
-
-          <select
-            value={method}
-            onChange={(event) =>
-              setMethod(
-                event.target.value
-              )
-            }
-          >
-            <option value="ALL">
-              Todas
-            </option>
-
-            <option value="BOLETO">
-              Boleto
-            </option>
-
-            <option value="PIX">
-              Pix
-            </option>
-
-            <option value="TRANSFER">
-              Transferência
-            </option>
-
-          </select>
-
-        </div>
-
-        <div className="pagamentos-filter">
-
-          <label>
-            Ordenar
-          </label>
-
-          <select
-            value={sortBy}
-            onChange={(event) =>
-              setSortBy(
-                event.target.value
-              )
-            }
-          >
-            <option value="DATE">
-              Mais recentes
-            </option>
-
-            <option value="VALUE">
-              Maior valor
-            </option>
-
-            <option value="CLIENT">
-              Cliente
-            </option>
-
-          </select>
-
-        </div>
-
-        {hasFilters && (
-          <button
-            type="button"
-            className="pagamentos-clear"
-            onClick={
-              clearFilters
-            }
-          >
-            Limpar
-          </button>
-        )}
-
-      </section>
-
-      {/* =================================================
-          TABLE
-      ================================================= */}
-
-      <section className="pagamentos-table-card">
-
-        <div className="pagamentos-table-header">
-
-          <div>
-
-            <h2>
-              Histórico de pagamentos
-            </h2>
-
-            <p>
-              {filteredPagamentos.length}{" "}
-              pagamento(s) encontrado(s).
-            </p>
-
           </div>
 
-          <div className="pagamentos-table-total">
+          <div className="pagamentos-filter">
+            <label htmlFor="pagamentos-period">
+              Período
+            </label>
 
-            <span>
-              Total filtrado
-            </span>
+            <select
+              id="pagamentos-period"
+              value={period}
+              onChange={(event) =>
+                setPeriod(event.target.value)
+              }
+            >
+              <option value="TODAY">
+                Hoje
+              </option>
 
-            <strong>
-              {formatCurrency(
-                summary.total
-              )}
-            </strong>
+              <option value="7_DAYS">
+                Últimos 7 dias
+              </option>
 
+              <option value="30_DAYS">
+                Últimos 30 dias
+              </option>
+
+              <option value="90_DAYS">
+                Últimos 90 dias
+              </option>
+
+              <option value="ALL">
+                Todo período
+              </option>
+            </select>
           </div>
 
-        </div>
+          <div className="pagamentos-filter">
+            <label htmlFor="pagamentos-status">
+              Status
+            </label>
 
-        {filteredPagamentos.length ===
-        0 ? (
-          <div className="pagamentos-empty">
+            <select
+              id="pagamentos-status"
+              value={status}
+              onChange={(event) =>
+                setStatus(event.target.value)
+              }
+            >
+              <option value="ALL">
+                Todos
+              </option>
 
-            <div className="pagamentos-empty-icon">
-              $
+              <option value="PAID">
+                Pagos
+              </option>
+
+              <option value="PENDING">
+                Pendentes
+              </option>
+
+              <option value="PROCESSING">
+                Processando
+              </option>
+
+              <option value="PROVIDER_UNKNOWN">
+                Aguardando confirmação
+              </option>
+
+              <option value="FAILED">
+                Falhos
+              </option>
+            </select>
+          </div>
+
+          <div className="pagamentos-filter">
+            <label htmlFor="pagamentos-method">
+              Forma
+            </label>
+
+            <select
+              id="pagamentos-method"
+              value={method}
+              onChange={(event) =>
+                setMethod(event.target.value)
+              }
+            >
+              <option value="ALL">
+                Todas
+              </option>
+
+              <option value="BOLETO">
+                Boleto
+              </option>
+
+              <option value="PIX">
+                Pix
+              </option>
+
+              <option value="TRANSFER">
+                Transferência
+              </option>
+            </select>
+          </div>
+
+          <div className="pagamentos-filter">
+            <label htmlFor="pagamentos-sort">
+              Ordenar
+            </label>
+
+            <select
+              id="pagamentos-sort"
+              value={sortBy}
+              onChange={(event) =>
+                setSortBy(event.target.value)
+              }
+            >
+              <option value="DATE">
+                Mais recentes
+              </option>
+
+              <option value="VALUE">
+                Maior valor
+              </option>
+
+              <option value="CLIENT">
+                Cliente
+              </option>
+            </select>
+          </div>
+
+          {hasFilters && (
+            <button
+              type="button"
+              className="pagamentos-clear"
+              onClick={clearFilters}
+            >
+              Limpar
+            </button>
+          )}
+        </section>
+
+        {/* =================================================
+            TABLE
+        ================================================= */}
+
+        <section className="pagamentos-table-card">
+          <div className="pagamentos-table-header">
+            <div>
+              <h2>
+                Histórico de pagamentos
+              </h2>
+
+              <p>
+                {filteredPagamentos.length}{" "}
+                pagamento(s) encontrado(s).
+              </p>
             </div>
 
-            <h3>
-              Nenhum pagamento encontrado
-            </h3>
+            <div className="pagamentos-table-total">
+              <span>Total filtrado</span>
 
-            <p>
-              Não existem pagamentos para os
-              filtros selecionados.
-            </p>
-
-            {hasFilters && (
-              <button
-                type="button"
-                onClick={
-                  clearFilters
-                }
-              >
-                Limpar filtros
-              </button>
-            )}
-
+              <strong>
+                {formatCurrency(summary.total)}
+              </strong>
+            </div>
           </div>
-        ) : (
-          <PagamentosTable
-            pagamentos={
-              filteredPagamentos
-            }
-            onViewPagamento={
-              onViewPagamento
-            }
-            onViewBoleto={
-              onViewBoleto
-            }
-            onViewClient={
-              onViewClient
-            }
-            onViewContract={
-              onViewContract
-            }
-          />
-        )}
 
-      </section>
+          {filteredPagamentos.length === 0 ? (
+            <div className="pagamentos-empty">
+              <div className="pagamentos-empty-icon">
+                $
+              </div>
 
-    </div>
+              <h3>
+                Nenhum pagamento encontrado
+              </h3>
+
+              <p>
+                Não existem pagamentos para os
+                filtros selecionados.
+              </p>
+
+              {hasFilters && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                >
+                  Limpar filtros
+                </button>
+              )}
+            </div>
+          ) : (
+            <PagamentosTable
+              pagamentos={filteredPagamentos}
+              onViewPagamento={
+                onViewPagamento
+              }
+              onViewBoleto={onViewBoleto}
+              onViewClient={onViewClient}
+              onViewContract={
+                onViewContract
+              }
+            />
+          )}
+        </section>
+      </div>
+    </DashboardLayout>
   );
 }

@@ -1,9 +1,17 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import ProtectedRoute, {
   PublicOnlyRoute,
 } from "./ProtectedRoute";
+
+// =========================================================
+// PÁGINAS GERAIS
+// =========================================================
 
 import LoginScreen from "../pages/Login/LoginScreen";
 import Home from "../pages/Home/Home";
@@ -11,9 +19,9 @@ import Cadastro from "../pages/cadastro/Cadastro";
 import Extrato from "../pages/Extrato/Extrato";
 import Pix from "../pages/Pix/Pix";
 
-/* =========================
-   BOLETOS
-========================= */
+// =========================================================
+// BOLETOS
+// =========================================================
 
 import BoletosDashboard from "../pages/Boletos/BoletosDashboard";
 import BoletosLista from "../pages/Boletos/BoletosLista";
@@ -30,26 +38,12 @@ import ContratoDetalhes from "../pages/Boletos/ContratoDetalhes";
 import Inadimplencia from "../pages/Boletos/Inadimplencia";
 import Pagamentos from "../pages/Boletos/Pagamentos";
 
-/**
- * Todas as rotas da aplicação ficam centralizadas aqui.
- *
- * Rotas públicas:
- * - /login
- * - /cadastro
- *
- * Rotas protegidas:
- * - /home
- * - /extrato
- * - /pix
- * - /boletos/*
- */
 export default function AppRoutes() {
   return (
     <Routes>
-
-      {/* =========================
+      {/* =====================================================
           RAIZ
-      ========================= */}
+      ===================================================== */}
 
       <Route
         path="/"
@@ -61,9 +55,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* =========================
+      {/* =====================================================
           AUTENTICAÇÃO
-      ========================= */}
+      ===================================================== */}
 
       <Route
         path="/login"
@@ -83,9 +77,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* =========================
+      {/* =====================================================
           HOME
-      ========================= */}
+      ===================================================== */}
 
       <Route
         path="/home"
@@ -96,9 +90,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* =========================
+      {/* =====================================================
           EXTRATO
-      ========================= */}
+      ===================================================== */}
 
       <Route
         path="/extrato"
@@ -109,9 +103,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* =========================
+      {/* =====================================================
           PIX
-      ========================= */}
+      ===================================================== */}
 
       <Route
         path="/pix"
@@ -137,7 +131,7 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Lista de boletos */}
+      {/* Lista */}
 
       <Route
         path="/boletos/lista"
@@ -148,7 +142,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Gerar boleto */}
+      {/* =====================================================
+          GERAÇÃO DE BOLETO
+      ===================================================== */}
 
       <Route
         path="/boletos/gerar"
@@ -159,7 +155,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Gerar boletos em lote */}
+      {/* =====================================================
+          GERAÇÃO EM LOTE
+      ===================================================== */}
 
       <Route
         path="/boletos/gerar-lote"
@@ -170,7 +168,40 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Clientes */}
+      {/* =====================================================
+          COMPATIBILIDADE
+          
+          Se algum componente antigo ainda usar:
+          
+          /boletos/emitir
+          /boletos/lote
+          
+          não vai mais quebrar.
+      ===================================================== */}
+
+      <Route
+        path="/boletos/emitir"
+        element={
+          <Navigate
+            to="/boletos/gerar"
+            replace
+          />
+        }
+      />
+
+      <Route
+        path="/boletos/lote"
+        element={
+          <Navigate
+            to="/boletos/gerar-lote"
+            replace
+          />
+        }
+      />
+
+      {/* =====================================================
+          CLIENTES
+      ===================================================== */}
 
       <Route
         path="/boletos/clientes"
@@ -181,8 +212,6 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Detalhes do cliente */}
-
       <Route
         path="/boletos/clientes/:id"
         element={
@@ -192,7 +221,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Detalhes do contrato */}
+      {/* =====================================================
+          CONTRATOS
+      ===================================================== */}
 
       <Route
         path="/boletos/contratos/:id"
@@ -203,7 +234,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Inadimplência */}
+      {/* =====================================================
+          INADIMPLÊNCIA
+      ===================================================== */}
 
       <Route
         path="/boletos/inadimplencia"
@@ -214,7 +247,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Pagamentos */}
+      {/* =====================================================
+          PAGAMENTOS
+      ===================================================== */}
 
       <Route
         path="/boletos/pagamentos"
@@ -229,7 +264,19 @@ export default function AppRoutes() {
           DETALHES DO BOLETO
           
           IMPORTANTE:
-          Deve ficar depois das rotas específicas.
+          Essa rota deve ficar DEPOIS das rotas específicas.
+          
+          Exemplo:
+          
+          /boletos/lista
+          /boletos/clientes
+          /boletos/pagamentos
+          
+          são específicas e já foram declaradas acima.
+          
+          Só depois usamos:
+          
+          /boletos/:id
       ===================================================== */}
 
       <Route
@@ -241,9 +288,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* =========================
+      {/* =====================================================
           ROTA DESCONHECIDA
-      ========================= */}
+      ===================================================== */}
 
       <Route
         path="*"
@@ -254,7 +301,6 @@ export default function AppRoutes() {
           />
         }
       />
-
     </Routes>
   );
 }

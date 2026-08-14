@@ -1,8 +1,13 @@
 import React, { useMemo, useState } from "react";
 
 import InadimplenciaTable from "../../components/boletos/InadimplenciaTable";
+import DashboardLayout from "../../layout/DashboardLayout";
 
 import "./Inadimplencia.css";
+
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function formatCurrency(value) {
   const number = Number(value);
@@ -23,29 +28,51 @@ function normalizeStatus(status) {
     .toUpperCase();
 }
 
+function parseDate(dateValue) {
+  if (!dateValue) {
+    return null;
+  }
+
+  const date = new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date;
+}
+
 function getDaysOverdue(boleto) {
-  if (boleto.days_overdue !== undefined) {
-    return Number(boleto.days_overdue) || 0;
+  if (
+    boleto.days_overdue !== undefined &&
+    boleto.days_overdue !== null &&
+    boleto.days_overdue !== ""
+  ) {
+    const days = Number(boleto.days_overdue);
+
+    return Number.isNaN(days) ? 0 : Math.max(0, Math.floor(days));
   }
 
   if (!boleto.due_date) {
     return 0;
   }
 
-  const dueDate = new Date(boleto.due_date);
+  const dueDate = parseDate(boleto.due_date);
+
+  if (!dueDate) {
+    return 0;
+  }
+
   const today = new Date();
 
   dueDate.setHours(0, 0, 0, 0);
   today.setHours(0, 0, 0, 0);
 
-  const difference =
-    today.getTime() - dueDate.getTime();
+  const difference = today.getTime() - dueDate.getTime();
 
   return Math.max(
     0,
-    Math.floor(
-      difference / (1000 * 60 * 60 * 24)
-    )
+    Math.floor(difference / (1000 * 60 * 60 * 24)),
   );
 }
 
@@ -60,24 +87,94 @@ function getClientName(item) {
   );
 }
 
-function getContractNumber(item) {
+function getClientDocument(item) {
   return (
+    item.client?.document ||
+    item.payer?.document ||
+    item.customer?.document ||
+    item.client_document ||
+    item.payer_document ||
+    ""
+  );
+}
+
+function getContractNumber(item) {
+  return String(
     item.contract?.number ||
-    item.contract?.contract_number ||
-    item.contract_number ||
-    item.contract?.id ||
-    "-"
+      item.contract?.contract_number ||
+      item.contract_number ||
+      item.contract?.id ||
+      "-",
+  );
+}
+
+function getBoletoNumber(item) {
+  return String(
+    item.number ||
+      item.boleto_number ||
+      item.boletoNumber ||
+      item.id ||
+      "-",
   );
 }
 
 function getBoletoAmount(item) {
-  return Number(
-    item.amount ||
-      item.value ||
-      item.original_amount ||
-      0
+  const amount =
+    item.amount ??
+    item.value ??
+    item.original_amount ??
+    item.originalValue ??
+    0;
+
+  const number = Number(amount);
+
+  return Number.isNaN(number) ? 0 : number;
+}
+
+function getItemId(item, index) {
+  return (
+    item.id ??
+    item.boleto_id ??
+    item.boletoId ??
+    item.number ??
+    item.boleto_number ??
+    `boleto-${index}`
   );
 }
+
+function getPeriodDate(boleto) {
+  return (
+    boleto.due_date ||
+    boleto.created_at ||
+    boleto.createdAt ||
+    boleto.issue_date ||
+    boleto.issueDate ||
+    null
+  );
+}
+
+function getDaysFromDate(dateValue) {
+  const date = parseDate(dateValue);
+
+  if (!date) {
+    return null;
+  }
+
+  const today = new Date();
+
+  date.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  const difference = today.getTime() - date.getTime();
+
+  return Math.floor(
+    difference / (1000 * 60 * 60 * 24),
+  );
+}
+
+/* =========================================================
+   COMPONENT
+========================================================= */
 
 export default function Inadimplencia({
   boletos = [],
@@ -90,194 +187,138 @@ export default function Inadimplencia({
   onContactClient,
   onRenegotiate,
 }) {
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
+  const [period, setPeriod] = useState("ALL");
+  const [aging, setAging] = useState("ALL");
+  const [sortBy, setSortBy] = useState("DAYS");
+  const [selectedItems, setSelectedItems] = useState([]);
 
-  const [period, setPeriod] =
-    useState("ALL");
-
-  const [aging, setAging] =
-    useState("ALL");
-
-  const [sortBy, setSortBy] =
-    useState("DAYS");
-
-  const [selectedItems, setSelectedItems] =
-    useState([]);
+  /* =========================================================
+     BOLETOS VENCIDOS
+  ========================================================= */
 
   const overdueBoletos = useMemo(() => {
     return boletos
+      .map((boleto, index) => ({
+        ...boleto,
+        _selectionId: getItemId(boleto, index),
+        days_overdue: getDaysOverdue(boleto),
+      }))
       .filter((boleto) => {
-        const status =
-          normalizeStatus(
-            boleto.status
-          );
+        const status = normalizeStatus(boleto.status);
 
         return (
           status === "OVERDUE" ||
-          getDaysOverdue(boleto) > 0
+          status === "VENCIDO" ||
+          status === "VENCIDA" ||
+          boleto.days_overdue > 0
         );
-      })
-      .map((boleto) => ({
-        ...boleto,
-        days_overdue:
-          getDaysOverdue(boleto),
-      }));
+      });
   }, [boletos]);
 
+  /* =========================================================
+     FILTROS
+  ========================================================= */
+
   const filteredBoletos = useMemo(() => {
-    const normalizedSearch =
-      search
-        .trim()
-        .toLowerCase();
+    const normalizedSearch = search.trim().toLowerCase();
 
-    let result =
-      overdueBoletos.filter(
-        (boleto) => {
-          const clientName =
-            getClientName(boleto)
-              .toLowerCase();
+    const result = overdueBoletos.filter((boleto) => {
+      const clientName = getClientName(boleto).toLowerCase();
 
-          const contract =
-            getContractNumber(boleto)
-              .toLowerCase();
+      const contract = getContractNumber(boleto).toLowerCase();
 
-          const boletoNumber =
-            String(
-              boleto.number ||
-                boleto.boleto_number ||
-                boleto.id ||
-                ""
-            ).toLowerCase();
+      const boletoNumber = getBoletoNumber(boleto).toLowerCase();
 
-          const document =
-            String(
-              boleto.client?.document ||
-                boleto.payer?.document ||
-                boleto.customer?.document ||
-                ""
-            ).toLowerCase();
+      const document = String(getClientDocument(boleto))
+        .toLowerCase()
+        .replace(/[.\-/\s]/g, "");
 
-          const matchesSearch =
-            !normalizedSearch ||
-            clientName.includes(
-              normalizedSearch
-            ) ||
-            contract.includes(
-              normalizedSearch
-            ) ||
-            boletoNumber.includes(
-              normalizedSearch
-            ) ||
-            document.includes(
-              normalizedSearch
-            );
+      const normalizedSearchWithoutFormatting =
+        normalizedSearch.replace(/[.\-/\s]/g, "");
 
-          if (!matchesSearch) {
-            return false;
-          }
+      const matchesSearch =
+        !normalizedSearch ||
+        clientName.includes(normalizedSearch) ||
+        contract.includes(normalizedSearch) ||
+        boletoNumber.includes(normalizedSearch) ||
+        document.includes(normalizedSearchWithoutFormatting);
 
-          const days =
-            boleto.days_overdue;
+      if (!matchesSearch) {
+        return false;
+      }
 
-          if (
-            aging === "1_7" &&
-            (days < 1 || days > 7)
-          ) {
-            return false;
-          }
+      /* -------------------------------------------------------
+         AGING
+      ------------------------------------------------------- */
 
-          if (
-            aging === "8_30" &&
-            (days < 8 || days > 30)
-          ) {
-            return false;
-          }
+      const days = Number(boleto.days_overdue || 0);
 
-          if (
-            aging === "31_60" &&
-            (days < 31 || days > 60)
-          ) {
-            return false;
-          }
+      if (aging === "1_7" && (days < 1 || days > 7)) {
+        return false;
+      }
 
-          if (
-            aging === "61_90" &&
-            (days < 61 || days > 90)
-          ) {
-            return false;
-          }
+      if (aging === "8_30" && (days < 8 || days > 30)) {
+        return false;
+      }
 
-          if (
-            aging === "90_PLUS" &&
-            days <= 90
-          ) {
-            return false;
-          }
+      if (aging === "31_60" && (days < 31 || days > 60)) {
+        return false;
+      }
 
-          if (period !== "ALL") {
-            const createdAt =
-              boleto.created_at ||
-              boleto.due_date;
+      if (aging === "61_90" && (days < 61 || days > 90)) {
+        return false;
+      }
 
-            if (createdAt) {
-              const date =
-                new Date(createdAt);
+      if (aging === "90_PLUS" && days <= 90) {
+        return false;
+      }
 
-              const today =
-                new Date();
+      /* -------------------------------------------------------
+         PERÍODO
+      ------------------------------------------------------- */
 
-              const diff =
-                Math.floor(
-                  (
-                    today.getTime() -
-                    date.getTime()
-                  ) /
-                    (1000 *
-                      60 *
-                      60 *
-                      24)
-                );
+      if (period !== "ALL") {
+        const periodDate = getPeriodDate(boleto);
 
-              if (
-                period === "7_DAYS" &&
-                diff > 7
-              ) {
-                return false;
-              }
+        if (periodDate) {
+          const diff = getDaysFromDate(periodDate);
 
-              if (
-                period === "30_DAYS" &&
-                diff > 30
-              ) {
-                return false;
-              }
+          if (diff !== null) {
+            if (period === "7_DAYS" && (diff < 0 || diff > 7)) {
+              return false;
+            }
 
-              if (
-                period === "90_DAYS" &&
-                diff > 90
-              ) {
-                return false;
-              }
+            if (period === "30_DAYS" && (diff < 0 || diff > 30)) {
+              return false;
+            }
+
+            if (period === "90_DAYS" && (diff < 0 || diff > 90)) {
+              return false;
             }
           }
-
-          return true;
         }
-      );
+      }
+
+      return true;
+    });
+
+    /* -------------------------------------------------------
+       ORDENAÇÃO
+    ------------------------------------------------------- */
 
     result.sort((a, b) => {
       if (sortBy === "VALUE") {
-        return (
-          getBoletoAmount(b) -
-          getBoletoAmount(a)
-        );
+        return getBoletoAmount(b) - getBoletoAmount(a);
       }
 
       if (sortBy === "CLIENT") {
         return getClientName(a).localeCompare(
           getClientName(b),
-          "pt-BR"
+          "pt-BR",
+          {
+            sensitivity: "base",
+          },
         );
       }
 
@@ -296,56 +337,54 @@ export default function Inadimplencia({
     sortBy,
   ]);
 
+  /* =========================================================
+     RESUMO
+  ========================================================= */
+
   const summary = useMemo(() => {
-    const total =
-      overdueBoletos.reduce(
-        (sum, boleto) =>
-          sum +
-          getBoletoAmount(boleto),
-        0
-      );
+    const total = overdueBoletos.reduce(
+      (sum, boleto) =>
+        sum + getBoletoAmount(boleto),
+      0,
+    );
 
-    const totalClients =
-      new Set(
-        overdueBoletos.map(
-          (boleto) =>
-            boleto.client?.id ||
-            boleto.payer?.id ||
-            boleto.customer?.id ||
-            getClientName(boleto)
-        )
-      ).size;
-
-    const totalContracts =
-      new Set(
-        overdueBoletos.map(
-          (boleto) =>
-            boleto.contract?.id ||
-            getContractNumber(boleto)
-        )
-      ).size;
-
-    const critical =
-      overdueBoletos.filter(
+    const totalClients = new Set(
+      overdueBoletos.map(
         (boleto) =>
-          boleto.days_overdue > 90
-      ).length;
+          boleto.client?.id ||
+          boleto.payer?.id ||
+          boleto.customer?.id ||
+          getClientDocument(boleto) ||
+          getClientName(boleto),
+      ),
+    ).size;
 
-    const averageDays =
-      overdueBoletos.length
-        ? Math.round(
-            overdueBoletos.reduce(
-              (sum, boleto) =>
-                sum +
-                Number(
-                  boleto.days_overdue ||
-                    0
-                ),
-              0
-            ) /
-              overdueBoletos.length
-          )
-        : 0;
+    const totalContracts = new Set(
+      overdueBoletos.map(
+        (boleto) =>
+          boleto.contract?.id ||
+          boleto.contract?.number ||
+          boleto.contract?.contract_number ||
+          boleto.contract_number ||
+          getContractNumber(boleto),
+      ),
+    ).size;
+
+    const critical = overdueBoletos.filter(
+      (boleto) =>
+        Number(boleto.days_overdue || 0) > 90,
+    ).length;
+
+    const averageDays = overdueBoletos.length
+      ? Math.round(
+          overdueBoletos.reduce(
+            (sum, boleto) =>
+              sum +
+              Number(boleto.days_overdue || 0),
+            0,
+          ) / overdueBoletos.length,
+        )
+      : 0;
 
     return {
       total,
@@ -356,37 +395,124 @@ export default function Inadimplencia({
     };
   }, [overdueBoletos]);
 
+  /* =========================================================
+     AGING
+  ========================================================= */
+
+  const agingSummary = useMemo(() => {
+    const ranges = [
+      {
+        key: "1_7",
+        label: "1–7 dias",
+        className: "normal",
+        filter: (days) => days >= 1 && days <= 7,
+      },
+      {
+        key: "8_30",
+        label: "8–30 dias",
+        className: "warning",
+        filter: (days) => days >= 8 && days <= 30,
+      },
+      {
+        key: "31_60",
+        label: "31–60 dias",
+        className: "warning",
+        filter: (days) => days >= 31 && days <= 60,
+      },
+      {
+        key: "61_90",
+        label: "61–90 dias",
+        className: "danger",
+        filter: (days) => days >= 61 && days <= 90,
+      },
+      {
+        key: "90_PLUS",
+        label: "+90 dias",
+        className: "critical",
+        filter: (days) => days > 90,
+      },
+    ];
+
+    return ranges.map((range) => {
+      const items = overdueBoletos.filter((boleto) =>
+        range.filter(
+          Number(boleto.days_overdue || 0),
+        ),
+      );
+
+      const value = items.reduce(
+        (sum, boleto) =>
+          sum + getBoletoAmount(boleto),
+        0,
+      );
+
+      return {
+        ...range,
+        count: items.length,
+        value,
+      };
+    });
+  }, [overdueBoletos]);
+
+  /* =========================================================
+     SELEÇÃO
+  ========================================================= */
+
   function toggleSelection(id) {
     setSelectedItems((current) => {
       if (current.includes(id)) {
         return current.filter(
-          (itemId) =>
-            itemId !== id
+          (itemId) => itemId !== id,
         );
       }
 
-      return [
-        ...current,
-        id,
-      ];
+      return [...current, id];
     });
   }
 
   function toggleAll() {
-    if (
-      selectedItems.length ===
-      filteredBoletos.length
-    ) {
-      setSelectedItems([]);
+    const visibleIds = filteredBoletos.map(
+      (boleto) => boleto._selectionId,
+    );
+
+    const allSelected =
+      visibleIds.length > 0 &&
+      visibleIds.every((id) =>
+        selectedItems.includes(id),
+      );
+
+    if (allSelected) {
+      setSelectedItems((current) =>
+        current.filter(
+          (id) => !visibleIds.includes(id),
+        ),
+      );
+
       return;
     }
 
-    setSelectedItems(
-      filteredBoletos.map(
-        (boleto) => boleto.id
-      )
-    );
+    setSelectedItems((current) => {
+      const next = new Set(current);
+
+      visibleIds.forEach((id) => next.add(id));
+
+      return Array.from(next);
+    });
   }
+
+  /* =========================================================
+     ITENS SELECIONADOS
+  ========================================================= */
+
+  const selectedBoletoObjects = useMemo(() => {
+    return overdueBoletos.filter((boleto) =>
+      selectedItems.includes(boleto._selectionId),
+    );
+  }, [overdueBoletos, selectedItems]);
+
+  /* =========================================================
+     FILTROS
+  ========================================================= */
 
   function clearFilters() {
     setSearch("");
@@ -400,619 +526,494 @@ export default function Inadimplencia({
     period !== "ALL" ||
     aging !== "ALL";
 
+  const allVisibleSelected =
+    filteredBoletos.length > 0 &&
+    filteredBoletos.every((boleto) =>
+      selectedItems.includes(boleto._selectionId),
+    );
+
+  /* =========================================================
+     LOADING
+  ========================================================= */
+
   if (loading) {
     return (
-      <div className="inadimplencia">
+      <DashboardLayout>
+        <div className="inadimplencia">
+          <div className="inadimplencia-loading">
+            <div className="inadimplencia-spinner" />
 
-        <div className="inadimplencia-loading">
-
-          <div className="inadimplencia-spinner" />
-
-          <span>
-            Carregando inadimplência...
-          </span>
-
+            <span>
+              Carregando inadimplência...
+            </span>
+          </div>
         </div>
-
-      </div>
+      </DashboardLayout>
     );
   }
 
+  /* =========================================================
+     RENDER
+  ========================================================= */
+
   return (
-    <div className="inadimplencia">
+    <DashboardLayout>
+      <div className="inadimplencia">
 
-      {/* =================================================
-          HEADER
-      ================================================= */}
+        {/* =================================================
+            HEADER
+        ================================================= */}
 
-      <header className="inadimplencia-header">
-
-        <div>
-
-          <span className="inadimplencia-eyebrow">
-            Cobrança
-          </span>
-
-          <h1>
-            Inadimplência
-          </h1>
-
-          <p>
-            Acompanhe clientes, contratos e
-            boletos vencidos.
-          </p>
-
-        </div>
-
-        {selectedItems.length > 0 && (
-          <div className="inadimplencia-header-actions">
-
-            {onContactClient && (
-              <button
-                type="button"
-                className="inadimplencia-secondary"
-                onClick={() =>
-                  onContactClient(
-                    filteredBoletos.filter(
-                      (boleto) =>
-                        selectedItems.includes(
-                          boleto.id
-                        )
-                    )
-                  )
-                }
-              >
-                Contatar clientes
-              </button>
-            )}
-
-            {onRenegotiate && (
-              <button
-                type="button"
-                className="inadimplencia-primary"
-                onClick={() =>
-                  onRenegotiate(
-                    filteredBoletos.filter(
-                      (boleto) =>
-                        selectedItems.includes(
-                          boleto.id
-                        )
-                    )
-                  )
-                }
-              >
-                Renegociar selecionados
-              </button>
-            )}
-
-          </div>
-        )}
-
-      </header>
-
-      {/* =================================================
-          SUMMARY
-      ================================================= */}
-
-      <section className="inadimplencia-summary">
-
-        <div className="inadimplencia-summary-card">
-
-          <div className="inadimplencia-summary-icon">
-            R$
-          </div>
-
-          <div>
-            <span>
-              Valor em atraso
+        <header className="inadimplencia-header">
+          <div className="inadimplencia-header-info">
+            <span className="inadimplencia-eyebrow">
+              Cobrança
             </span>
 
-            <strong>
-              {formatCurrency(
-                summary.total
-              )}
-            </strong>
-          </div>
-
-        </div>
-
-        <div className="inadimplencia-summary-card">
-
-          <div className="inadimplencia-summary-icon">
-            C
-          </div>
-
-          <div>
-            <span>
-              Clientes inadimplentes
-            </span>
-
-            <strong>
-              {summary.totalClients}
-            </strong>
-          </div>
-
-        </div>
-
-        <div className="inadimplencia-summary-card">
-
-          <div className="inadimplencia-summary-icon">
-            CT
-          </div>
-
-          <div>
-            <span>
-              Contratos afetados
-            </span>
-
-            <strong>
-              {summary.totalContracts}
-            </strong>
-          </div>
-
-        </div>
-
-        <div className="inadimplencia-summary-card">
-
-          <div className="inadimplencia-summary-icon">
-            D
-          </div>
-
-          <div>
-            <span>
-              Média de atraso
-            </span>
-
-            <strong>
-              {summary.averageDays}{" "}
-              dias
-            </strong>
-          </div>
-
-        </div>
-
-        <div
-          className={
-            summary.critical > 0
-              ? "inadimplencia-summary-card inadimplencia-summary-danger"
-              : "inadimplencia-summary-card"
-          }
-        >
-
-          <div className="inadimplencia-summary-icon">
-            !
-          </div>
-
-          <div>
-            <span>
-              Mais de 90 dias
-            </span>
-
-            <strong>
-              {summary.critical}
-            </strong>
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* =================================================
-          FILTERS
-      ================================================= */}
-
-      <section className="inadimplencia-filters">
-
-        <div className="inadimplencia-search">
-
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <circle
-              cx="11"
-              cy="11"
-              r="7"
-            />
-
-            <path d="m20 20-4-4" />
-          </svg>
-
-          <input
-            type="text"
-            placeholder="Buscar cliente, CPF/CNPJ, contrato ou boleto..."
-            value={search}
-            onChange={(event) =>
-              setSearch(
-                event.target.value
-              )
-            }
-          />
-
-        </div>
-
-        <div className="inadimplencia-filter">
-
-          <label>
-            Atraso
-          </label>
-
-          <select
-            value={aging}
-            onChange={(event) =>
-              setAging(
-                event.target.value
-              )
-            }
-          >
-            <option value="ALL">
-              Todos
-            </option>
-
-            <option value="1_7">
-              1 a 7 dias
-            </option>
-
-            <option value="8_30">
-              8 a 30 dias
-            </option>
-
-            <option value="31_60">
-              31 a 60 dias
-            </option>
-
-            <option value="61_90">
-              61 a 90 dias
-            </option>
-
-            <option value="90_PLUS">
-              Mais de 90 dias
-            </option>
-
-          </select>
-
-        </div>
-
-        <div className="inadimplencia-filter">
-
-          <label>
-            Período
-          </label>
-
-          <select
-            value={period}
-            onChange={(event) =>
-              setPeriod(
-                event.target.value
-              )
-            }
-          >
-            <option value="ALL">
-              Todos
-            </option>
-
-            <option value="7_DAYS">
-              Últimos 7 dias
-            </option>
-
-            <option value="30_DAYS">
-              Últimos 30 dias
-            </option>
-
-            <option value="90_DAYS">
-              Últimos 90 dias
-            </option>
-
-          </select>
-
-        </div>
-
-        <div className="inadimplencia-filter">
-
-          <label>
-            Ordenar por
-          </label>
-
-          <select
-            value={sortBy}
-            onChange={(event) =>
-              setSortBy(
-                event.target.value
-              )
-            }
-          >
-            <option value="DAYS">
-              Maior atraso
-            </option>
-
-            <option value="VALUE">
-              Maior valor
-            </option>
-
-            <option value="CLIENT">
-              Cliente
-            </option>
-
-          </select>
-
-        </div>
-
-        {hasFilters && (
-          <button
-            type="button"
-            className="inadimplencia-clear"
-            onClick={
-              clearFilters
-            }
-          >
-            Limpar
-          </button>
-        )}
-
-      </section>
-
-      {/* =================================================
-          AGING
-      ================================================= */}
-
-      <section className="inadimplencia-aging">
-
-        <div className="inadimplencia-aging-header">
-
-          <div>
-
-            <h2>
-              Aging da inadimplência
-            </h2>
+            <h1>Inadimplência</h1>
 
             <p>
-              Distribuição dos boletos vencidos
-              por tempo de atraso.
+              Acompanhe clientes, contratos e
+              boletos vencidos.
             </p>
-
-          </div>
-
-        </div>
-
-        <div className="inadimplencia-aging-grid">
-
-          {[
-            {
-              key: "1_7",
-              label: "1–7 dias",
-            },
-            {
-              key: "8_30",
-              label: "8–30 dias",
-            },
-            {
-              key: "31_60",
-              label: "31–60 dias",
-            },
-            {
-              key: "61_90",
-              label: "61–90 dias",
-            },
-            {
-              key: "90_PLUS",
-              label: "+90 dias",
-            },
-          ].map((item) => {
-            const items =
-              overdueBoletos.filter(
-                (boleto) => {
-                  const days =
-                    boleto.days_overdue;
-
-                  if (
-                    item.key ===
-                    "1_7"
-                  ) {
-                    return (
-                      days >= 1 &&
-                      days <= 7
-                    );
-                  }
-
-                  if (
-                    item.key ===
-                    "8_30"
-                  ) {
-                    return (
-                      days >= 8 &&
-                      days <= 30
-                    );
-                  }
-
-                  if (
-                    item.key ===
-                    "31_60"
-                  ) {
-                    return (
-                      days >= 31 &&
-                      days <= 60
-                    );
-                  }
-
-                  if (
-                    item.key ===
-                    "61_90"
-                  ) {
-                    return (
-                      days >= 61 &&
-                      days <= 90
-                    );
-                  }
-
-                  return days > 90;
-                }
-              );
-
-            const value =
-              items.reduce(
-                (sum, boleto) =>
-                  sum +
-                  getBoletoAmount(
-                    boleto
-                  ),
-                0
-              );
-
-            return (
-              <button
-                type="button"
-                key={item.key}
-                className="inadimplencia-aging-card"
-                onClick={() =>
-                  setAging(
-                    item.key
-                  )
-                }
-              >
-
-                <span>
-                  {item.label}
-                </span>
-
-                <strong>
-                  {items.length}
-                </strong>
-
-                <small>
-                  {formatCurrency(
-                    value
-                  )}
-                </small>
-
-              </button>
-            );
-          })}
-
-        </div>
-
-      </section>
-
-      {/* =================================================
-          TABLE
-      ================================================= */}
-
-      <section className="inadimplencia-table-card">
-
-        <div className="inadimplencia-table-header">
-
-          <div>
-
-            <h2>
-              Cobranças vencidas
-            </h2>
-
-            <p>
-              {filteredBoletos.length}{" "}
-              cobrança(s) encontrada(s).
-            </p>
-
           </div>
 
           {selectedItems.length > 0 && (
-            <span className="inadimplencia-selected">
-              {selectedItems.length}{" "}
-              selecionado(s)
-            </span>
+            <div className="inadimplencia-header-actions">
+              {onContactClient && (
+                <button
+                  type="button"
+                  className="inadimplencia-secondary"
+                  onClick={() =>
+                    onContactClient(
+                      selectedBoletoObjects,
+                    )
+                  }
+                >
+                  <span className="button-icon">
+                    ↗
+                  </span>
+
+                  Contatar clientes
+                </button>
+              )}
+
+              {onRenegotiate && (
+                <button
+                  type="button"
+                  className="inadimplencia-primary"
+                  onClick={() =>
+                    onRenegotiate(
+                      selectedBoletoObjects,
+                    )
+                  }
+                >
+                  <span className="button-icon">
+                    $
+                  </span>
+
+                  Renegociar selecionados
+                </button>
+              )}
+            </div>
           )}
+        </header>
 
-        </div>
+        {/* =================================================
+            RESUMO
+        ================================================= */}
 
-        {filteredBoletos.length ===
-        0 ? (
-          <div className="inadimplencia-empty">
+        <section className="inadimplencia-summary">
 
-            <div className="inadimplencia-empty-icon">
-              ✓
+          <div className="inadimplencia-summary-card">
+            <div className="inadimplencia-summary-icon danger-icon">
+              R$
             </div>
 
-            <h3>
-              Nenhuma inadimplência encontrada
-            </h3>
+            <div className="inadimplencia-summary-content">
+              <span>Valor em atraso</span>
 
-            <p>
-              Não existem cobranças vencidas
-              para os filtros selecionados.
-            </p>
-
-            {hasFilters && (
-              <button
-                type="button"
-                onClick={
-                  clearFilters
-                }
-              >
-                Limpar filtros
-              </button>
-            )}
-
+              <strong>
+                {formatCurrency(summary.total)}
+              </strong>
+            </div>
           </div>
-        ) : (
-          <>
 
-            <div className="inadimplencia-select-all">
-
-              <label>
-
-                <input
-                  type="checkbox"
-                  checked={
-                    filteredBoletos.length >
-                      0 &&
-                    selectedItems.length ===
-                      filteredBoletos.length
-                  }
-                  onChange={
-                    toggleAll
-                  }
-                />
-
-                Selecionar todos
-
-              </label>
-
+          <div className="inadimplencia-summary-card">
+            <div className="inadimplencia-summary-icon">
+              C
             </div>
 
-            <InadimplenciaTable
-              boletos={
-                filteredBoletos
-              }
-              selectedItems={
-                selectedItems
-              }
-              onToggleSelection={
-                toggleSelection
-              }
-              onViewBoleto={
-                onViewBoleto
-              }
-              onViewClient={
-                onViewClient
-              }
-              onViewContract={
-                onViewContract
-              }
-              onContactClient={
-                onContactClient
-              }
-              onRenegotiate={
-                onRenegotiate
+            <div className="inadimplencia-summary-content">
+              <span>
+                Clientes inadimplentes
+              </span>
+
+              <strong>
+                {summary.totalClients}
+              </strong>
+            </div>
+          </div>
+
+          <div className="inadimplencia-summary-card">
+            <div className="inadimplencia-summary-icon">
+              CT
+            </div>
+
+            <div className="inadimplencia-summary-content">
+              <span>Contratos afetados</span>
+
+              <strong>
+                {summary.totalContracts}
+              </strong>
+            </div>
+          </div>
+
+          <div className="inadimplencia-summary-card">
+            <div className="inadimplencia-summary-icon">
+              D
+            </div>
+
+            <div className="inadimplencia-summary-content">
+              <span>Média de atraso</span>
+
+              <strong>
+                {summary.averageDays} dias
+              </strong>
+            </div>
+          </div>
+
+          <div
+            className={
+              summary.critical > 0
+                ? "inadimplencia-summary-card inadimplencia-summary-danger"
+                : "inadimplencia-summary-card"
+            }
+          >
+            <div className="inadimplencia-summary-icon critical-icon">
+              !
+            </div>
+
+            <div className="inadimplencia-summary-content">
+              <span>Mais de 90 dias</span>
+
+              <strong>
+                {summary.critical}
+              </strong>
+            </div>
+          </div>
+
+        </section>
+
+        {/* =================================================
+            FILTROS
+        ================================================= */}
+
+        <section className="inadimplencia-filters">
+
+          <div className="inadimplencia-search">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle
+                cx="11"
+                cy="11"
+                r="7"
+              />
+
+              <path d="m20 20-4-4" />
+            </svg>
+
+            <input
+              type="text"
+              placeholder="Buscar cliente, CPF/CNPJ, contrato ou boleto..."
+              value={search}
+              onChange={(event) =>
+                setSearch(event.target.value)
               }
             />
+          </div>
 
-          </>
-        )}
+          <div className="inadimplencia-filter">
+            <label htmlFor="inadimplencia-aging">
+              Atraso
+            </label>
 
-      </section>
+            <select
+              id="inadimplencia-aging"
+              value={aging}
+              onChange={(event) =>
+                setAging(event.target.value)
+              }
+            >
+              <option value="ALL">
+                Todos
+              </option>
 
-    </div>
+              <option value="1_7">
+                1 a 7 dias
+              </option>
+
+              <option value="8_30">
+                8 a 30 dias
+              </option>
+
+              <option value="31_60">
+                31 a 60 dias
+              </option>
+
+              <option value="61_90">
+                61 a 90 dias
+              </option>
+
+              <option value="90_PLUS">
+                Mais de 90 dias
+              </option>
+            </select>
+          </div>
+
+          <div className="inadimplencia-filter">
+            <label htmlFor="inadimplencia-period">
+              Período
+            </label>
+
+            <select
+              id="inadimplencia-period"
+              value={period}
+              onChange={(event) =>
+                setPeriod(event.target.value)
+              }
+            >
+              <option value="ALL">
+                Todos
+              </option>
+
+              <option value="7_DAYS">
+                Últimos 7 dias
+              </option>
+
+              <option value="30_DAYS">
+                Últimos 30 dias
+              </option>
+
+              <option value="90_DAYS">
+                Últimos 90 dias
+              </option>
+            </select>
+          </div>
+
+          <div className="inadimplencia-filter">
+            <label htmlFor="inadimplencia-sort">
+              Ordenar por
+            </label>
+
+            <select
+              id="inadimplencia-sort"
+              value={sortBy}
+              onChange={(event) =>
+                setSortBy(event.target.value)
+              }
+            >
+              <option value="DAYS">
+                Maior atraso
+              </option>
+
+              <option value="VALUE">
+                Maior valor
+              </option>
+
+              <option value="CLIENT">
+                Cliente
+              </option>
+            </select>
+          </div>
+
+          {hasFilters && (
+            <button
+              type="button"
+              className="inadimplencia-clear"
+              onClick={clearFilters}
+            >
+              Limpar
+            </button>
+          )}
+
+        </section>
+
+        {/* =================================================
+            AGING
+        ================================================= */}
+
+        <section className="inadimplencia-aging-section">
+
+          <div className="inadimplencia-aging-header">
+            <div>
+              <h2>
+                Aging da inadimplência
+              </h2>
+
+              <p>
+                Distribuição dos boletos vencidos
+                por tempo de atraso.
+              </p>
+            </div>
+          </div>
+
+          <div className="inadimplencia-aging-grid">
+            {agingSummary.map((item) => (
+              <button
+                type="button"
+                key={item.key}
+                className={`inadimplencia-aging-card ${item.className} ${
+                  aging === item.key
+                    ? "active"
+                    : ""
+                }`}
+                onClick={() =>
+                  setAging(
+                    aging === item.key
+                      ? "ALL"
+                      : item.key,
+                  )
+                }
+              >
+                <div className="aging-card-top">
+                  <span>
+                    {item.label}
+                  </span>
+
+                  {aging === item.key && (
+                    <small className="aging-active">
+                      Ativo
+                    </small>
+                  )}
+                </div>
+
+                <strong>
+                  {item.count}
+                </strong>
+
+                <small className="aging-value">
+                  {formatCurrency(item.value)}
+                </small>
+              </button>
+            ))}
+          </div>
+
+        </section>
+
+        {/* =================================================
+            TABELA
+        ================================================= */}
+
+        <section className="inadimplencia-table-card">
+
+          <div className="inadimplencia-table-header">
+            <div>
+              <h2>
+                Cobranças vencidas
+              </h2>
+
+              <p>
+                {filteredBoletos.length}{" "}
+                cobrança
+                {filteredBoletos.length !== 1
+                  ? "s"
+                  : ""}{" "}
+                encontrada
+                {filteredBoletos.length !== 1
+                  ? "s"
+                  : ""}
+                .
+              </p>
+            </div>
+
+            {selectedItems.length > 0 && (
+              <span className="inadimplencia-selected">
+                {selectedItems.length}{" "}
+                selecionado
+                {selectedItems.length !== 1
+                  ? "s"
+                  : ""}
+              </span>
+            )}
+          </div>
+
+          {filteredBoletos.length === 0 ? (
+            <div className="inadimplencia-empty">
+              <div className="inadimplencia-empty-icon">
+                ✓
+              </div>
+
+              <h3>
+                Nenhuma inadimplência encontrada
+              </h3>
+
+              <p>
+                Não existem cobranças vencidas
+                para os filtros selecionados.
+              </p>
+
+              {hasFilters && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                >
+                  Limpar filtros
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="inadimplencia-select-all">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={allVisibleSelected}
+                    onChange={toggleAll}
+                  />
+
+                  <span>
+                    Selecionar todos
+                  </span>
+                </label>
+
+                <span className="inadimplencia-visible-count">
+                  {filteredBoletos.length}{" "}
+                  cobrança
+                  {filteredBoletos.length !== 1
+                    ? "s"
+                    : ""}
+                </span>
+              </div>
+
+              <InadimplenciaTable
+                boletos={filteredBoletos}
+                selectedItems={selectedItems}
+                onToggleSelection={
+                  toggleSelection
+                }
+                onViewBoleto={onViewBoleto}
+                onViewClient={onViewClient}
+                onViewContract={
+                  onViewContract
+                }
+                onContactClient={
+                  onContactClient
+                }
+                onRenegotiate={onRenegotiate}
+              />
+            </>
+          )}
+
+        </section>
+
+      </div>
+    </DashboardLayout>
   );
 }

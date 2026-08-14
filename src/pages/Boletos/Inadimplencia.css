@@ -1,4 +1,3 @@
-
 /* =========================================================
    INADIMPLÊNCIA
 ========================================================= */
@@ -8,8 +7,8 @@
   min-height: 100%;
   padding: 30px;
   box-sizing: border-box;
+  background: #f7f8fc;
 }
-
 
 /* =========================================================
    HEADER
@@ -21,8 +20,11 @@
   justify-content: space-between;
 
   gap: 20px;
-
   margin-bottom: 28px;
+}
+
+.inadimplencia-header-info {
+  min-width: 0;
 }
 
 .inadimplencia-eyebrow {
@@ -58,37 +60,30 @@
   font-size: 14px;
 }
 
-
 /* =========================================================
-   AÇÕES
+   AÇÕES DO HEADER
 ========================================================= */
 
-.inadimplencia-actions {
+.inadimplencia-header-actions {
   display: flex;
   align-items: center;
 
   gap: 10px;
 }
 
-.inadimplencia-action {
-  height: 44px;
+.inadimplencia-secondary,
+.inadimplencia-primary {
+  min-height: 44px;
 
   padding: 0 16px;
 
-  border:
-    1px solid #dfe5f2;
-
   border-radius: 12px;
 
-  background: #ffffff;
-
-  color: #34415f;
-
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  gap: 9px;
+  gap: 8px;
 
   font-size: 13px;
   font-weight: 650;
@@ -98,21 +93,30 @@
   transition:
     background 0.2s ease,
     border-color 0.2s ease,
+    box-shadow 0.2s ease,
     transform 0.2s ease;
 }
 
-.inadimplencia-action:hover {
+.inadimplencia-secondary {
+  border: 1px solid #dfe5f2;
+
+  background: #ffffff;
+
+  color: #34415f;
+}
+
+.inadimplencia-secondary:hover {
   background: #f7f8fc;
 
   border-color: #cfd7e9;
+
+  box-shadow:
+    0 4px 12px
+    rgba(26, 43, 79, 0.06);
 }
 
-.inadimplencia-action:active {
-  transform: translateY(1px);
-}
-
-.inadimplencia-action-primary {
-  border-color: transparent;
+.inadimplencia-primary {
+  border: 1px solid transparent;
 
   background:
     linear-gradient(
@@ -122,19 +126,41 @@
     );
 
   color: #ffffff;
+
+  box-shadow:
+    0 5px 14px
+    rgba(117, 101, 255, 0.18);
 }
 
-.inadimplencia-action-primary:hover {
-  border-color: transparent;
-
+.inadimplencia-primary:hover {
   background:
     linear-gradient(
       90deg,
       #6958ef,
       #773ff0
     );
+
+  box-shadow:
+    0 7px 18px
+    rgba(117, 101, 255, 0.24);
 }
 
+.inadimplencia-secondary:active,
+.inadimplencia-primary:active {
+  transform: translateY(1px);
+}
+
+.button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 18px;
+  height: 18px;
+
+  font-size: 13px;
+  font-weight: 800;
+}
 
 /* =========================================================
    RESUMO
@@ -144,7 +170,7 @@
   display: grid;
 
   grid-template-columns:
-    repeat(4, minmax(0, 1fr));
+    repeat(5, minmax(0, 1fr));
 
   gap: 15px;
 
@@ -173,6 +199,18 @@
   box-shadow:
     0 4px 14px
     rgba(26, 43, 79, 0.035);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.inadimplencia-summary-card:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 7px 20px
+    rgba(26, 43, 79, 0.06);
 }
 
 .inadimplencia-summary-icon {
@@ -184,16 +222,30 @@
   border-radius: 13px;
 
   background:
-    rgba(192, 75, 85, 0.10);
+    rgba(117, 101, 255, 0.09);
 
-  color: #c04b55;
+  color: #7565ff;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 800;
+}
+
+.inadimplencia-summary-icon.danger-icon {
+  background:
+    rgba(192, 75, 85, 0.10);
+
+  color: #c04b55;
+}
+
+.inadimplencia-summary-icon.critical-icon {
+  background:
+    rgba(150, 59, 75, 0.11);
+
+  color: #963b4b;
 }
 
 .inadimplencia-summary-content {
@@ -208,6 +260,8 @@
   color: #7d89a1;
 
   font-size: 12px;
+
+  white-space: nowrap;
 }
 
 .inadimplencia-summary-content strong {
@@ -215,113 +269,25 @@
 
   color: #17233f;
 
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 750;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
 }
 
-.inadimplencia-summary-content small {
-  display: block;
-
-  margin-top: 4px;
-
-  color: #9aa4b7;
-
-  font-size: 10px;
-}
-
-
-/* =========================================================
-   INDICADORES DE AGING
-========================================================= */
-
-.inadimplencia-aging {
-  display: grid;
-
-  grid-template-columns:
-    repeat(5, minmax(0, 1fr));
-
-  gap: 12px;
-
-  margin-bottom: 22px;
-}
-
-.inadimplencia-aging-card {
-  padding: 15px;
-
-  border:
-    1px solid #e7ebf4;
-
-  border-radius: 14px;
-
-  background: #ffffff;
-
-  box-shadow:
-    0 4px 14px
-    rgba(26, 43, 79, 0.025);
-}
-
-.inadimplencia-aging-card span {
-  display: block;
-
-  margin-bottom: 7px;
-
-  color: #7d89a1;
-
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.inadimplencia-aging-card strong {
-  display: block;
-
-  color: #263451;
-
-  font-size: 17px;
-  font-weight: 750;
-}
-
-.inadimplencia-aging-card small {
-  display: block;
-
-  margin-top: 4px;
-
-  color: #99a3b6;
-
-  font-size: 10px;
-}
-
-
-/* =========================================================
-   DESTAQUES DE ATRASO
-========================================================= */
-
-.inadimplencia-aging-card.warning {
-  border-color:
-    rgba(218, 163, 56, 0.20);
-}
-
-.inadimplencia-aging-card.warning strong {
-  color: #b27816;
-}
-
-.inadimplencia-aging-card.danger {
+.inadimplencia-summary-danger {
   border-color:
     rgba(192, 75, 85, 0.20);
-}
 
-.inadimplencia-aging-card.danger strong {
-  color: #c04b55;
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #fffafb 100%
+    );
 }
-
-.inadimplencia-aging-card.critical {
-  border-color:
-    rgba(143, 53, 67, 0.22);
-}
-
-.inadimplencia-aging-card.critical strong {
-  color: #963b4b;
-}
-
 
 /* =========================================================
    FILTROS
@@ -410,7 +376,6 @@
     rgba(117, 101, 255, 0.09);
 }
 
-
 /* =========================================================
    SELECTS
 ========================================================= */
@@ -460,6 +425,10 @@
     box-shadow 0.2s ease;
 }
 
+.inadimplencia-filter select:hover {
+  border-color: #cfd7e8;
+}
+
 .inadimplencia-filter select:focus {
   border-color: #7565ff;
 
@@ -467,7 +436,6 @@
     0 0 0 3px
     rgba(117, 101, 255, 0.09);
 }
-
 
 /* =========================================================
    LIMPAR FILTROS
@@ -494,13 +462,201 @@
   cursor: pointer;
 
   transition:
-    background 0.2s ease;
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .inadimplencia-clear:hover {
   background: #e7e3ff;
 }
 
+.inadimplencia-clear:active {
+  transform: translateY(1px);
+}
+
+/* =========================================================
+   AGING
+========================================================= */
+
+.inadimplencia-aging-section {
+  margin-bottom: 22px;
+}
+
+.inadimplencia-aging-header {
+  margin-bottom: 12px;
+}
+
+.inadimplencia-aging-header h2 {
+  margin: 0;
+
+  color: #1c2944;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.inadimplencia-aging-header p {
+  margin: 5px 0 0;
+
+  color: #8994a9;
+
+  font-size: 12px;
+}
+
+.inadimplencia-aging-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.inadimplencia-aging-card {
+  min-width: 0;
+
+  padding: 15px;
+
+  border:
+    1px solid #e7ebf4;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 4px 14px
+    rgba(26, 43, 79, 0.025);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.inadimplencia-aging-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 7px 18px
+    rgba(26, 43, 79, 0.07);
+}
+
+.inadimplencia-aging-card.active {
+  border-color: #7565ff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #f8f6ff
+    );
+
+  box-shadow:
+    0 0 0 3px
+    rgba(117, 101, 255, 0.08);
+}
+
+.aging-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-bottom: 7px;
+}
+
+.inadimplencia-aging-card span {
+  display: block;
+
+  color: #7d89a1;
+
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.inadimplencia-aging-card strong {
+  display: block;
+
+  color: #263451;
+
+  font-size: 22px;
+  font-weight: 750;
+
+  line-height: 1.2;
+}
+
+.inadimplencia-aging-card .aging-value {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #99a3b6;
+
+  font-size: 10px;
+}
+
+.aging-active {
+  display: inline-flex;
+
+  padding: 3px 6px;
+
+  border-radius: 6px;
+
+  background: #eeeaff;
+
+  color: #6957ef;
+
+  font-size: 8px !important;
+  font-weight: 700 !important;
+
+  text-transform: uppercase;
+}
+
+.inadimplencia-aging-card.normal {
+  border-color:
+    rgba(117, 101, 255, 0.12);
+}
+
+.inadimplencia-aging-card.warning {
+  border-color:
+    rgba(218, 163, 56, 0.20);
+}
+
+.inadimplencia-aging-card.warning strong {
+  color: #b27816;
+}
+
+.inadimplencia-aging-card.danger {
+  border-color:
+    rgba(192, 75, 85, 0.20);
+}
+
+.inadimplencia-aging-card.danger strong {
+  color: #c04b55;
+}
+
+.inadimplencia-aging-card.critical {
+  border-color:
+    rgba(143, 53, 67, 0.22);
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #fff9fa
+    );
+}
+
+.inadimplencia-aging-card.critical strong {
+  color: #963b4b;
+}
 
 /* =========================================================
    TABELA
@@ -556,27 +712,78 @@
   font-size: 12px;
 }
 
-.inadimplencia-table-total {
-  text-align: right;
+.inadimplencia-selected {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 30px;
+
+  padding: 0 10px;
+
+  border-radius: 8px;
+
+  background: #f1efff;
+
+  color: #6957ef;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  white-space: nowrap;
 }
 
-.inadimplencia-table-total span {
-  display: block;
+/* =========================================================
+   SELECIONAR TODOS
+========================================================= */
 
-  margin-bottom: 3px;
+.inadimplencia-select-all {
+  min-height: 48px;
 
-  color: #8994a9;
+  padding:
+    0 20px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom:
+    1px solid #edf0f6;
+
+  background: #fbfcfe;
+}
+
+.inadimplencia-select-all label {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 9px;
+
+  color: #596780;
+
+  font-size: 12px;
+  font-weight: 650;
+
+  cursor: pointer;
+}
+
+.inadimplencia-select-all input {
+  width: 16px;
+  height: 16px;
+
+  margin: 0;
+
+  accent-color: #7565ff;
+
+  cursor: pointer;
+}
+
+.inadimplencia-visible-count {
+  color: #9aa4b7;
 
   font-size: 11px;
 }
-
-.inadimplencia-table-total strong {
-  color: #c04b55;
-
-  font-size: 17px;
-  font-weight: 750;
-}
-
 
 /* =========================================================
    EMPTY STATE
@@ -659,8 +866,21 @@
   font-weight: 600;
 
   cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
+.inadimplencia-empty button:hover {
+  box-shadow:
+    0 5px 14px
+    rgba(117, 101, 255, 0.20);
+}
+
+.inadimplencia-empty button:active {
+  transform: translateY(1px);
+}
 
 /* =========================================================
    LOADING
@@ -689,7 +909,7 @@
   border:
     3px solid #e7e9f2;
 
-  border-top-color: #c04b55;
+  border-top-color: #7565ff;
 
   border-radius: 50%;
 
@@ -704,20 +924,26 @@
   }
 }
 
-
 /* =========================================================
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 1250px) {
+@media (max-width: 1350px) {
+  .inadimplencia-summary {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .inadimplencia-aging-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
   .inadimplencia-summary {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
-  }
-
-  .inadimplencia-aging {
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
   }
 
   .inadimplencia-filters {
@@ -727,8 +953,11 @@
   .inadimplencia-search {
     flex-basis: 100%;
   }
-}
 
+  .inadimplencia-filter {
+    flex: 1;
+  }
+}
 
 @media (max-width: 900px) {
   .inadimplencia {
@@ -741,45 +970,23 @@
     flex-direction: column;
   }
 
-  .inadimplencia-actions {
+  .inadimplencia-header-actions {
     width: 100%;
   }
 
-  .inadimplencia-aging {
+  .inadimplencia-header-actions
+    button {
+    flex: 1;
+  }
+
+  .inadimplencia-aging-grid {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
   }
-
-  .inadimplencia-filter {
-    flex: 1;
-
-    min-width: 140px;
-  }
 }
 
-
-@media (max-width: 600px) {
-  .inadimplencia {
-    padding: 16px;
-  }
-
-  .inadimplencia-header h1 {
-    font-size: 25px;
-  }
-
-  .inadimplencia-actions {
-    flex-direction: column;
-  }
-
-  .inadimplencia-action {
-    width: 100%;
-  }
-
+@media (max-width: 700px) {
   .inadimplencia-summary {
-    grid-template-columns: 1fr;
-  }
-
-  .inadimplencia-aging {
     grid-template-columns: 1fr;
   }
 
@@ -789,7 +996,10 @@
   }
 
   .inadimplencia-search {
+    width: 100%;
     min-width: 0;
+
+    flex-basis: auto;
   }
 
   .inadimplencia-filter {
@@ -800,13 +1010,102 @@
     width: 100%;
   }
 
+  .inadimplencia-aging-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .inadimplencia {
+    padding: 16px;
+  }
+
+  .inadimplencia-header {
+    margin-bottom: 22px;
+  }
+
+  .inadimplencia-header h1 {
+    font-size: 25px;
+  }
+
+  .inadimplencia-header p {
+    font-size: 13px;
+  }
+
+  .inadimplencia-header-actions {
+    flex-direction: column;
+  }
+
+  .inadimplencia-header-actions
+    button {
+    width: 100%;
+    flex: none;
+  }
+
+  .inadimplencia-summary-card {
+    min-height: 92px;
+
+    padding: 15px;
+  }
+
+  .inadimplencia-summary-content
+    strong {
+    font-size: 18px;
+  }
+
+  .inadimplencia-aging-card {
+    padding: 14px;
+  }
+
   .inadimplencia-table-header {
     align-items: flex-start;
 
     flex-direction: column;
+
+    padding:
+      15px 16px;
   }
 
-  .inadimplencia-table-total {
-    text-align: left;
+  .inadimplencia-selected {
+    align-self: flex-start;
+  }
+
+  .inadimplencia-select-all {
+    padding:
+      0 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .inadimplencia {
+    padding: 12px;
+  }
+
+  .inadimplencia-summary-card {
+    gap: 10px;
+  }
+
+  .inadimplencia-summary-icon {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 11px;
+  }
+
+  .inadimplencia-summary-content
+    span {
+    font-size: 11px;
+  }
+
+  .inadimplencia-summary-content
+    strong {
+    font-size: 16px;
+  }
+
+  .inadimplencia-filter
+    select,
+  .inadimplencia-search
+    input {
+    height: 42px;
   }
 }

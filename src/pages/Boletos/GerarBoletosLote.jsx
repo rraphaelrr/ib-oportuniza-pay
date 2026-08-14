@@ -5,7 +5,7 @@ import StepContratos from "../../components/boletos/GeracaoLote/StepContratos";
 import StepConfiguracao from "../../components/boletos/GeracaoLote/StepConfiguracao";
 import StepRevisao from "../../components/boletos/GeracaoLote/StepRevisao";
 import StepResultado from "../../components/boletos/GeracaoLote/StepResultado";
-
+import DashboardLayout from "../../layout/DashboardLayout";
 import "./GerarBoletosLote.css";
 
 const STEPS = [
@@ -63,42 +63,27 @@ export default function GerarBoletosLote({
   onBack,
   onSubmit,
 }) {
-  const [currentStep, setCurrentStep] =
-    useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
 
-  const [data, setData] =
-    useState(INITIAL_DATA);
+  const [data, setData] = useState(INITIAL_DATA);
 
-  const [errors, setErrors] =
-    useState({});
+  const [errors, setErrors] = useState({});
 
-  const [submitting, setSubmitting] =
-    useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const step = STEPS[currentStep];
 
-  const isFirstStep =
-    currentStep === 0;
+  const isFirstStep = currentStep === 0;
 
-  const isLastStep =
-    currentStep ===
-    STEPS.length - 1;
+  const isLastStep = currentStep === STEPS.length - 1;
 
-  const selectedContracts =
-    useMemo(() => {
-      return contratos.filter((contrato) =>
-        data.contratos.some(
-          (selected) =>
-            String(
-              selected.id ?? selected
-            ) ===
-            String(contrato.id)
-        )
-      );
-    }, [
-      contratos,
-      data.contratos,
-    ]);
+  const selectedContracts = useMemo(() => {
+    return contratos.filter((contrato) =>
+      data.contratos.some(
+        (selected) => String(selected.id ?? selected) === String(contrato.id),
+      ),
+    );
+  }, [contratos, data.contratos]);
 
   function updateData(section, value) {
     setData((previous) => ({
@@ -107,9 +92,7 @@ export default function GerarBoletosLote({
     }));
   }
 
-  function updateConfiguracao(
-    changes
-  ) {
+  function updateConfiguracao(changes) {
     setData((previous) => ({
       ...previous,
 
@@ -129,16 +112,11 @@ export default function GerarBoletosLote({
 
     if (currentStep === 0) {
       if (!data.origem?.type) {
-        nextErrors.origem =
-          "Selecione a origem dos boletos.";
+        nextErrors.origem = "Selecione a origem dos boletos.";
       }
 
-      if (
-        data.origem?.type === "file" &&
-        !data.origem?.file
-      ) {
-        nextErrors.file =
-          "Selecione um arquivo.";
+      if (data.origem?.type === "file" && !data.origem?.file) {
+        nextErrors.file = "Selecione um arquivo.";
       }
     }
 
@@ -147,12 +125,8 @@ export default function GerarBoletosLote({
     // ------------------------------------------
 
     if (currentStep === 1) {
-      if (
-        !data.contratos ||
-        data.contratos.length === 0
-      ) {
-        nextErrors.contratos =
-          "Selecione pelo menos um contrato.";
+      if (!data.contratos || data.contratos.length === 0) {
+        nextErrors.contratos = "Selecione pelo menos um contrato.";
       }
     }
 
@@ -161,30 +135,20 @@ export default function GerarBoletosLote({
     // ------------------------------------------
 
     if (currentStep === 2) {
-      const config =
-        data.configuracao;
+      const config = data.configuracao;
 
       if (!config.due_date) {
-        nextErrors.due_date =
-          "Informe o vencimento.";
+        nextErrors.due_date = "Informe o vencimento.";
       }
 
-      if (
-        config.discount_type !==
-          "NONE" &&
-        !config.discount_value
-      ) {
-        nextErrors.discount_value =
-          "Informe o desconto.";
+      if (config.discount_type !== "NONE" && !config.discount_value) {
+        nextErrors.discount_value = "Informe o desconto.";
       }
     }
 
     setErrors(nextErrors);
 
-    return (
-      Object.keys(nextErrors).length ===
-      0
-    );
+    return Object.keys(nextErrors).length === 0;
   }
 
   function goNext() {
@@ -194,20 +158,13 @@ export default function GerarBoletosLote({
 
     setErrors({});
 
-    setCurrentStep((previous) =>
-      Math.min(
-        previous + 1,
-        STEPS.length - 1
-      )
-    );
+    setCurrentStep((previous) => Math.min(previous + 1, STEPS.length - 1));
   }
 
   function goPrevious() {
     setErrors({});
 
-    setCurrentStep((previous) =>
-      Math.max(previous - 1, 0)
-    );
+    setCurrentStep((previous) => Math.max(previous - 1, 0));
   }
 
   async function handleGenerate() {
@@ -218,46 +175,31 @@ export default function GerarBoletosLote({
     const payload = {
       origin: data.origem,
 
-      contract_ids:
-        data.contratos.map(
-          (contract) =>
-            contract.id ?? contract
-        ),
+      contract_ids: data.contratos.map((contract) => contract.id ?? contract),
 
-      configuration:
-        data.configuracao,
+      configuration: data.configuracao,
     };
 
     try {
       setSubmitting(true);
 
-      const result =
-        await onSubmit?.(payload);
+      const result = await onSubmit?.(payload);
 
       updateData(
         "resultado",
         result || {
           success: true,
-        }
+        },
       );
 
-      setCurrentStep(
-        STEPS.length - 1
-      );
+      setCurrentStep(STEPS.length - 1);
     } catch (error) {
-      updateData(
-        "resultado",
-        {
-          success: false,
-          error:
-            error?.message ||
-            "Não foi possível gerar os boletos.",
-        }
-      );
+      updateData("resultado", {
+        success: false,
+        error: error?.message || "Não foi possível gerar os boletos.",
+      });
 
-      setCurrentStep(
-        STEPS.length - 1
-      );
+      setCurrentStep(STEPS.length - 1);
     } finally {
       setSubmitting(false);
     }
@@ -285,12 +227,7 @@ export default function GerarBoletosLote({
         return (
           <StepOrigem
             value={data.origem}
-            onChange={(value) =>
-              updateData(
-                "origem",
-                value
-              )
-            }
+            onChange={(value) => updateData("origem", value)}
             error={errors.origem}
             fileError={errors.file}
           />
@@ -302,12 +239,7 @@ export default function GerarBoletosLote({
             contratos={contratos}
             clientes={clientes}
             value={data.contratos}
-            onChange={(value) =>
-              updateData(
-                "contratos",
-                value
-              )
-            }
+            onChange={(value) => updateData("contratos", value)}
             error={errors.contratos}
           />
         );
@@ -315,12 +247,8 @@ export default function GerarBoletosLote({
       case "configuracao":
         return (
           <StepConfiguracao
-            value={
-              data.configuracao
-            }
-            onChange={
-              updateConfiguracao
-            }
+            value={data.configuracao}
+            onChange={updateConfiguracao}
             errors={errors}
           />
         );
@@ -329,28 +257,18 @@ export default function GerarBoletosLote({
         return (
           <StepRevisao
             origem={data.origem}
-            contratos={
-              selectedContracts
-            }
-            configuracao={
-              data.configuracao
-            }
-            onEditStep={
-              handleStepClick
-            }
+            contratos={selectedContracts}
+            configuracao={data.configuracao}
+            onEditStep={handleStepClick}
           />
         );
 
       case "resultado":
         return (
           <StepResultado
-            resultado={
-              data.resultado
-            }
+            resultado={data.resultado}
             loading={submitting}
-            onFinish={
-              handleFinish
-            }
+            onFinish={handleFinish}
           />
         );
 
@@ -360,16 +278,16 @@ export default function GerarBoletosLote({
   }
 
   return (
-    <div className="gerar-boletos-lote">
+    <DashboardLayout>
 
+    
+    <div className="gerar-boletos-lote">
       {/* =================================================
           HEADER
       ================================================= */}
 
       <header className="gerar-boletos-lote-header">
-
         <div className="gerar-boletos-lote-header-left">
-
           <button
             type="button"
             className="gerar-boletos-lote-back"
@@ -391,18 +309,11 @@ export default function GerarBoletosLote({
           </button>
 
           <div>
-            <h1>
-              Gerar boletos em lote
-            </h1>
+            <h1>Gerar boletos em lote</h1>
 
-            <p>
-              Gere várias cobranças de uma
-              só vez a partir dos contratos.
-            </p>
+            <p>Gere várias cobranças de uma só vez a partir dos contratos.</p>
           </div>
-
         </div>
-
       </header>
 
       {/* =================================================
@@ -410,86 +321,63 @@ export default function GerarBoletosLote({
       ================================================= */}
 
       <div className="gerar-boletos-lote-stepper">
+        {STEPS.map((item, index) => {
+          const active = index === currentStep;
 
-        {STEPS.map(
-          (item, index) => {
-            const active =
-              index === currentStep;
+          const completed = index < currentStep;
 
-            const completed =
-              index < currentStep;
+          const disabled = index > currentStep;
 
-            const disabled =
-              index > currentStep;
-
-            return (
-              <React.Fragment
-                key={item.id}
+          return (
+            <React.Fragment key={item.id}>
+              <button
+                type="button"
+                className={[
+                  "gerar-boletos-lote-step",
+                  active ? "is-active" : "",
+                  completed ? "is-completed" : "",
+                  disabled ? "is-disabled" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                onClick={() => handleStepClick(index)}
+                disabled={disabled}
               >
-                <button
-                  type="button"
+                <span className="gerar-boletos-lote-step-number">
+                  {completed ? (
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  ) : (
+                    index + 1
+                  )}
+                </span>
+
+                <span className="gerar-boletos-lote-step-label">
+                  {item.label}
+                </span>
+              </button>
+
+              {index < STEPS.length - 1 && (
+                <span
                   className={[
-                    "gerar-boletos-lote-step",
-                    active
-                      ? "is-active"
-                      : "",
-                    completed
-                      ? "is-completed"
-                      : "",
-                    disabled
-                      ? "is-disabled"
-                      : "",
+                    "gerar-boletos-lote-step-line",
+                    index < currentStep ? "is-completed" : "",
                   ]
                     .filter(Boolean)
                     .join(" ")}
-                  onClick={() =>
-                    handleStepClick(
-                      index
-                    )
-                  }
-                  disabled={disabled}
-                >
-                  <span className="gerar-boletos-lote-step-number">
-                    {completed ? (
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                      >
-                        <path d="m5 12 4 4L19 6" />
-                      </svg>
-                    ) : (
-                      index + 1
-                    )}
-                  </span>
-
-                  <span className="gerar-boletos-lote-step-label">
-                    {item.label}
-                  </span>
-                </button>
-
-                {index <
-                  STEPS.length - 1 && (
-                  <span
-                    className={[
-                      "gerar-boletos-lote-step-line",
-                      index <
-                      currentStep
-                        ? "is-completed"
-                        : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                  />
-                )}
-              </React.Fragment>
-            );
-          }
-        )}
-
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
       </div>
 
       {/* =================================================
@@ -497,13 +385,7 @@ export default function GerarBoletosLote({
       ================================================= */}
 
       <main className="gerar-boletos-lote-content">
-
-        <div className="gerar-boletos-lote-card">
-
-          {renderCurrentStep()}
-
-        </div>
-
+        <div className="gerar-boletos-lote-card">{renderCurrentStep()}</div>
       </main>
 
       {/* =================================================
@@ -512,24 +394,16 @@ export default function GerarBoletosLote({
 
       {!isLastStep && (
         <footer className="gerar-boletos-lote-footer">
-
           <button
             type="button"
             className="gerar-boletos-lote-button-secondary"
-            onClick={
-              isFirstStep
-                ? onBack
-                : goPrevious
-            }
+            onClick={isFirstStep ? onBack : goPrevious}
             disabled={submitting}
           >
-            {isFirstStep
-              ? "Cancelar"
-              : "Voltar"}
+            {isFirstStep ? "Cancelar" : "Voltar"}
           </button>
 
-          {currentStep <
-            STEPS.length - 2 ? (
+          {currentStep < STEPS.length - 2 ? (
             <button
               type="button"
               className="gerar-boletos-lote-button-primary"
@@ -537,7 +411,6 @@ export default function GerarBoletosLote({
               disabled={submitting}
             >
               Continuar
-
               <svg
                 width="17"
                 height="17"
@@ -557,9 +430,7 @@ export default function GerarBoletosLote({
               onClick={handleGenerate}
               disabled={submitting}
             >
-              {submitting
-                ? "Gerando boletos..."
-                : "Gerar boletos"}
+              {submitting ? "Gerando boletos..." : "Gerar boletos"}
 
               {!submitting && (
                 <svg
@@ -575,11 +446,9 @@ export default function GerarBoletosLote({
               )}
             </button>
           )}
-
         </footer>
       )}
-
     </div>
+    </DashboardLayout>
   );
 }
-
