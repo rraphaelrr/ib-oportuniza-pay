@@ -77,33 +77,26 @@ export default function StepSenha({
   // MÍNIMO de 12 caracteres
   const hasValidLength = password.length >= 12;
 
-  // Regras da senha
   const hasLowercase = /[a-z]/.test(password);
   const hasUppercase = /[A-Z]/.test(password);
   const hasNumber = /\d/.test(password);
   const hasSpecial = /[^A-Za-z0-9]/.test(password);
 
-  const isStrong =
-    hasValidLength &&
-    hasLowercase &&
-    hasUppercase &&
-    hasNumber &&
-    hasSpecial;
+  // Não exige mais senha forte.
+  // A única exigência é ter pelo menos 12 caracteres.
+  const isValidPassword = hasValidLength;
 
-  // A confirmação também precisa ter pelo menos 12 caracteres
   const passwordsMatch =
-    password === confirmPassword &&
-    confirmPassword.length >= 12;
+    password === confirmPassword && confirmPassword.length >= 12;
 
   const handleNext = () => {
-    if (isStrong && passwordsMatch) {
+    if (isValidPassword && passwordsMatch) {
       next();
     }
   };
 
   return (
     <div className="cadastro-step">
-
       <h2>Senha de Acesso</h2>
 
       <p className="step-description">
@@ -117,9 +110,7 @@ export default function StepSenha({
           type={showPassword ? "text" : "password"}
           autoComplete="new-password"
           value={password}
-          onChange={(e) =>
-            updateField("numericPassword", e.target.value)
-          }
+          onChange={(e) => updateField("numericPassword", e.target.value)}
           error={errors.numericPassword}
         />
 
@@ -127,11 +118,7 @@ export default function StepSenha({
           type="button"
           className="password-toggle"
           onClick={() => setShowPassword(!showPassword)}
-          aria-label={
-            showPassword
-              ? "Ocultar senha"
-              : "Visualizar senha"
-          }
+          aria-label={showPassword ? "Ocultar senha" : "Visualizar senha"}
         >
           {showPassword ? (
             // Olho riscado
@@ -171,7 +158,6 @@ export default function StepSenha({
 
       {/* FORÇA DA SENHA */}
       <div className="password-strength">
-
         <div className="password-strength-bar">
           <div
             className="password-strength-fill"
@@ -188,47 +174,30 @@ export default function StepSenha({
         >
           {strength.label}
         </span>
-
       </div>
 
       {/* REGRAS */}
       <ul className="password-rules">
+        <li className={hasValidLength ? "ok" : ""}>Mínimo de 12 caracteres</li>
 
-        <li className={hasValidLength ? "ok" : ""}>
-          Mínimo de 12 caracteres
-        </li>
+        <li className={hasUppercase ? "ok" : ""}>Uma letra maiúscula</li>
 
-        <li className={hasUppercase ? "ok" : ""}>
-          Uma letra maiúscula
-        </li>
+        <li className={hasLowercase ? "ok" : ""}>Uma letra minúscula</li>
 
-        <li className={hasLowercase ? "ok" : ""}>
-          Uma letra minúscula
-        </li>
+        <li className={hasNumber ? "ok" : ""}>Um número</li>
 
-        <li className={hasNumber ? "ok" : ""}>
-          Um número
-        </li>
-
-        <li className={hasSpecial ? "ok" : ""}>
-          Um caractere especial
-        </li>
-
+        <li className={hasSpecial ? "ok" : ""}>Um caractere especial</li>
       </ul>
 
       {/* CONFIRMAR SENHA */}
       <div className="password-input-wrapper">
-
         <Input
           label="Confirmar Senha"
           type={showConfirmPassword ? "text" : "password"}
           autoComplete="new-password"
           value={confirmPassword}
           onChange={(e) =>
-            updateField(
-              "confirmNumericPassword",
-              e.target.value
-            )
+            updateField("confirmNumericPassword", e.target.value)
           }
           error={errors.confirmNumericPassword}
         />
@@ -236,13 +205,9 @@ export default function StepSenha({
         <button
           type="button"
           className="password-toggle"
-          onClick={() =>
-            setShowConfirmPassword(!showConfirmPassword)
-          }
+          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
           aria-label={
-            showConfirmPassword
-              ? "Ocultar senha"
-              : "Visualizar senha"
+            showConfirmPassword ? "Ocultar senha" : "Visualizar senha"
           }
         >
           {showConfirmPassword ? (
@@ -279,25 +244,16 @@ export default function StepSenha({
             </svg>
           )}
         </button>
-
       </div>
 
       {/* ERRO DE CONFIRMAÇÃO */}
-      {confirmPassword &&
-        password !== confirmPassword && (
-          <span className="field-error">
-            As senhas não conferem.
-          </span>
-        )}
+      {confirmPassword && password !== confirmPassword && (
+        <span className="field-error">As senhas não conferem.</span>
+      )}
 
       {/* BOTÕES */}
       <div className="step-buttons">
-
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={back}
-        >
+        <button type="button" className="btn-secondary" onClick={back}>
           Voltar
         </button>
 
@@ -305,13 +261,10 @@ export default function StepSenha({
           type="button"
           className="btn-primary"
           onClick={handleNext}
-          disabled={!isStrong || !passwordsMatch}
-        >
+disabled={!isValidPassword || !passwordsMatch}        >
           Continuar
         </button>
-
       </div>
-
     </div>
   );
 }
