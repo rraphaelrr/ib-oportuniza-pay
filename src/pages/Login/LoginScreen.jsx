@@ -16,7 +16,7 @@ export default function LoginScreen() {
 
   const [document, setDocument] = useState("");
   const [password, setPassword] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(true);
 
   const [loading, setLoading] = useState(false);
@@ -145,15 +145,28 @@ export default function LoginScreen() {
               />
             </div>
 
-            <div className="form-group">
+            <div className="form-group password-group">
               <label>Senha</label>
 
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="********"
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="********"
+                />
+
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword((old) => !old)}
+                  aria-label={
+                    showPassword ? "Ocultar senha" : "Visualizar senha"
+                  }
+                >
+                  {showPassword ? "Ocultar" : "Visualizar"}
+                </button>
+              </div>
             </div>
 
             {error && <div className="login-error">{error}</div>}

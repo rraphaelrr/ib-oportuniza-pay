@@ -242,7 +242,7 @@ export default function StepSucesso({
       <div className="success-buttons">
 
 
-        <button
+       {/*  <button
 
           className="btn btn-secondary"
 
@@ -256,7 +256,7 @@ export default function StepSucesso({
 
           Baixar Comprovante
 
-        </button>
+        </button> */}
 
 
 
