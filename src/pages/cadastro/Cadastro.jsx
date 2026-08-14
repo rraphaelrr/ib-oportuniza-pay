@@ -203,69 +203,104 @@ export default function Cadastro() {
   }
 
   async function handleSubmit() {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const response = await createAccount(form);
+      const response = await createAccount(form);
 
-    console.log("Conta criada:", response);
+      console.log("Conta criada:", response);
 
-    const accountId = response.id;
+      const accountId = response.id;
 
-    const attachments = [];
+      const attachments = [];
 
-    if (form.documentoFrente) {
-      attachments.push({
-        file: form.documentoFrente,
-        attachmentType: "identity_document",
-        description: "document_front",
-      });
+      if (form.documentoFrente) {
+        attachments.push({
+          file: form.documentoFrente,
+          attachmentType: "identity_document",
+          description: "document_front",
+        });
+      }
+
+      if (form.documentoVerso) {
+        attachments.push({
+          file: form.documentoVerso,
+          attachmentType: "identity_document",
+          description: "document_back",
+        });
+      }
+
+      if (form.selfie) {
+        attachments.push({
+          file: form.selfie,
+          attachmentType: "selfie",
+          description: "selfie_with_document",
+        });
+      }
+
+      if (form.cartaoCNPJ) {
+        attachments.push({
+          file: form.cartaoCNPJ,
+          attachmentType: "company_document",
+          description: "cnpj_card",
+        });
+      }
+
+      if (attachments.length > 0) {
+        await uploadAccountAttachment(accountId, attachments);
+
+        console.log("Todos os anexos enviados.");
+      }
+
+      setProtocolo(response.account_number);
+
+      setStep(steps.length - 1);
+    } catch (error) {
+      console.error("Erro ao criar conta:", error);
+
+      const errorCode = error.response?.data?.error?.code;
+
+      // Mensagens amigáveis para os erros vindos do backend
+      const errorMessages = {
+        weak_password:
+          "A senha escolhida é muito fraca. Volte à etapa de senha e escolha uma senha mais segura.",
+
+        invalid_password:
+          "A senha informada é inválida. Verifique a senha e tente novamente.",
+
+        cpf_already_exists: "Este CPF já possui uma conta cadastrada.",
+
+        cnpj_already_exists: "Este CNPJ já possui uma conta cadastrada.",
+
+        email_already_exists: "Este e-mail já possui uma conta cadastrada.",
+
+        invalid_cpf: "O CPF informado é inválido.",
+
+        invalid_cnpj: "O CNPJ informado é inválido.",
+      };
+
+      const message =
+        errorMessages[errorCode] ||
+        error.response?.data?.message ||
+        "Não foi possível criar a conta. Verifique os dados e tente novamente.";
+
+      // Se o erro for relacionado à senha,
+      // volta automaticamente para a etapa de senha.
+      if (errorCode === "weak_password" || errorCode === "invalid_password") {
+        const passwordStepIndex = steps.findIndex(
+          (item) => item.component === StepSenha,
+        );
+
+        if (passwordStepIndex !== -1) {
+          setStep(passwordStepIndex);
+        }
+      }
+
+      alert(message);
+    } finally {
+      setLoading(false);
     }
-
-    if (form.documentoVerso) {
-      attachments.push({
-        file: form.documentoVerso,
-        attachmentType: "identity_document",
-        description: "document_back",
-      });
-    }
-
-    if (form.selfie) {
-      attachments.push({
-        file: form.selfie,
-        attachmentType: "selfie",
-        description: "selfie_with_document",
-      });
-    }
-
-    if (form.cartaoCNPJ) {
-      attachments.push({
-        file: form.cartaoCNPJ,
-        attachmentType: "company_document",
-        description: "cnpj_card",
-      });
-    }
-
-    if (attachments.length > 0) {
-      await uploadAccountAttachment(accountId, attachments);
-
-      console.log("Todos os anexos enviados.");
-    }
-
-    setProtocolo(response.account_number);
-
-    setStep(steps.length - 1);
-  } catch (error) {
-    console.error(error);
-
-    alert(
-      error.response?.data?.message ||
-      "Erro ao criar a conta."
-    );
-  } finally {
-    setLoading(false);
   }
-}
 
   return (
     <div className="cadastro">
