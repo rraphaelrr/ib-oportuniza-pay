@@ -261,7 +261,8 @@ export default function StepSenha({
           type="button"
           className="btn-primary"
           onClick={handleNext}
-disabled={!isValidPassword || !passwordsMatch}        >
+          disabled={!isValidPassword || !passwordsMatch}
+        >
           Continuar
         </button>
       </div>

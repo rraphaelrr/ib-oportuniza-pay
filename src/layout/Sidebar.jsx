@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 
 import {
@@ -30,16 +29,17 @@ import Produtos from "../components/Produtos";
 export default function Sidebar({
   collapsed,
   onToggle,
+  mobileOpen,
+  onClose,
 }) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const { logout } = useAuth();
 
-  const [boletosOpen, setBoletosOpen] =
-    useState(
-      location.pathname.startsWith("/boletos")
-    );
+  const [boletosOpen, setBoletosOpen] = useState(
+    location.pathname.startsWith("/boletos")
+  );
 
   const menus = [
     {
@@ -53,28 +53,24 @@ export default function Sidebar({
           path: "/home",
           show: true,
         },
-
         {
           label: "Pix",
           icon: <FaPix />,
           path: "/pix",
           show: true,
         },
-
         {
           label: "Extrato",
           icon: <FaWallet />,
           path: "/extrato",
           show: true,
         },
-
         {
           label: "Transferências",
           icon: <FaArrowRightArrowLeft />,
           path: "/transferencias",
           show: false,
         },
-
         {
           label: "Cartões",
           icon: <FaCreditCard />,
@@ -86,7 +82,6 @@ export default function Sidebar({
 
     {
       title: "COBRANÇA",
-
       show: Produtos.boleto,
 
       items: [
@@ -102,37 +97,31 @@ export default function Sidebar({
               icon: <FaChartLine />,
               path: "/boletos",
             },
-
             {
               label: "Todos os boletos",
               icon: <FaReceipt />,
               path: "/boletos/lista",
             },
-
             {
               label: "Gerar boleto",
               icon: <FaPlus />,
               path: "/boletos/gerar",
             },
-
             {
               label: "Gerar em lote",
               icon: <FaLayerGroup />,
               path: "/boletos/gerar-lote",
             },
-
             {
               label: "Clientes",
               icon: <FaUsers />,
               path: "/boletos/clientes",
             },
-
             {
               label: "Inadimplência",
               icon: <FaTriangleExclamation />,
               path: "/boletos/inadimplencia",
             },
-
             {
               label: "Pagamentos",
               icon: <FaMoneyBillTransfer />,
@@ -145,7 +134,6 @@ export default function Sidebar({
 
     {
       title: "CRÉDITO & ATIVOS",
-
       show: false,
 
       items: [
@@ -155,14 +143,12 @@ export default function Sidebar({
           path: "/antecipacao",
           show: false,
         },
-
         {
           label: "Consórcio",
           icon: <FaClock />,
           path: "/consorcio",
           show: false,
         },
-
         {
           label: "Investimentos",
           icon: <FaChartLine />,
@@ -183,218 +169,230 @@ export default function Sidebar({
   function handleBoletosClick() {
     if (collapsed) {
       navigate("/boletos");
+      onClose?.();
       return;
     }
 
-    setBoletosOpen(
-      (current) => !current
-    );
+    setBoletosOpen((current) => !current);
+  }
+
+  function handleNavigation(path) {
+    navigate(path);
+    onClose?.();
   }
 
   function handleSubmenuClick(path) {
     navigate(path);
+    onClose?.();
+  }
+
+  function handleLogout() {
+    logout();
+    onClose?.();
   }
 
   return (
-    <aside
-      className={`sidebar ${
-        collapsed ? "collapsed" : ""
-      }`}
-    >
-      {/* =========================
-          LOGO
-      ========================= */}
+    <>
+      {/* OVERLAY MOBILE */}
+      {mobileOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={onClose}
+        />
+      )}
 
-      <div className="sidebar-logo">
-        <strong>
-          Oportuni<span>ZA</span>
-        </strong>
+      <aside
+        className={`
+          sidebar
+          ${collapsed ? "collapsed" : ""}
+          ${mobileOpen ? "mobile-open" : ""}
+        `}
+      >
+        {/* =========================
+            LOGO
+        ========================= */}
 
-        {!collapsed && (
-          <small>PAY</small>
-        )}
-      </div>
+        <div className="sidebar-logo">
+          <strong>
+            Oportuni<span>ZA</span>
+          </strong>
 
-      {/* =========================
-          MENU
-      ========================= */}
+          {!collapsed && <small>PAY</small>}
+        </div>
 
-      <nav>
-        {menus
-          .filter(
-            (group) =>
-              group.show !== false
-          )
-          .map((group, index) => (
-            <div
-              className="menu-group"
-              key={index}
-            >
-              {!collapsed && (
-                <h4>
-                  {group.title}
-                </h4>
-              )}
+        {/* =========================
+            MENU
+        ========================= */}
 
-              {group.items
-                .filter(
-                  (item) =>
-                    item.show !== false
-                )
-                .map((item, i) => {
-                  const hasSubmenu =
-                    Array.isArray(
-                      item.submenu
-                    ) &&
-                    item.submenu.length > 0;
+        <nav>
+          {menus
+            .filter((group) => group.show !== false)
+            .map((group, index) => (
+              <div
+                className="menu-group"
+                key={index}
+              >
+                {!collapsed && (
+                  <h4>{group.title}</h4>
+                )}
 
-                  const active =
-                    hasSubmenu
+                {group.items
+                  .filter(
+                    (item) =>
+                      item.show !== false
+                  )
+                  .map((item, i) => {
+                    const hasSubmenu =
+                      Array.isArray(
+                        item.submenu
+                      ) &&
+                      item.submenu.length > 0;
+
+                    const active = hasSubmenu
                       ? isBoletosActive
-                      : isActive(
-                          item.path
-                        );
+                      : isActive(item.path);
 
-                  return (
-                    <React.Fragment
-                      key={i}
-                    >
-                      <button
-                        type="button"
-                        className={
-                          active
-                            ? "active"
-                            : ""
-                        }
-                        onClick={() => {
-                          if (
-                            hasSubmenu
-                          ) {
-                            handleBoletosClick();
-                            return;
-                          }
-
-                          navigate(
-                            item.path
-                          );
-                        }}
+                    return (
+                      <React.Fragment
+                        key={i}
                       >
-                        <span className="menu-icon">
-                          {item.icon}
-                        </span>
+                        <button
+                          type="button"
+                          className={
+                            active
+                              ? "active"
+                              : ""
+                          }
+                          onClick={() => {
+                            if (hasSubmenu) {
+                              handleBoletosClick();
+                              return;
+                            }
 
-                        {!collapsed && (
-                          <>
-                            <span className="menu-label">
-                              {item.label}
-                            </span>
+                            handleNavigation(
+                              item.path
+                            );
+                          }}
+                          title={
+                            collapsed
+                              ? item.label
+                              : undefined
+                          }
+                        >
+                          <span className="menu-icon">
+                            {item.icon}
+                          </span>
 
-                            {hasSubmenu && (
-                              <FaChevronDown
-                                className={`submenu-chevron ${
-                                  boletosOpen
-                                    ? "open"
-                                    : ""
-                                }`}
-                              />
-                            )}
-                          </>
-                        )}
-                      </button>
+                          {!collapsed && (
+                            <>
+                              <span className="menu-label">
+                                {item.label}
+                              </span>
 
-                      {/* =========================
-                          SUBMENU BOLETOS
-                      ========================= */}
-
-                      {hasSubmenu &&
-                        !collapsed &&
-                        boletosOpen && (
-                          <div className="sidebar-submenu">
-                            {item.submenu.map(
-                              (
-                                subItem
-                              ) => {
-                                const subActive =
-                                  isActive(
-                                    subItem.path
-                                  );
-
-                                return (
-                                  <button
-                                    type="button"
-                                    key={
-                                      subItem.path
-                                    }
-                                    className={
-                                      subActive
-                                        ? "submenu-active"
+                              {hasSubmenu && (
+                                <FaChevronDown
+                                  className={`
+                                    submenu-chevron
+                                    ${
+                                      boletosOpen
+                                        ? "open"
                                         : ""
                                     }
-                                    onClick={() =>
-                                      handleSubmenuClick(
+                                  `}
+                                />
+                              )}
+                            </>
+                          )}
+                        </button>
+
+                        {/* SUBMENU */}
+
+                        {hasSubmenu &&
+                          !collapsed &&
+                          boletosOpen && (
+                            <div className="sidebar-submenu">
+                              {item.submenu.map(
+                                (subItem) => {
+                                  const subActive =
+                                    isActive(
+                                      subItem.path
+                                    );
+
+                                  return (
+                                    <button
+                                      type="button"
+                                      key={
                                         subItem.path
-                                      )
-                                    }
-                                  >
-                                    <span className="submenu-icon">
-                                      {
-                                        subItem.icon
                                       }
-                                    </span>
-
-                                    <span>
-                                      {
-                                        subItem.label
+                                      className={
+                                        subActive
+                                          ? "submenu-active"
+                                          : ""
                                       }
-                                    </span>
-                                  </button>
-                                );
-                              }
-                            )}
-                          </div>
-                        )}
-                    </React.Fragment>
-                  );
-                })}
-            </div>
-          ))}
-      </nav>
+                                      onClick={() =>
+                                        handleSubmenuClick(
+                                          subItem.path
+                                        )
+                                      }
+                                    >
+                                      <span className="submenu-icon">
+                                        {
+                                          subItem.icon
+                                        }
+                                      </span>
 
-      {/* =========================
-          FOOTER
-      ========================= */}
+                                      <span>
+                                        {
+                                          subItem.label
+                                        }
+                                      </span>
+                                    </button>
+                                  );
+                                }
+                              )}
+                            </div>
+                          )}
+                      </React.Fragment>
+                    );
+                  })}
+              </div>
+            ))}
+        </nav>
 
-      <div className="sidebar-footer">
-        <button
-          type="button"
-          onClick={() =>
-            navigate(
-              "/configuracoes"
-            )
-          }
-        >
-          <FaGear />
+        {/* =========================
+            FOOTER
+        ========================= */}
 
-          {!collapsed && (
-            <span>
-              Configurações
-            </span>
-          )}
-        </button>
+        <div className="sidebar-footer">
+          <button
+            type="button"
+            onClick={() =>
+              handleNavigation(
+                "/configuracoes"
+              )
+            }
+          >
+            <FaGear />
 
-        <button
-          type="button"
-          onClick={logout}
-        >
-          <FaArrowRightFromBracket />
+            {!collapsed && (
+              <span>
+                Configurações
+              </span>
+            )}
+          </button>
 
-          {!collapsed && (
-            <span>
-              Sair
-            </span>
-          )}
-        </button>
-      </div>
-    </aside>
+          <button
+            type="button"
+            onClick={handleLogout}
+          >
+            <FaArrowRightFromBracket />
+
+            {!collapsed && (
+              <span>Sair</span>
+            )}
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

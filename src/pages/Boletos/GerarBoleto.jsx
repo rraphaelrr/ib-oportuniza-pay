@@ -1,6 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
 import "./GerarBoleto.css";
 import DashboardLayout from "../../layout/DashboardLayout";
+
+import {
+  getClientes,
+  getContratos,
+  criarBoleto,
+} from "../../services/boletoService";
 
 /* =========================================================
    FORMATAÇÃO
@@ -93,12 +100,27 @@ function today() {
 ========================================================= */
 
 export default function GerarBoleto({
-  clientes = [],
-  contratos = [],
-  loading = false,
+  clientes: clientesProp = [],
+  contratos: contratosProp = [],
+  loading: loadingProp = false,
+
   onBack,
   onSubmit,
+  onSuccess,
 }) {
+  /* =========================================================
+     DADOS
+  ========================================================= */
+
+  const [clientes, setClientes] = useState(clientesProp);
+  const [contratos, setContratos] = useState(contratosProp);
+
+  const [loadingData, setLoadingData] = useState(false);
+
+  /* =========================================================
+     FORMULÁRIO
+  ========================================================= */
+
   const [clienteId, setClienteId] = useState("");
   const [contratoId, setContratoId] = useState("");
 
@@ -118,34 +140,122 @@ export default function GerarBoleto({
   const [submitting, setSubmitting] = useState(false);
 
   /* =========================================================
+     CARREGAR CLIENTES E CONTRATOS
+  ========================================================= */
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadData() {
+      /*
+       * Se o componente já recebeu os dados por props,
+       * não precisa buscar novamente.
+       */
+
+      if (
+        clientesProp?.length > 0 &&
+        contratosProp?.length > 0
+      ) {
+        return;
+      }
+
+      try {
+        setLoadingData(true);
+
+        const [clientesResponse, contratosResponse] =
+          await Promise.all([
+            clientesProp?.length > 0
+              ? Promise.resolve(clientesProp)
+              : getClientes(),
+
+            contratosProp?.length > 0
+              ? Promise.resolve(contratosProp)
+              : getContratos(),
+          ]);
+
+        if (!mounted) return;
+
+        setClientes(
+          Array.isArray(clientesResponse)
+            ? clientesResponse
+            : [],
+        );
+
+        setContratos(
+          Array.isArray(contratosResponse)
+            ? contratosResponse
+            : [],
+        );
+      } catch (error) {
+        console.error(
+          "Erro ao carregar dados do boleto:",
+          error,
+        );
+
+        if (mounted) {
+          setErrors((current) => ({
+            ...current,
+            geral:
+              "Não foi possível carregar os clientes e contratos.",
+          }));
+        }
+      } finally {
+        if (mounted) {
+          setLoadingData(false);
+        }
+      }
+    }
+
+    loadData();
+
+    return () => {
+      mounted = false;
+    };
+  }, [clientesProp, contratosProp]);
+
+  /* =========================================================
+     LOADING FINAL
+  ========================================================= */
+
+  const loading =
+    Boolean(loadingProp) || loadingData;
+
+  /* =========================================================
      CLIENTE SELECIONADO
   ========================================================= */
 
   const clienteSelecionado = clientes.find(
-    (cliente) => String(cliente.id) === String(clienteId),
+    (cliente) =>
+      String(cliente.id) === String(clienteId),
   );
 
   /* =========================================================
      CONTRATOS DO CLIENTE
   ========================================================= */
 
-  const contratosDoCliente = contratos.filter((contrato) => {
-    if (!clienteId) {
-      return false;
-    }
+  const contratosDoCliente = contratos.filter(
+    (contrato) => {
+      if (!clienteId) {
+        return false;
+      }
 
-    return (
-      String(contrato.client_id ?? contrato.cliente_id) ===
-      String(clienteId)
-    );
-  });
+      return (
+        String(
+          contrato.client_id ??
+            contrato.cliente_id ??
+            contrato.clientId,
+        ) === String(clienteId)
+      );
+    },
+  );
 
   /* =========================================================
      CONTRATO SELECIONADO
   ========================================================= */
 
   const contratoSelecionado = contratos.find(
-    (contrato) => String(contrato.id) === String(contratoId),
+    (contrato) =>
+      String(contrato.id) === String(contratoId),
   );
 
   /* =========================================================
@@ -157,13 +267,13 @@ export default function GerarBoleto({
 
     setClienteId(value);
 
-    // Sempre limpa o contrato quando o cliente muda.
     setContratoId("");
 
     setErrors((current) => ({
       ...current,
       cliente: undefined,
       contrato: undefined,
+      geral: undefined,
     }));
   }
 
@@ -173,15 +283,19 @@ export default function GerarBoleto({
     setErrors((current) => ({
       ...current,
       contrato: undefined,
+      geral: undefined,
     }));
   }
 
   function handleValorChange(event) {
-    setValor(formatCurrencyInput(event.target.value));
+    setValor(
+      formatCurrencyInput(event.target.value),
+    );
 
     setErrors((current) => ({
       ...current,
       valor: undefined,
+      geral: undefined,
     }));
   }
 
@@ -191,6 +305,7 @@ export default function GerarBoleto({
     setErrors((current) => ({
       ...current,
       vencimento: undefined,
+      geral: undefined,
     }));
   }
 
@@ -198,26 +313,34 @@ export default function GerarBoleto({
     const type = event.target.value;
 
     setTipoDesconto(type);
-
-    // Evita manter um valor incompatível com o novo tipo.
     setDesconto("");
 
     setErrors((current) => ({
       ...current,
       desconto: undefined,
+      geral: undefined,
     }));
   }
 
   function handleDescontoChange(event) {
     if (tipoDesconto === "PERCENTAGE") {
-      setDesconto(formatPercentageInput(event.target.value));
+      setDesconto(
+        formatPercentageInput(
+          event.target.value,
+        ),
+      );
     } else {
-      setDesconto(formatCurrencyInput(event.target.value));
+      setDesconto(
+        formatCurrencyInput(
+          event.target.value,
+        ),
+      );
     }
 
     setErrors((current) => ({
       ...current,
       desconto: undefined,
+      geral: undefined,
     }));
   }
 
@@ -263,31 +386,37 @@ export default function GerarBoleto({
     const nextErrors = {};
 
     if (!clienteId) {
-      nextErrors.cliente = "Selecione o cliente.";
+      nextErrors.cliente =
+        "Selecione o cliente.";
     }
 
     if (!contratoId) {
-      nextErrors.contrato = "Selecione o contrato.";
+      nextErrors.contrato =
+        "Selecione o contrato.";
     }
 
-    const valorNumerico = parseCurrency(valor);
+    const valorNumerico =
+      parseCurrency(valor);
 
     if (!valor || valorNumerico <= 0) {
-      nextErrors.valor = "Informe um valor válido.";
+      nextErrors.valor =
+        "Informe um valor válido.";
     }
 
     if (!vencimento) {
-      nextErrors.vencimento = "Informe o vencimento.";
+      nextErrors.vencimento =
+        "Informe o vencimento.";
     }
 
-    if (vencimento && vencimento < today()) {
+    if (
+      vencimento &&
+      vencimento < today()
+    ) {
       nextErrors.vencimento =
         "O vencimento não pode ser anterior à data atual.";
     }
 
-    /* ---------------------------------------------------------
-       DESCONTO
-    --------------------------------------------------------- */
+    /* DESCONTO */
 
     if (tipoDesconto !== "NONE") {
       const descontoNumerico =
@@ -295,8 +424,12 @@ export default function GerarBoleto({
           ? parsePercentage(desconto)
           : parseCurrency(desconto);
 
-      if (!desconto || descontoNumerico <= 0) {
-        nextErrors.desconto = "Informe o valor do desconto.";
+      if (
+        !desconto ||
+        descontoNumerico <= 0
+      ) {
+        nextErrors.desconto =
+          "Informe o valor do desconto.";
       }
 
       if (
@@ -316,12 +449,11 @@ export default function GerarBoleto({
       }
     }
 
-    /* ---------------------------------------------------------
-       JUROS
-    --------------------------------------------------------- */
+    /* JUROS */
 
     if (juros !== "") {
-      const jurosNumerico = Number(juros);
+      const jurosNumerico =
+        Number(juros);
 
       if (
         Number.isNaN(jurosNumerico) ||
@@ -333,12 +465,11 @@ export default function GerarBoleto({
       }
     }
 
-    /* ---------------------------------------------------------
-       MULTA
-    --------------------------------------------------------- */
+    /* MULTA */
 
     if (multa !== "") {
-      const multaNumerico = Number(multa);
+      const multaNumerico =
+        Number(multa);
 
       if (
         Number.isNaN(multaNumerico) ||
@@ -352,7 +483,9 @@ export default function GerarBoleto({
 
     setErrors(nextErrors);
 
-    return Object.keys(nextErrors).length === 0;
+    return (
+      Object.keys(nextErrors).length === 0
+    );
   }
 
   /* =========================================================
@@ -366,38 +499,108 @@ export default function GerarBoleto({
       return;
     }
 
+    const valorNumerico =
+      parseCurrency(valor);
+
     const payload = {
       client_id: clienteId,
       contract_id: contratoId,
 
-      amount: parseCurrency(valor),
+      amount: valorNumerico,
 
       due_date: vencimento,
 
-      description: descricao.trim() || null,
+      description:
+        descricao.trim() || null,
 
       discount:
         tipoDesconto === "NONE"
           ? null
           : {
               type: tipoDesconto,
+
               value:
-                tipoDesconto === "PERCENTAGE"
-                  ? parsePercentage(desconto)
-                  : parseCurrency(desconto),
+                tipoDesconto ===
+                "PERCENTAGE"
+                  ? parsePercentage(
+                      desconto,
+                    )
+                  : parseCurrency(
+                      desconto,
+                    ),
             },
 
-      interest: juros !== "" ? Number(juros) : 0,
+      interest:
+        juros !== ""
+          ? Number(juros)
+          : 0,
 
-      fine: multa !== "" ? Number(multa) : 0,
+      fine:
+        multa !== ""
+          ? Number(multa)
+          : 0,
 
-      instructions: instructions.trim() || null,
+      instructions:
+        instructions.trim() || null,
     };
 
     try {
       setSubmitting(true);
 
-      await onSubmit?.(payload);
+      /*
+       * =====================================================
+       * CONEXÃO COM BOLETO SERVICE
+       * =====================================================
+       *
+       * Aqui acontece a chamada centralizada.
+       *
+       * Atualmente o service devolve um boleto mockado.
+       * Depois ele poderá chamar a API real.
+       */
+
+      const boletoCriado =
+        await criarBoleto(payload);
+
+      console.log(
+        "Boleto criado:",
+        boletoCriado,
+      );
+
+      /*
+       * Mantém compatibilidade com quem
+       * já utiliza onSubmit no componente.
+       */
+
+      if (
+        typeof onSubmit === "function"
+      ) {
+        await onSubmit(
+          payload,
+          boletoCriado,
+        );
+      }
+
+      /*
+       * Callback específico após criação.
+       */
+
+      if (
+        typeof onSuccess === "function"
+      ) {
+        onSuccess(boletoCriado);
+      }
+    } catch (error) {
+      console.error(
+        "Erro ao gerar boleto:",
+        error,
+      );
+
+      setErrors((current) => ({
+        ...current,
+        geral:
+          error?.message ||
+          "Não foi possível gerar o boleto.",
+      }));
     } finally {
       setSubmitting(false);
     }
@@ -407,7 +610,9 @@ export default function GerarBoleto({
      LABEL DO CONTRATO
   ========================================================= */
 
-  function getContratoLabel(contrato) {
+  function getContratoLabel(
+    contrato,
+  ) {
     return (
       contrato.number ||
       contrato.numero ||
@@ -423,12 +628,14 @@ export default function GerarBoleto({
   return (
     <DashboardLayout>
       <div className="gerar-boleto">
+
         {/* ==================================================
             HEADER
         ================================================== */}
 
         <header className="gerar-boleto-header">
           <div className="gerar-boleto-header-left">
+
             <button
               type="button"
               className="gerar-boleto-back"
@@ -462,6 +669,22 @@ export default function GerarBoleto({
         </header>
 
         {/* ==================================================
+            ERRO GERAL
+        ================================================== */}
+
+        {errors.geral && (
+          <div
+            className="gerar-boleto-error"
+            style={{
+              marginBottom: "16px",
+              display: "block",
+            }}
+          >
+            {errors.geral}
+          </div>
+        )}
+
+        {/* ==================================================
             FORMULÁRIO
         ================================================== */}
 
@@ -470,14 +693,18 @@ export default function GerarBoleto({
           onSubmit={handleSubmit}
           noValidate
         >
+
           {/* ==================================================
               CLIENTE E CONTRATO
           ================================================== */}
 
           <section className="gerar-boleto-card">
+
             <div className="gerar-boleto-card-header">
               <div>
-                <h2>Cliente e contrato</h2>
+                <h2>
+                  Cliente e contrato
+                </h2>
 
                 <p>
                   Informe quem será responsável pela cobrança.
@@ -486,9 +713,11 @@ export default function GerarBoleto({
             </div>
 
             <div className="gerar-boleto-grid">
+
               {/* CLIENTE */}
 
               <div className="gerar-boleto-field">
+
                 <label htmlFor="cliente">
                   Cliente
                 </label>
@@ -496,28 +725,41 @@ export default function GerarBoleto({
                 <select
                   id="cliente"
                   value={clienteId}
-                  onChange={handleClienteChange}
-                  className={errors.cliente ? "has-error" : ""}
-                  disabled={submitting || loading}
+                  onChange={
+                    handleClienteChange
+                  }
+                  className={
+                    errors.cliente
+                      ? "has-error"
+                      : ""
+                  }
+                  disabled={
+                    submitting ||
+                    loading
+                  }
                 >
                   <option value="">
-                    Selecione um cliente
+                    {loading
+                      ? "Carregando clientes..."
+                      : "Selecione um cliente"}
                   </option>
 
-                  {clientes.map((cliente) => (
-                    <option
-                      key={cliente.id}
-                      value={cliente.id}
-                    >
-                      {cliente.name ||
-                        cliente.nome ||
-                        "Cliente sem nome"}
+                  {clientes.map(
+                    (cliente) => (
+                      <option
+                        key={cliente.id}
+                        value={cliente.id}
+                      >
+                        {cliente.name ||
+                          cliente.nome ||
+                          "Cliente sem nome"}
 
-                      {cliente.document
-                        ? ` — ${cliente.document}`
-                        : ""}
-                    </option>
-                  ))}
+                        {cliente.document
+                          ? ` — ${cliente.document}`
+                          : ""}
+                      </option>
+                    ),
+                  )}
                 </select>
 
                 {errors.cliente && (
@@ -525,11 +767,13 @@ export default function GerarBoleto({
                     {errors.cliente}
                   </span>
                 )}
+
               </div>
 
               {/* CONTRATO */}
 
               <div className="gerar-boleto-field">
+
                 <label htmlFor="contrato">
                   Contrato
                 </label>
@@ -537,32 +781,42 @@ export default function GerarBoleto({
                 <select
                   id="contrato"
                   value={contratoId}
-                  onChange={handleContratoChange}
+                  onChange={
+                    handleContratoChange
+                  }
                   disabled={
                     !clienteId ||
                     submitting ||
                     loading
                   }
                   className={
-                    errors.contrato ? "has-error" : ""
+                    errors.contrato
+                      ? "has-error"
+                      : ""
                   }
                 >
                   <option value="">
                     {clienteId
-                      ? contratosDoCliente.length > 0
+                      ? contratosDoCliente.length >
+                        0
                         ? "Selecione um contrato"
                         : "Nenhum contrato encontrado"
                       : "Selecione primeiro o cliente"}
                   </option>
 
-                  {contratosDoCliente.map((contrato) => (
-                    <option
-                      key={contrato.id}
-                      value={contrato.id}
-                    >
-                      #{getContratoLabel(contrato)}
-                    </option>
-                  ))}
+                  {contratosDoCliente.map(
+                    (contrato) => (
+                      <option
+                        key={contrato.id}
+                        value={contrato.id}
+                      >
+                        #
+                        {getContratoLabel(
+                          contrato,
+                        )}
+                      </option>
+                    ),
+                  )}
                 </select>
 
                 {errors.contrato && (
@@ -570,6 +824,7 @@ export default function GerarBoleto({
                     {errors.contrato}
                   </span>
                 )}
+
               </div>
             </div>
 
@@ -577,6 +832,7 @@ export default function GerarBoleto({
 
             {clienteSelecionado && (
               <div className="gerar-boleto-selected">
+
                 <div className="gerar-boleto-avatar">
                   {(
                     clienteSelecionado.name ||
@@ -597,10 +853,13 @@ export default function GerarBoleto({
 
                   {clienteSelecionado.document && (
                     <span>
-                      {clienteSelecionado.document}
+                      {
+                        clienteSelecionado.document
+                      }
                     </span>
                   )}
                 </div>
+
               </div>
             )}
 
@@ -608,13 +867,21 @@ export default function GerarBoleto({
 
             {contratoSelecionado && (
               <div className="gerar-boleto-contract">
-                <span>Contrato</span>
+
+                <span>
+                  Contrato
+                </span>
 
                 <strong>
-                  #{getContratoLabel(contratoSelecionado)}
+                  #
+                  {getContratoLabel(
+                    contratoSelecionado,
+                  )}
                 </strong>
+
               </div>
             )}
+
           </section>
 
           {/* ==================================================
@@ -622,9 +889,12 @@ export default function GerarBoleto({
           ================================================== */}
 
           <section className="gerar-boleto-card">
+
             <div className="gerar-boleto-card-header">
               <div>
-                <h2>Dados da cobrança</h2>
+                <h2>
+                  Dados da cobrança
+                </h2>
 
                 <p>
                   Configure o valor e o vencimento do boleto.
@@ -633,9 +903,11 @@ export default function GerarBoleto({
             </div>
 
             <div className="gerar-boleto-grid">
+
               {/* VALOR */}
 
               <div className="gerar-boleto-field">
+
                 <label htmlFor="valor">
                   Valor
                 </label>
@@ -647,11 +919,18 @@ export default function GerarBoleto({
                   autoComplete="off"
                   placeholder="R$ 0,00"
                   value={valor}
-                  onChange={handleValorChange}
-                  className={
-                    errors.valor ? "has-error" : ""
+                  onChange={
+                    handleValorChange
                   }
-                  disabled={submitting || loading}
+                  className={
+                    errors.valor
+                      ? "has-error"
+                      : ""
+                  }
+                  disabled={
+                    submitting ||
+                    loading
+                  }
                 />
 
                 {errors.valor && (
@@ -659,11 +938,13 @@ export default function GerarBoleto({
                     {errors.valor}
                   </span>
                 )}
+
               </div>
 
               {/* VENCIMENTO */}
 
               <div className="gerar-boleto-field">
+
                 <label htmlFor="vencimento">
                   Vencimento
                 </label>
@@ -673,33 +954,44 @@ export default function GerarBoleto({
                   type="date"
                   min={today()}
                   value={vencimento}
-                  onChange={handleVencimentoChange}
+                  onChange={
+                    handleVencimentoChange
+                  }
                   className={
                     errors.vencimento
                       ? "has-error"
                       : ""
                   }
-                  disabled={submitting || loading}
+                  disabled={
+                    submitting ||
+                    loading
+                  }
                 />
 
-                {vencimento && !errors.vencimento && (
-                  <small>
-                    Vencimento:{" "}
-                    {formatDate(vencimento)}
-                  </small>
-                )}
+                {vencimento &&
+                  !errors.vencimento && (
+                    <small>
+                      Vencimento:{" "}
+                      {formatDate(
+                        vencimento,
+                      )}
+                    </small>
+                  )}
 
                 {errors.vencimento && (
                   <span className="gerar-boleto-error">
                     {errors.vencimento}
                   </span>
                 )}
+
               </div>
+
             </div>
 
             {/* DESCRIÇÃO */}
 
             <div className="gerar-boleto-card-field">
+
               <label htmlFor="descricao">
                 Descrição
               </label>
@@ -710,16 +1002,23 @@ export default function GerarBoleto({
                 placeholder="Ex.: Mensalidade de agosto"
                 value={descricao}
                 onChange={(event) =>
-                  setDescricao(event.target.value)
+                  setDescricao(
+                    event.target.value,
+                  )
                 }
                 maxLength={120}
-                disabled={submitting || loading}
+                disabled={
+                  submitting ||
+                  loading
+                }
               />
 
               <div className="gerar-boleto-counter">
                 {descricao.length}/120
               </div>
+
             </div>
+
           </section>
 
           {/* ==================================================
@@ -727,21 +1026,25 @@ export default function GerarBoleto({
           ================================================== */}
 
           <section className="gerar-boleto-card">
+
             <div className="gerar-boleto-card-header">
               <div>
-                <h2>Descontos e encargos</h2>
+                <h2>
+                  Descontos e encargos
+                </h2>
 
                 <p>
-                  Configure as condições para pagamento antes
-                  ou após o vencimento.
+                  Configure as condições para pagamento antes ou após o vencimento.
                 </p>
               </div>
             </div>
 
             <div className="gerar-boleto-grid">
-              {/* TIPO DE DESCONTO */}
+
+              {/* TIPO DESCONTO */}
 
               <div className="gerar-boleto-field">
+
                 <label htmlFor="tipo-desconto">
                   Tipo de desconto
                 </label>
@@ -749,8 +1052,13 @@ export default function GerarBoleto({
                 <select
                   id="tipo-desconto"
                   value={tipoDesconto}
-                  onChange={handleTipoDescontoChange}
-                  disabled={submitting || loading}
+                  onChange={
+                    handleTipoDescontoChange
+                  }
+                  disabled={
+                    submitting ||
+                    loading
+                  }
                 >
                   <option value="NONE">
                     Sem desconto
@@ -764,29 +1072,36 @@ export default function GerarBoleto({
                     Percentual
                   </option>
                 </select>
+
               </div>
 
               {/* DESCONTO */}
 
               <div className="gerar-boleto-field">
+
                 <label htmlFor="desconto">
                   Desconto
                 </label>
 
                 <div className="gerar-boleto-input-wrapper">
+
                   <input
                     id="desconto"
                     type="text"
                     inputMode="decimal"
                     placeholder={
-                      tipoDesconto === "PERCENTAGE"
+                      tipoDesconto ===
+                      "PERCENTAGE"
                         ? "0,00%"
                         : "R$ 0,00"
                     }
                     value={desconto}
-                    onChange={handleDescontoChange}
+                    onChange={
+                      handleDescontoChange
+                    }
                     disabled={
-                      tipoDesconto === "NONE" ||
+                      tipoDesconto ===
+                        "NONE" ||
                       submitting ||
                       loading
                     }
@@ -797,12 +1112,13 @@ export default function GerarBoleto({
                     }
                   />
 
-                  {tipoDesconto === "PERCENTAGE" &&
-                    tipoDesconto !== "NONE" && (
-                      <span className="gerar-boleto-input-suffix">
-                        %
-                      </span>
-                    )}
+                  {tipoDesconto ===
+                    "PERCENTAGE" && (
+                    <span className="gerar-boleto-input-suffix">
+                      %
+                    </span>
+                  )}
+
                 </div>
 
                 {errors.desconto && (
@@ -810,16 +1126,19 @@ export default function GerarBoleto({
                     {errors.desconto}
                   </span>
                 )}
+
               </div>
 
               {/* JUROS */}
 
               <div className="gerar-boleto-field">
+
                 <label htmlFor="juros">
                   Juros ao mês (%)
                 </label>
 
                 <div className="gerar-boleto-input-wrapper">
+
                   <input
                     id="juros"
                     type="number"
@@ -829,16 +1148,24 @@ export default function GerarBoleto({
                     inputMode="decimal"
                     placeholder="0,00"
                     value={juros}
-                    onChange={handleJurosChange}
-                    disabled={submitting || loading}
+                    onChange={
+                      handleJurosChange
+                    }
+                    disabled={
+                      submitting ||
+                      loading
+                    }
                     className={
-                      errors.juros ? "has-error" : ""
+                      errors.juros
+                        ? "has-error"
+                        : ""
                     }
                   />
 
                   <span className="gerar-boleto-input-suffix">
                     %
                   </span>
+
                 </div>
 
                 {errors.juros && (
@@ -846,16 +1173,19 @@ export default function GerarBoleto({
                     {errors.juros}
                   </span>
                 )}
+
               </div>
 
               {/* MULTA */}
 
               <div className="gerar-boleto-field">
+
                 <label htmlFor="multa">
                   Multa (%)
                 </label>
 
                 <div className="gerar-boleto-input-wrapper">
+
                   <input
                     id="multa"
                     type="number"
@@ -865,16 +1195,24 @@ export default function GerarBoleto({
                     inputMode="decimal"
                     placeholder="0,00"
                     value={multa}
-                    onChange={handleMultaChange}
-                    disabled={submitting || loading}
+                    onChange={
+                      handleMultaChange
+                    }
+                    disabled={
+                      submitting ||
+                      loading
+                    }
                     className={
-                      errors.multa ? "has-error" : ""
+                      errors.multa
+                        ? "has-error"
+                        : ""
                     }
                   />
 
                   <span className="gerar-boleto-input-suffix">
                     %
                   </span>
+
                 </div>
 
                 {errors.multa && (
@@ -882,8 +1220,11 @@ export default function GerarBoleto({
                     {errors.multa}
                   </span>
                 )}
+
               </div>
+
             </div>
+
           </section>
 
           {/* ==================================================
@@ -891,18 +1232,21 @@ export default function GerarBoleto({
           ================================================== */}
 
           <section className="gerar-boleto-card">
+
             <div className="gerar-boleto-card-header">
               <div>
-                <h2>Instruções</h2>
+                <h2>
+                  Instruções
+                </h2>
 
                 <p>
-                  Informações adicionais que podem acompanhar
-                  a cobrança.
+                  Informações adicionais que podem acompanhar a cobrança.
                 </p>
               </div>
             </div>
 
             <div className="gerar-boleto-card-field">
+
               <label htmlFor="instructions">
                 Instruções do boleto
               </label>
@@ -914,15 +1258,22 @@ export default function GerarBoleto({
                 placeholder="Ex.: Não receber após o vencimento."
                 value={instructions}
                 onChange={(event) =>
-                  setInstructions(event.target.value)
+                  setInstructions(
+                    event.target.value,
+                  )
                 }
-                disabled={submitting || loading}
+                disabled={
+                  submitting ||
+                  loading
+                }
               />
 
               <div className="gerar-boleto-counter">
                 {instructions.length}/500
               </div>
+
             </div>
+
           </section>
 
           {/* ==================================================
@@ -930,8 +1281,11 @@ export default function GerarBoleto({
           ================================================== */}
 
           <section className="gerar-boleto-review">
+
             <div>
-              <span>Cliente</span>
+              <span>
+                Cliente
+              </span>
 
               <strong>
                 {clienteSelecionado?.name ||
@@ -941,7 +1295,9 @@ export default function GerarBoleto({
             </div>
 
             <div>
-              <span>Contrato</span>
+              <span>
+                Contrato
+              </span>
 
               <strong>
                 {contratoSelecionado
@@ -953,22 +1309,30 @@ export default function GerarBoleto({
             </div>
 
             <div>
-              <span>Valor</span>
+              <span>
+                Valor
+              </span>
 
               <strong>
-                {valor || "R$ 0,00"}
+                {valor ||
+                  "R$ 0,00"}
               </strong>
             </div>
 
             <div>
-              <span>Vencimento</span>
+              <span>
+                Vencimento
+              </span>
 
               <strong>
                 {vencimento
-                  ? formatDate(vencimento)
+                  ? formatDate(
+                      vencimento,
+                    )
                   : "-"}
               </strong>
             </div>
+
           </section>
 
           {/* ==================================================
@@ -976,6 +1340,7 @@ export default function GerarBoleto({
           ================================================== */}
 
           <div className="gerar-boleto-footer">
+
             <button
               type="button"
               className="gerar-boleto-button-secondary"
@@ -988,7 +1353,10 @@ export default function GerarBoleto({
             <button
               type="submit"
               className="gerar-boleto-button-primary"
-              disabled={submitting || loading}
+              disabled={
+                submitting ||
+                loading
+              }
             >
               {submitting
                 ? "Gerando boleto..."
@@ -996,7 +1364,9 @@ export default function GerarBoleto({
                   ? "Carregando..."
                   : "Gerar boleto"}
             </button>
+
           </div>
+
         </form>
       </div>
     </DashboardLayout>

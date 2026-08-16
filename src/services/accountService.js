@@ -23,7 +23,10 @@ async function fileToBase64(file) {
   });
 }
 
-export async function createAccount(form) {
+export async function createAccount(
+  form,
+  onboardingIdentity
+) {
   const isPJ = form.tipoConta?.toUpperCase() === "PJ";
 
   const payload = {
@@ -35,7 +38,8 @@ export async function createAccount(form) {
 
     default_currency: "BRL",
 
-    external_id: uuidv4(),
+    external_id:
+  onboardingIdentity.external_id,
     
     credentials: {
       email: form.email,
@@ -120,7 +124,7 @@ export async function createAccount(form) {
   const response = await api.post("/partner/v1/accounts", payload, {
     headers: {
       "X-Partner-Internal-Token": TOKEN,
-      "Idempotency-Key": uuidv4(),
+      "Idempotency-Key":   onboardingIdentity.idempotency_key,
     },
   });
 

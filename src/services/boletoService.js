@@ -1,54 +1,108 @@
-import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import api from "./api"
+import api from "./api";
+
 /*
 |--------------------------------------------------------------------------
 | CONFIGURAÇÃO
 |--------------------------------------------------------------------------
 */
 
-
-
 const USE_MOCK = true;
-
-
-/*
-|--------------------------------------------------------------------------
-| AXIOS
-|--------------------------------------------------------------------------
-*/
-
-
-
 
 /*
 |--------------------------------------------------------------------------
 | HEADERS
 |--------------------------------------------------------------------------
-|
-| Todos os endpoints Partner exigem:
-|
-| Authorization: Bearer <access_token>
-| X-Partner-Internal-Token: <TOKEN>
-|
 */
 
 function getHeaders() {
-  
   return {
     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
 
     "X-Partner-Internal-Token":
       "5b7a8e4ffbeae77b80085436d2bde1d60b93f3dd7f876a84e0a59eeff5fe8a87dab367cd047af7ef7aaef2b15f31d185",
-
-    
   };
 }
 
+/*
+|--------------------------------------------------------------------------
+| MOCK CLIENTES
+|--------------------------------------------------------------------------
+*/
+
+const MOCK_CLIENTES = [
+  {
+    id: "cli-001",
+    name: "João da Silva",
+    document: "123.456.789-00",
+    email: "joao@example.com",
+  },
+
+  {
+    id: "cli-002",
+    name: "Maria Oliveira",
+    document: "987.654.321-00",
+    email: "maria@example.com",
+  },
+
+  {
+    id: "cli-003",
+    name: "Empresa ABC Ltda",
+    document: "12.345.678/0001-90",
+    email: "contato@empresaabc.com",
+  },
+
+  {
+    id: "cli-004",
+    name: "Carlos Mendes",
+    document: "456.789.123-00",
+    email: "carlos@example.com",
+  },
+];
 
 /*
 |--------------------------------------------------------------------------
-| MOCK DATA
+| MOCK CONTRATOS
+|--------------------------------------------------------------------------
+*/
+
+const MOCK_CONTRATOS = [
+  {
+    id: "ctr-001",
+    client_id: "cli-001",
+    number: "CTR-2026-001",
+    description: "Contrato residencial",
+    status: "active",
+  },
+
+  {
+    id: "ctr-002",
+    client_id: "cli-002",
+    number: "CTR-2026-002",
+    description: "Contrato comercial",
+    status: "active",
+  },
+
+  {
+    id: "ctr-003",
+    client_id: "cli-003",
+    number: "CTR-2026-003",
+    description: "Contrato empresarial",
+    status: "active",
+  },
+
+  {
+    id: "ctr-004",
+    client_id: "cli-004",
+    number: "CTR-2026-004",
+    description: "Contrato residencial",
+    status: "active",
+  },
+];
+
+/*
+|--------------------------------------------------------------------------
+| MOCK BOLETOS
 |--------------------------------------------------------------------------
 */
 
@@ -77,6 +131,8 @@ const MOCK_BOLETOS = [
     metadata: {
       contrato: "CTR-2026-001",
       cliente: "João da Silva",
+      client_id: "cli-001",
+      contract_id: "ctr-001",
     },
 
     nosso_numero: "000000001",
@@ -130,6 +186,8 @@ const MOCK_BOLETOS = [
     metadata: {
       contrato: "CTR-2026-002",
       cliente: "Maria Oliveira",
+      client_id: "cli-002",
+      contract_id: "ctr-002",
     },
 
     nosso_numero: "000000002",
@@ -183,6 +241,8 @@ const MOCK_BOLETOS = [
     metadata: {
       contrato: "CTR-2026-003",
       cliente: "Empresa ABC Ltda",
+      client_id: "cli-003",
+      contract_id: "ctr-003",
     },
 
     nosso_numero: "000000003",
@@ -236,6 +296,8 @@ const MOCK_BOLETOS = [
     metadata: {
       contrato: "CTR-2026-004",
       cliente: "Carlos Mendes",
+      client_id: "cli-004",
+      contract_id: "ctr-004",
     },
 
     nosso_numero: "000000004",
@@ -266,7 +328,6 @@ const MOCK_BOLETOS = [
   },
 ];
 
-
 /*
 |--------------------------------------------------------------------------
 | MOCK OVERVIEW
@@ -289,7 +350,6 @@ const MOCK_OVERVIEW = {
   total_boletos: 152,
 };
 
-
 /*
 |--------------------------------------------------------------------------
 | UTILITÁRIOS
@@ -302,9 +362,20 @@ function delay(ms = 400) {
   });
 }
 
-
 function createMockBoleto(data = {}) {
   const id = uuidv4();
+
+  const client = MOCK_CLIENTES.find(
+    (item) =>
+      String(item.id) === String(data.client_id),
+  );
+
+  const contract = MOCK_CONTRATOS.find(
+    (item) =>
+      String(item.id) === String(data.contract_id),
+  );
+
+  const now = new Date().toISOString();
 
   return {
     id,
@@ -312,7 +383,8 @@ function createMockBoleto(data = {}) {
     account_id: "acc-001",
     agency_id: "ag-001",
 
-    amount: data.amount || "100.00",
+    amount: Number(data.amount || 100).toFixed(2),
+
     paid_amount: "0.00",
 
     currency: data.currency || "BRL",
@@ -327,29 +399,80 @@ function createMockBoleto(data = {}) {
 
     due_date:
       data.due_date ||
-      new Date(Date.now() + 15 * 86400000)
+      new Date(
+        Date.now() + 15 * 86400000,
+      )
         .toISOString()
         .substring(0, 10),
 
-    external_id: data.external_id || `BOLETO-${Date.now()}`,
+    external_id:
+      data.external_id ||
+      `BOLETO-${Date.now()}`,
 
-    installment_id: data.installment_id || uuidv4(),
+    installment_id:
+      data.installment_id ||
+      uuidv4(),
 
-    metadata: data.metadata || {},
+    metadata: {
+      ...data.metadata,
+
+      cliente:
+        client?.name ||
+        client?.nome ||
+        "Cliente não informado",
+
+      contrato:
+        contract?.number ||
+        contract?.numero ||
+        contract?.contract_number ||
+        data.contract_id ||
+        "—",
+
+      client_id:
+        data.client_id || null,
+
+      contract_id:
+        data.contract_id || null,
+
+      description:
+        data.description || null,
+
+      discount:
+        data.discount || null,
+
+      interest:
+        data.interest ?? 0,
+
+      fine:
+        data.fine ?? 0,
+
+      instructions:
+        data.instructions || null,
+    },
 
     nosso_numero:
       data.nosso_numero ||
-      String(Math.floor(Math.random() * 999999999)).padStart(9, "0"),
+      String(
+        Math.floor(
+          Math.random() * 999999999,
+        ),
+      ).padStart(9, "0"),
 
-    payer_id: data.payer_id || "payer-001",
+    payer_id:
+      data.payer_id ||
+      data.client_id ||
+      "payer-001",
 
     provider: "mock-provider",
 
-    provider_reference: `MOCK-${Date.now()}`,
+    provider_reference:
+      `MOCK-${Date.now()}`,
 
-    receivable_id: data.receivable_id || uuidv4(),
+    receivable_id:
+      data.receivable_id ||
+      uuidv4(),
 
-    registered_at: new Date().toISOString(),
+    registered_at: now,
 
     registration_error_code: null,
 
@@ -357,9 +480,9 @@ function createMockBoleto(data = {}) {
 
     status: "open",
 
-    created_at: new Date().toISOString(),
+    created_at: now,
 
-    updated_at: new Date().toISOString(),
+    updated_at: now,
 
     cancelled_at: null,
 
@@ -367,6 +490,55 @@ function createMockBoleto(data = {}) {
   };
 }
 
+/*
+|--------------------------------------------------------------------------
+| CLIENTES
+|--------------------------------------------------------------------------
+*/
+
+export async function getClientes() {
+  if (USE_MOCK) {
+    await delay();
+
+    return [...MOCK_CLIENTES];
+  }
+
+  const response = await api.get(
+    "/partner/v1/payers",
+    {
+      headers: getHeaders(),
+    },
+  );
+
+  return Array.isArray(response.data)
+    ? response.data
+    : response.data?.data || [];
+}
+
+/*
+|--------------------------------------------------------------------------
+| CONTRATOS
+|--------------------------------------------------------------------------
+*/
+
+export async function getContratos() {
+  if (USE_MOCK) {
+    await delay();
+
+    return [...MOCK_CONTRATOS];
+  }
+
+  const response = await api.get(
+    "/partner/v1/contracts",
+    {
+      headers: getHeaders(),
+    },
+  );
+
+  return Array.isArray(response.data)
+    ? response.data
+    : response.data?.data || [];
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -385,12 +557,13 @@ export async function listarBoletos() {
     "/partner/v1/boletos",
     {
       headers: getHeaders(),
-    }
+    },
   );
 
-  return response.data;
+  return Array.isArray(response.data)
+    ? response.data
+    : response.data?.data || [];
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -411,12 +584,11 @@ export async function obterOverviewBoletos() {
     "/partner/v1/boletos/overview",
     {
       headers: getHeaders(),
-    }
+    },
   );
 
   return response.data;
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -429,7 +601,7 @@ export async function obterBoleto(id) {
     await delay();
 
     const boleto = MOCK_BOLETOS.find(
-      (item) => item.id === id
+      (item) => item.id === id,
     );
 
     if (boleto) {
@@ -446,12 +618,11 @@ export async function obterBoleto(id) {
     `/partner/v1/boletos/${id}`,
     {
       headers: getHeaders(),
-    }
+    },
   );
 
   return response.data;
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -459,16 +630,21 @@ export async function obterBoleto(id) {
 |--------------------------------------------------------------------------
 */
 
-export async function obterBoletoPorExternalId(externalId) {
+export async function obterBoletoPorExternalId(
+  externalId,
+) {
   if (USE_MOCK) {
     await delay();
 
     const boleto = MOCK_BOLETOS.find(
-      (item) => item.external_id === externalId
+      (item) =>
+        item.external_id === externalId,
     );
 
     if (!boleto) {
-      throw new Error("Boleto não encontrado.");
+      throw new Error(
+        "Boleto não encontrado.",
+      );
     }
 
     return { ...boleto };
@@ -476,16 +652,15 @@ export async function obterBoletoPorExternalId(externalId) {
 
   const response = await api.get(
     `/partner/v1/boletos/external/${encodeURIComponent(
-      externalId
+      externalId,
     )}`,
     {
       headers: getHeaders(),
-    }
+    },
   );
 
   return response.data;
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -493,16 +668,21 @@ export async function obterBoletoPorExternalId(externalId) {
 |--------------------------------------------------------------------------
 */
 
-export async function obterBoletoPorNossoNumero(nossoNumero) {
+export async function obterBoletoPorNossoNumero(
+  nossoNumero,
+) {
   if (USE_MOCK) {
     await delay();
 
     const boleto = MOCK_BOLETOS.find(
-      (item) => item.nosso_numero === nossoNumero
+      (item) =>
+        item.nosso_numero === nossoNumero,
     );
 
     if (!boleto) {
-      throw new Error("Boleto não encontrado.");
+      throw new Error(
+        "Boleto não encontrado.",
+      );
     }
 
     return { ...boleto };
@@ -510,16 +690,15 @@ export async function obterBoletoPorNossoNumero(nossoNumero) {
 
   const response = await api.get(
     `/partner/v1/boletos/nosso-numero/${encodeURIComponent(
-      nossoNumero
+      nossoNumero,
     )}`,
     {
       headers: getHeaders(),
-    }
+    },
   );
 
   return response.data;
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -529,11 +708,15 @@ export async function obterBoletoPorNossoNumero(nossoNumero) {
 
 export async function criarBoleto(payload) {
   const externalId =
-    payload.external_id || `BOLETO-${Date.now()}`;
+    payload.external_id ||
+    `BOLETO-${Date.now()}`;
 
   const requestPayload = {
     amount: payload.amount,
-    currency: payload.currency || "BRL",
+
+    currency:
+      payload.currency || "BRL",
+
     due_date: payload.due_date,
 
     external_id: externalId,
@@ -544,24 +727,73 @@ export async function criarBoleto(payload) {
     instructions:
       payload.instructions || "",
 
-    metadata:
-      payload.metadata || {},
+    metadata: {
+      ...(payload.metadata || {}),
 
-    payer_id: payload.payer_id,
+      client_id:
+        payload.client_id || null,
+
+      contract_id:
+        payload.contract_id || null,
+
+      description:
+        payload.description || null,
+
+      discount:
+        payload.discount || null,
+
+      interest:
+        payload.interest ?? 0,
+
+      fine:
+        payload.fine ?? 0,
+
+      instructions:
+        payload.instructions || null,
+    },
+
+    payer_id:
+      payload.payer_id ||
+      payload.client_id ||
+      null,
 
     protest_days:
       payload.protest_days || 0,
 
     receivable_id:
       payload.receivable_id || null,
+
+    /*
+     * Mantemos os campos abaixo no payload interno
+     * para o mock conseguir montar corretamente
+     * os dados do cliente e contrato.
+     */
+    client_id:
+      payload.client_id || null,
+
+    contract_id:
+      payload.contract_id || null,
+
+    description:
+      payload.description || null,
+
+    discount:
+      payload.discount || null,
+
+    interest:
+      payload.interest ?? 0,
+
+    fine:
+      payload.fine ?? 0,
   };
 
   if (USE_MOCK) {
     await delay(700);
 
-    const boleto = createMockBoleto(
-      requestPayload
-    );
+    const boleto =
+      createMockBoleto(
+        requestPayload,
+      );
 
     MOCK_BOLETOS.unshift(boleto);
 
@@ -575,14 +807,14 @@ export async function criarBoleto(payload) {
       headers: {
         ...getHeaders(),
 
-        "Idempotency-Key": externalId,
+        "Idempotency-Key":
+          externalId,
       },
-    }
+    },
   );
 
   return response.data;
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -590,12 +822,14 @@ export async function criarBoleto(payload) {
 |--------------------------------------------------------------------------
 */
 
-export async function listarPagamentosBoleto(id) {
+export async function listarPagamentosBoleto(
+  id,
+) {
   if (USE_MOCK) {
     await delay();
 
     const boleto = MOCK_BOLETOS.find(
-      (item) => item.id === id
+      (item) => item.id === id,
     );
 
     if (!boleto) {
@@ -610,31 +844,43 @@ export async function listarPagamentosBoleto(id) {
       {
         id: `payment-${id}`,
 
-        account_id: boleto.account_id,
-        agency_id: boleto.agency_id,
+        account_id:
+          boleto.account_id,
 
-        amount: boleto.paid_amount,
+        agency_id:
+          boleto.agency_id,
 
-        boleto_id: boleto.id,
+        amount:
+          boleto.paid_amount,
 
-        confirmed_at: boleto.paid_at,
+        boleto_id:
+          boleto.id,
 
-        created_at: boleto.paid_at,
+        confirmed_at:
+          boleto.paid_at,
 
-        currency: boleto.currency,
+        created_at:
+          boleto.paid_at,
 
-        external_id: `PAY-${boleto.external_id}`,
+        currency:
+          boleto.currency,
 
-        paid_at: boleto.paid_at,
+        external_id:
+          `PAY-${boleto.external_id}`,
 
-        provider: boleto.provider,
+        paid_at:
+          boleto.paid_at,
+
+        provider:
+          boleto.provider,
 
         provider_reference:
           boleto.provider_reference,
 
         status: "confirmed",
 
-        updated_at: boleto.paid_at,
+        updated_at:
+          boleto.paid_at,
 
         metadata: {},
       },
@@ -645,12 +891,11 @@ export async function listarPagamentosBoleto(id) {
     `/partner/v1/boletos/${id}/payments`,
     {
       headers: getHeaders(),
-    }
+    },
   );
 
   return response.data;
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -658,30 +903,35 @@ export async function listarPagamentosBoleto(id) {
 |--------------------------------------------------------------------------
 */
 
-export async function listarTarifasBoleto(id) {
+export async function listarTarifasBoleto(
+  id,
+) {
   if (USE_MOCK) {
     await delay();
 
     const boleto = MOCK_BOLETOS.find(
-      (item) => item.id === id
+      (item) => item.id === id,
     );
 
     if (!boleto) {
       return [];
     }
 
-    const baseAmount = Number(boleto.amount);
+    const baseAmount =
+      Number(boleto.amount);
 
     return [
       {
         id: `fee-${id}`,
 
-        account_id: boleto.account_id,
+        account_id:
+          boleto.account_id,
 
         base_amount:
           baseAmount.toFixed(2),
 
-        boleto_id: boleto.id,
+        boleto_id:
+          boleto.id,
 
         charged_at:
           boleto.registered_at,
@@ -698,17 +948,21 @@ export async function listarTarifasBoleto(id) {
 
         fee_amount: "2.50",
 
-        fee_code: "BOLETO_REGISTRATION",
+        fee_code:
+          "BOLETO_REGISTRATION",
 
-        guarantee_operation_id: null,
+        guarantee_operation_id:
+          null,
 
         profit_amount: "1.00",
 
-        resolution_level: "account",
+        resolution_level:
+          "account",
 
         status: "charged",
 
-        trigger_event: "boleto_created",
+        trigger_event:
+          "boleto_created",
       },
     ];
   }
@@ -717,12 +971,199 @@ export async function listarTarifasBoleto(id) {
     `/partner/v1/boletos/${id}/fees`,
     {
       headers: getHeaders(),
-    }
+    },
   );
 
   return response.data;
 }
 
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD
+|--------------------------------------------------------------------------
+*/
+
+export async function getDashboard() {
+  if (USE_MOCK) {
+    await delay();
+
+    const resumo = {
+      total:
+        Number(
+          MOCK_OVERVIEW.total_boletos,
+        ) || 0,
+
+      emAberto:
+        Number(
+          MOCK_OVERVIEW.open_boletos,
+        ) || 0,
+
+      pagos:
+        Number(
+          MOCK_OVERVIEW.paid_boletos,
+        ) || 0,
+
+      vencidos:
+        Number(
+          MOCK_OVERVIEW.overdue_boletos,
+        ) || 0,
+
+      valorEmAberto:
+        Number(
+          MOCK_OVERVIEW.open_amount,
+        ) || 0,
+
+      valorRecebido:
+        Number(
+          MOCK_OVERVIEW.paid_amount,
+        ) || 0,
+
+      valorVencido:
+        MOCK_BOLETOS.filter(
+          (boleto) =>
+            boleto.status ===
+            "overdue",
+        ).reduce(
+          (total, boleto) =>
+            total +
+            (Number(boleto.amount) || 0),
+          0,
+        ),
+    };
+
+    const ultimosBoletos =
+      [...MOCK_BOLETOS]
+        .sort(
+          (a, b) =>
+            new Date(b.created_at) -
+            new Date(a.created_at),
+        )
+        .slice(0, 5)
+        .map((boleto) => ({
+          id: boleto.id,
+
+          cliente:
+            boleto.metadata?.cliente ||
+            "Cliente não informado",
+
+          contrato:
+            boleto.metadata?.contrato ||
+            "—",
+
+          valor:
+            Number(boleto.amount) || 0,
+
+          vencimento:
+            boleto.due_date || "—",
+
+          status:
+            boleto.status,
+        }));
+
+    return {
+      resumo,
+      ultimosBoletos,
+    };
+  }
+
+  const [
+    overviewResponse,
+    boletosResponse,
+  ] = await Promise.all([
+    api.get(
+      "/partner/v1/boletos/overview",
+      {
+        headers: getHeaders(),
+      },
+    ),
+
+    api.get(
+      "/partner/v1/boletos",
+      {
+        headers: getHeaders(),
+      },
+    ),
+  ]);
+
+  const overview =
+    overviewResponse.data;
+
+  const boletos =
+    Array.isArray(
+      boletosResponse.data,
+    )
+      ? boletosResponse.data
+      : boletosResponse.data?.data ||
+        [];
+
+  const resumo = {
+    total:
+      Number(
+        overview.total_boletos,
+      ) || 0,
+
+    emAberto:
+      Number(
+        overview.open_boletos,
+      ) || 0,
+
+    pagos:
+      Number(
+        overview.paid_boletos,
+      ) || 0,
+
+    vencidos:
+      Number(
+        overview.overdue_boletos,
+      ) || 0,
+
+    valorEmAberto:
+      Number(
+        overview.open_amount,
+      ) || 0,
+
+    valorRecebido:
+      Number(
+        overview.paid_amount,
+      ) || 0,
+
+    valorVencido: 0,
+  };
+
+  const ultimosBoletos =
+    [...boletos]
+      .sort(
+        (a, b) =>
+          new Date(b.created_at) -
+          new Date(a.created_at),
+      )
+      .slice(0, 5)
+      .map((boleto) => ({
+        id: boleto.id,
+
+        cliente:
+          boleto.metadata?.cliente ||
+          "Cliente não informado",
+
+        contrato:
+          boleto.metadata?.contrato ||
+          "—",
+
+        valor:
+          Number(boleto.amount) || 0,
+
+        vencimento:
+          boleto.due_date || "—",
+
+        status:
+          boleto.status,
+      }));
+
+  return {
+    resumo,
+    ultimosBoletos,
+  };
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -731,12 +1172,20 @@ export async function listarTarifasBoleto(id) {
 */
 
 export default {
+  getClientes,
+  getContratos,
+
   listarBoletos,
   obterOverviewBoletos,
   obterBoleto,
+
   obterBoletoPorExternalId,
   obterBoletoPorNossoNumero,
+
   criarBoleto,
+
   listarPagamentosBoleto,
   listarTarifasBoleto,
+
+  getDashboard,
 };

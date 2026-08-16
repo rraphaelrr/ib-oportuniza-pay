@@ -3,34 +3,37 @@
 ===================================================== */
 
 .pix-page {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
   display: grid;
-
   grid-template-columns: minmax(0, 1fr) 360px;
-
   gap: 24px;
 
   padding: 24px;
+
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .pix-left {
+  min-width: 0;
+
   display: flex;
-
   flex-direction: column;
-
   gap: 20px;
 }
 
 .pix-loading {
-  height: 400px;
+  min-height: 400px;
+  width: 100%;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
   font-size: 18px;
-
   color: #64748b;
 }
 
@@ -39,13 +42,16 @@
 ===================================================== */
 
 .pix-card {
+  width: 100%;
+  min-width: 0;
+
   background: #ffffff;
-
   border-radius: 24px;
-
   padding: 30px;
 
   box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+
+  box-sizing: border-box;
 }
 
 /* =====================================================
@@ -53,42 +59,40 @@
 ===================================================== */
 
 .pix-tabs {
-  display: flex;
+  width: 100%;
+  min-width: 0;
 
+  display: flex;
   gap: 12px;
 
   background: white;
-
   padding: 12px;
 
   border-radius: 20px;
 
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+
+  box-sizing: border-box;
 }
 
 .pix-tab {
   flex: 1;
+  min-width: 0;
 
   height: 50px;
 
   border: none;
-
   border-radius: 14px;
 
   background: #f8fafc;
-
   color: #475569;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   gap: 8px;
 
   cursor: pointer;
-
   font-weight: 600;
 
   transition: 0.25s;
@@ -100,7 +104,6 @@
 
 .pix-tab.active {
   background: #2563eb;
-
   color: white;
 
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
@@ -111,10 +114,11 @@
 ===================================================== */
 
 .pix-form {
+  width: 100%;
+  min-width: 0;
+
   display: flex;
-
   flex-direction: column;
-
   gap: 22px;
 }
 
@@ -122,29 +126,29 @@
   margin: 0;
 
   color: #1e293b;
-
   font-size: 26px;
+  line-height: 1.25;
 }
 
 .pix-subtitle {
   margin: -12px 0 5px;
 
   color: #64748b;
-
   font-size: 15px;
+  line-height: 1.5;
 }
 
 .pix-field {
+  width: 100%;
+  min-width: 0;
+
   display: flex;
-
   flex-direction: column;
-
   gap: 8px;
 }
 
 .pix-field label {
   font-weight: 600;
-
   color: #334155;
 }
 
@@ -153,23 +157,24 @@
 ===================================================== */
 
 .pix-input {
-  display: flex;
-
-  align-items: center;
-
-  gap: 12px;
-
+  width: 100%;
+  min-width: 0;
   min-height: 56px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
 
   padding: 0 16px;
 
   border-radius: 15px;
-
   border: 1px solid #e2e8f0;
 
   background: #fff;
 
   transition: 0.2s;
+
+  box-sizing: border-box;
 }
 
 .pix-input:focus-within {
@@ -180,22 +185,22 @@
 
 .pix-input svg {
   color: #64748b;
-
   flex-shrink: 0;
 }
 
 .pix-input input,
 .pix-input textarea {
+  width: 100%;
+  min-width: 0;
+
   flex: 1;
 
   border: none;
-
   outline: none;
 
   background: transparent;
 
   font-size: 15px;
-
   color: #0f172a;
 
   resize: none;
@@ -207,32 +212,86 @@
 }
 
 /* =====================================================
-   QR UPLOAD
+   CONSULTA PIX
 ===================================================== */
 
-.pix-upload label {
-  height: 56px;
-
-  border: 2px dashed #cbd5e1;
-
-  border-radius: 16px;
+.pix-input-consulta {
+  width: 100%;
+  min-width: 0;
 
   display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
 
+.pix-input-consulta textarea {
+  flex: 1;
+  min-width: 0;
+
+  resize: none;
+}
+
+.pix-search-btn {
+  flex: 0 0 150px;
+
+  min-width: 0;
+  min-height: 56px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #00a86b;
+  color: #fff;
+
+  font-weight: 600;
+
+  display: flex;
   align-items: center;
-
   justify-content: center;
-
-  gap: 10px;
+  gap: 8px;
 
   cursor: pointer;
 
+  transition: 0.2s;
+}
+
+.pix-search-btn:hover {
+  filter: brightness(0.95);
+}
+
+.pix-search-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   QR UPLOAD
+===================================================== */
+
+.pix-upload {
+  width: 100%;
+}
+
+.pix-upload label {
+  width: 100%;
+  min-height: 56px;
+
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  cursor: pointer;
   color: #475569;
+
+  box-sizing: border-box;
 }
 
 .pix-upload label:hover {
   border-color: #2563eb;
-
   color: #2563eb;
 }
 
@@ -242,10 +301,10 @@
 
 .pix-divider {
   display: flex;
-
   align-items: center;
-
   color: #94a3b8;
+
+  width: 100%;
 }
 
 .pix-divider::before,
@@ -259,6 +318,7 @@
 
 .pix-divider span {
   padding: 0 15px;
+  white-space: nowrap;
 }
 
 /* =====================================================
@@ -266,12 +326,11 @@
 ===================================================== */
 
 .pix-primary-btn {
+  width: 100%;
+  min-width: 0;
   height: 56px;
 
-  width: 100%;
-
   border: none;
-
   border-radius: 15px;
 
   background: linear-gradient(135deg, #2563eb, #4f46e5);
@@ -279,15 +338,11 @@
   color: white;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   gap: 10px;
 
   font-size: 16px;
-
   font-weight: 600;
 
   cursor: pointer;
@@ -303,6 +358,8 @@
 
 .pix-primary-btn:disabled {
   opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* =====================================================
@@ -310,14 +367,17 @@
 ===================================================== */
 
 .pix-sidebar {
+  min-width: 0;
+
   display: flex;
-
   flex-direction: column;
-
   gap: 20px;
 }
 
 .pix-sidebar-card {
+  width: 100%;
+  min-width: 0;
+
   background: white;
 
   border-radius: 22px;
@@ -325,6 +385,8 @@
   padding: 24px;
 
   box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+
+  box-sizing: border-box;
 }
 
 /* =====================================================
@@ -333,49 +395,43 @@
 
 .pix-resumo-list {
   display: flex;
-
   flex-direction: column;
-
   gap: 18px;
 }
 
 .pix-resumo-item {
   display: flex;
-
   align-items: center;
-
   gap: 14px;
+
+  min-width: 0;
 }
 
 .pix-resumo-icon {
   width: 46px;
-
   height: 46px;
+
+  flex-shrink: 0;
 
   border-radius: 14px;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 }
 
 .pix-resumo-icon.recebido {
   background: #dcfce7;
-
   color: #16a34a;
 }
 
 .pix-resumo-icon.enviado {
   background: #fee2e2;
-
   color: #dc2626;
 }
 
 .pix-resumo-icon.limite {
   background: #dbeafe;
-
   color: #2563eb;
 }
 
@@ -386,37 +442,61 @@
 .pix-modal-overlay {
   position: fixed;
   inset: 0;
+
   background: rgba(14, 22, 35, 0.55);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   z-index: 9999;
+
   padding: 24px;
+
+  box-sizing: border-box;
 }
 
 .pix-modal {
   width: 100%;
   max-width: 560px;
+  max-height: calc(100vh - 48px);
+
+  overflow-y: auto;
+
   background: #fff;
+
   border-radius: 24px;
+
   padding: 32px;
+
   position: relative;
+
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18);
+
+  box-sizing: border-box;
 }
 
 .pix-modal-close {
   position: absolute;
+
   right: 20px;
   top: 20px;
+
   width: 40px;
   height: 40px;
+
   border: none;
+
   background: #f4f6fa;
+
   border-radius: 12px;
+
   cursor: pointer;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   transition: 0.2s;
 }
 
@@ -428,15 +508,23 @@
   display: flex;
   align-items: center;
   gap: 16px;
+
   margin-bottom: 28px;
+
+  min-width: 0;
 }
 
 .pix-modal-icon {
   width: 58px;
   height: 58px;
+
+  flex-shrink: 0;
+
   border-radius: 16px;
+
   background: #eef4ff;
   color: #3056d3;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -444,13 +532,16 @@
 
 .pix-modal-header h2 {
   margin: 0;
+
   font-size: 32px;
   font-weight: 700;
+
   color: #0f172a;
 }
 
 .pix-modal-header p {
   margin-top: 4px;
+
   color: #6b7280;
   font-size: 14px;
 }
@@ -459,41 +550,68 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
   background: #f8fafc;
+
   border-radius: 24px;
+
   padding: 32px;
+
   margin-bottom: 28px;
+
+  overflow: hidden;
+}
+
+.pix-qrcode-box img,
+.pix-qrcode-box canvas,
+.pix-qrcode-box svg {
+  max-width: 100%;
+  height: auto;
 }
 
 .pix-info-grid {
   display: grid;
+
   grid-template-columns: 1fr;
+
   gap: 14px;
+
   margin-bottom: 24px;
 }
 
 .pix-info-card {
   background: #f8fafc;
+
   border-radius: 14px;
+
   padding: 16px 20px;
+
+  min-width: 0;
 }
 
 .pix-info-card span {
   display: block;
+
   color: #64748b;
+
   font-size: 13px;
+
   margin-bottom: 6px;
 }
 
 .pix-info-card strong {
   font-size: 22px;
   color: #0f172a;
+
+  overflow-wrap: anywhere;
 }
 
 .pix-copy-box {
   display: flex;
   flex-direction: column;
   gap: 14px;
+
+  min-width: 0;
 }
 
 .pix-copy-box label {
@@ -504,38 +622,27 @@
 
 .pix-copy-box textarea {
   resize: none;
+
   width: 100%;
+  min-width: 0;
   min-height: 120px;
+
   border: 1px solid #dbe3ef;
+
   border-radius: 14px;
+
   padding: 16px;
+
   font-size: 13px;
   line-height: 22px;
+
   background: #f8fafc;
+
   font-family: monospace;
+
   outline: none;
-}
 
-.pix-primary-btn {
-  width: 100%;
-  height: 54px;
-  border: none;
-  border-radius: 16px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: linear-gradient(90deg, #2854ff, #5b4bff);
-  transition: 0.2s;
-}
-
-.pix-primary-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 28px rgba(48, 86, 211, 0.28);
+  box-sizing: border-box;
 }
 
 /* =====================================================
@@ -543,6 +650,9 @@
 ===================================================== */
 
 .pix-comprovante-card {
+  width: 100%;
+  min-width: 0;
+
   background: white;
 
   border-radius: 22px;
@@ -550,6 +660,8 @@
   padding: 30px;
 
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+
+  box-sizing: border-box;
 }
 
 .pix-success {
@@ -569,60 +681,335 @@
 }
 
 /* =====================================================
-   RESPONSIVO
+   TABLET
 ===================================================== */
 
 @media (max-width: 1100px) {
   .pix-page {
     grid-template-columns: 1fr;
+
+    padding: 20px;
+  }
+
+  .pix-sidebar {
+    width: 100%;
   }
 }
 
-@media (max-width: 600px) {
-  .pix-page {
-    padding: 12px;
-  }
+/* =====================================================
+   TABLET PEQUENO
+===================================================== */
 
-  .pix-tabs {
-    flex-direction: column;
+@media (max-width: 768px) {
+  .pix-page {
+    padding: 16px;
+
+    gap: 18px;
   }
 
   .pix-card {
+    padding: 24px;
+  }
+
+  .pix-sidebar-card {
     padding: 20px;
+  }
+
+  .pix-form {
+    gap: 18px;
+  }
+
+  .pix-form h2 {
+    font-size: 23px;
   }
 }
 
-.pix-input-consulta {
-    display: flex;
-    gap: 12px;
-    align-items: stretch;
-}
+/* =====================================================
+   CELULAR
+===================================================== */
 
-.pix-input-consulta textarea {
-    flex: 1;
-    resize: none;
-}
+@media (max-width: 600px) {
+  .pix-page {
+    width: 100%;
+    max-width: 100%;
 
-.pix-search-btn {
-    min-width: 150px;
-    border: none;
-    border-radius: 12px;
-    background: #00a86b;
-    color: #fff;
-    font-weight: 600;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+
+    padding: 10px;
+
+    gap: 14px;
+  }
+
+  .pix-left {
+    width: 100%;
+  }
+
+  /* TABS */
+
+  .pix-tabs {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
     gap: 8px;
-    cursor: pointer;
-    transition: .2s;
+
+    padding: 8px;
+
+    border-radius: 16px;
+  }
+
+  .pix-tab {
+    width: 100%;
+    height: 46px;
+
+    font-size: 14px;
+
+    border-radius: 11px;
+  }
+
+  /* CARD */
+
+  .pix-card {
+    width: 100%;
+
+    padding: 18px;
+
+    border-radius: 18px;
+  }
+
+  /* FORM */
+
+  .pix-form {
+    gap: 17px;
+  }
+
+  .pix-form h2 {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .pix-subtitle {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  /* INPUT */
+
+  .pix-input {
+    min-height: 52px;
+
+    padding: 0 13px;
+
+    border-radius: 13px;
+  }
+
+  .pix-input input,
+  .pix-input textarea {
+    font-size: 14px;
+  }
+
+  /* CONSULTA */
+
+  .pix-input-consulta {
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .pix-input-consulta textarea {
+    width: 100%;
+    min-height: 100px;
+  }
+
+  .pix-search-btn {
+    width: 100%;
+    flex: none;
+
+    min-height: 50px;
+  }
+
+  /* UPLOAD */
+
+  .pix-upload label {
+    min-height: 52px;
+
+    padding: 10px;
+
+    text-align: center;
+
+    font-size: 14px;
+  }
+
+  /* DIVISOR */
+
+  .pix-divider span {
+    padding: 0 10px;
+
+    font-size: 13px;
+  }
+
+  /* BOTÃO */
+
+  .pix-primary-btn {
+    height: 52px;
+
+    font-size: 15px;
+
+    border-radius: 13px;
+  }
+
+  /* SIDEBAR */
+
+  .pix-sidebar {
+    width: 100%;
+  }
+
+  .pix-sidebar-card {
+    width: 100%;
+
+    padding: 18px;
+
+    border-radius: 18px;
+  }
+
+  /* MODAL */
+
+  .pix-modal-overlay {
+    padding: 10px;
+
+    align-items: flex-end;
+  }
+
+  .pix-modal {
+    width: 100%;
+    max-width: 100%;
+
+    max-height: calc(100vh - 20px);
+
+    padding: 20px;
+
+    border-radius: 22px 22px 0 0;
+  }
+
+  .pix-modal-close {
+    right: 14px;
+    top: 14px;
+  }
+
+  .pix-modal-header {
+    padding-right: 45px;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+  }
+
+  .pix-modal-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .pix-modal-header h2 {
+    font-size: 23px;
+  }
+
+  .pix-modal-header p {
+    font-size: 13px;
+  }
+
+  .pix-qrcode-box {
+    padding: 20px;
+
+    border-radius: 18px;
+
+    margin-bottom: 18px;
+  }
+
+  .pix-info-card {
+    padding: 14px 16px;
+  }
+
+  .pix-info-card strong {
+    font-size: 19px;
+  }
+
+  .pix-copy-box textarea {
+    min-height: 110px;
+
+    padding: 13px;
+
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  /* COMPROVANTE */
+
+  .pix-comprovante-card {
+    padding: 20px;
+
+    border-radius: 18px;
+  }
+
+  .pix-success strong {
+    font-size: 26px;
+  }
 }
 
-.pix-search-btn:hover {
-    filter: brightness(.95);
+/* =====================================================
+   CELULARES PEQUENOS
+===================================================== */
+
+@media (max-width: 380px) {
+  .pix-page {
+    padding: 8px;
+  }
+
+  .pix-card {
+    padding: 15px;
+  }
+
+  .pix-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .pix-tab {
+    height: 44px;
+  }
+
+  .pix-form h2 {
+    font-size: 20px;
+  }
+
+  .pix-input {
+    padding: 0 11px;
+  }
+
+  .pix-modal {
+    padding: 16px;
+  }
+
+  .pix-modal-header h2 {
+    font-size: 21px;
+  }
+
+  .pix-qrcode-box {
+    padding: 15px;
+  }
 }
 
-.pix-search-btn:disabled {
-    opacity: .6;
-    cursor: not-allowed;
+/* =====================================================
+   SEGURANÇA CONTRA OVERFLOW
+===================================================== */
+
+.pix-page img,
+.pix-page svg,
+.pix-page canvas {
+  max-width: 100%;
+}
+
+.pix-page input,
+.pix-page textarea,
+.pix-page button {
+  max-width: 100%;
 }
