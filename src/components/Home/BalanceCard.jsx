@@ -73,7 +73,7 @@ export default function BalanceCard({
         <strong>{showBalance ? money(anticipationLimit) : "••••"}</strong>
       </p>
 
-      <div className="balance-details">
+      {/* <div className="balance-details">
         <div>
           <span>Agência</span>
 
@@ -97,7 +97,7 @@ export default function BalanceCard({
 
           <strong>{usdt}</strong>
         </div>
-      </div>
+      </div> */}
 
       <div className="balance-actions">
         <button onClick={onPix}>
