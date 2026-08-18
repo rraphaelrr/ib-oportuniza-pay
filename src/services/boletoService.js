@@ -355,11 +355,8 @@ const MOCK_OVERVIEW = {
 | UTILITÁRIOS
 |--------------------------------------------------------------------------
 */
-
-function delay(ms = 400) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
+function delay(ms = 0) {
+  return Promise.resolve();
 }
 
 function createMockBoleto(data = {}) {

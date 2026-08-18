@@ -55,7 +55,205 @@ const INITIAL_DATA = {
 
   resultado: null,
 };
+function generateDigits(length = 10) {
+  return Array.from(
+    { length },
+    () => Math.floor(Math.random() * 10)
+  ).join("");
+}
 
+function generateBarcode() {
+  return generateDigits(44);
+}
+
+function generateDigitableLine() {
+  const numbers = generateDigits(47);
+
+  return (
+    `${numbers.slice(0, 5)}.${numbers.slice(5, 10)} ` +
+    `${numbers.slice(10, 15)}.${numbers.slice(15, 20)} ` +
+    `${numbers.slice(20, 25)}.${numbers.slice(25, 30)} ` +
+    `${numbers.slice(30, 31)} ` +
+    `${numbers.slice(31)}`
+  );
+}
+
+function createFakeBoleto({
+  contrato,
+  cliente,
+  configuracao,
+}) {
+  const now = new Date();
+
+  const amount =
+    Number(contrato?.amount) ||
+    Number(contrato?.value) ||
+    Number(contrato?.valor) ||
+    100;
+
+  const boleto = {
+    id: `bol-${Date.now()}-${generateDigits(4)}`,
+
+    status: "open",
+
+    type: "BOLETO",
+
+    nosso_numero: generateDigits(8),
+
+    numero_documento: generateDigits(10),
+
+    barcode: generateBarcode(),
+
+    linha_digitavel:
+      generateDigitableLine(),
+
+    client_id:
+      cliente?.id ||
+      contrato?.client_id ||
+      contrato?.cliente_id ||
+      null,
+
+    client: cliente
+      ? {
+          id: cliente.id,
+
+          name:
+            cliente.name ||
+            cliente.nome ||
+            "Cliente não informado",
+
+          document:
+            cliente.document ||
+            cliente.cpf ||
+            cliente.cnpj ||
+            null,
+
+          email:
+            cliente.email ||
+            null,
+
+          phone:
+            cliente.phone ||
+            cliente.telefone ||
+            null,
+        }
+      : null,
+
+    contract_id:
+      contrato?.id || null,
+
+    contract: {
+      id: contrato?.id || null,
+
+      number:
+        contrato?.number ||
+        contrato?.numero ||
+        contrato?.contract_number ||
+        contrato?.id ||
+        "—",
+    },
+
+    amount,
+
+    due_date:
+      configuracao.due_date,
+
+    description:
+      configuracao.description ||
+      `Cobrança referente ao contrato ${
+        contrato?.number ||
+        contrato?.numero ||
+        contrato?.id ||
+        ""
+      }`,
+
+    discount:
+      configuracao.discount_type !== "NONE"
+        ? {
+            type:
+              configuracao.discount_type,
+
+            value:
+              Number(
+                configuracao.discount_value
+              ) || 0,
+          }
+        : null,
+
+    interest:
+      Number(
+        configuracao.interest
+      ) || 0,
+
+    fine:
+      Number(
+        configuracao.fine
+      ) || 0,
+
+    instructions:
+      configuracao.instructions ||
+      null,
+
+    bank: {
+      code: "001",
+
+      name:
+        "BANCO DEMONSTRAÇÃO",
+
+      agency: "0001",
+
+      account: "123456-7",
+    },
+
+    metadata: {
+      cliente:
+        cliente?.name ||
+        cliente?.nome ||
+        "Cliente não informado",
+
+      contrato:
+        contrato?.number ||
+        contrato?.numero ||
+        contrato?.contract_number ||
+        contrato?.id ||
+        "—",
+
+      client_id:
+        cliente?.id ||
+        null,
+
+      contract_id:
+        contrato?.id ||
+        null,
+    },
+
+    created_at:
+      now.toISOString(),
+
+    updated_at:
+      now.toISOString(),
+
+    formatted_amount:
+      amount.toLocaleString(
+        "pt-BR",
+        {
+          style: "currency",
+          currency: "BRL",
+        }
+      ),
+
+    formatted_due_date:
+      configuracao.due_date
+        ? new Date(
+            `${configuracao.due_date}T00:00:00`
+          ).toLocaleDateString(
+            "pt-BR"
+          )
+        : "",
+  };
+
+  return boleto;
+}
 export default function GerarBoletosLote({
   clientes = [],
   contratos = [],
@@ -167,43 +365,186 @@ export default function GerarBoletosLote({
     setCurrentStep((previous) => Math.max(previous - 1, 0));
   }
 
-  async function handleGenerate() {
-    if (!validateStep()) {
-      return;
+ async function handleGenerate() {
+  if (!validateStep()) {
+    return;
+  }
+
+  try {
+    setSubmitting(true);
+
+    /*
+     * =====================================================
+     * CONTRATOS SELECIONADOS
+     * =====================================================
+     */
+
+    const contratosParaGerar =
+      selectedContracts;
+
+    if (!contratosParaGerar.length) {
+      throw new Error(
+        "Nenhum contrato selecionado."
+      );
     }
+
+    /*
+     * =====================================================
+     * GERA UM BOLETO FAKE PARA CADA CONTRATO
+     * =====================================================
+     */
+
+    const boletosGerados =
+      contratosParaGerar.map(
+        (contrato) => {
+          const clienteId =
+            contrato.client_id ??
+            contrato.cliente_id ??
+            contrato.payer_id;
+
+          const cliente =
+            clientes.find(
+              (item) =>
+                String(item.id) ===
+                String(clienteId)
+            );
+
+          return createFakeBoleto({
+            contrato,
+            cliente,
+            configuracao:
+              data.configuracao,
+          });
+        }
+      );
+
+    /*
+     * =====================================================
+     * SALVA NO MOCK DO NAVEGADOR
+     * =====================================================
+     */
+
+    const storageKey =
+      "@oportuniza_pay_boletos_mock";
+
+    const boletosExistentes =
+      JSON.parse(
+        localStorage.getItem(
+          storageKey
+        ) || "[]"
+      );
+
+    const todosBoletos = [
+      ...boletosGerados,
+      ...boletosExistentes,
+    ];
+
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify(
+        todosBoletos
+      )
+    );
+
+    /*
+     * =====================================================
+     * PAYLOAD PARA EVENTUAL API
+     * =====================================================
+     */
 
     const payload = {
       origin: data.origem,
 
-      contract_ids: data.contratos.map((contract) => contract.id ?? contract),
+      contract_ids:
+        data.contratos.map(
+          (contract) =>
+            contract.id ??
+            contract
+        ),
 
-      configuration: data.configuracao,
+      configuration:
+        data.configuracao,
+
+      boletos:
+        boletosGerados,
     };
 
-    try {
-      setSubmitting(true);
+    /*
+     * =====================================================
+     * CALLBACK OPCIONAL
+     * =====================================================
+     */
 
-      const result = await onSubmit?.(payload);
+    let externalResult = null;
 
-      updateData(
-        "resultado",
-        result || {
-          success: true,
-        },
-      );
-
-      setCurrentStep(STEPS.length - 1);
-    } catch (error) {
-      updateData("resultado", {
-        success: false,
-        error: error?.message || "Não foi possível gerar os boletos.",
-      });
-
-      setCurrentStep(STEPS.length - 1);
-    } finally {
-      setSubmitting(false);
+    if (
+      typeof onSubmit ===
+      "function"
+    ) {
+      externalResult =
+        await onSubmit(
+          payload
+        );
     }
+
+    /*
+     * =====================================================
+     * RESULTADO
+     * =====================================================
+     */
+
+    const resultado = {
+      success: true,
+
+      total:
+        boletosGerados.length,
+
+      boletos:
+        boletosGerados,
+
+      payload,
+
+      externalResult,
+    };
+
+    updateData(
+      "resultado",
+      resultado
+    );
+
+    setCurrentStep(
+      STEPS.length - 1
+    );
+
+  } catch (error) {
+    console.error(
+      "Erro ao gerar boletos em lote:",
+      error
+    );
+
+    updateData(
+      "resultado",
+      {
+        success: false,
+
+        error:
+          error?.message ||
+          "Não foi possível gerar os boletos.",
+
+        total: 0,
+
+        boletos: [],
+      }
+    );
+
+    setCurrentStep(
+      STEPS.length - 1
+    );
+
+  } finally {
+    setSubmitting(false);
   }
+}
 
   function handleStepClick(index) {
     // Não permite pular etapas para frente.

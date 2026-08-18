@@ -6,9 +6,9 @@ import DashboardLayout from "../../layout/DashboardLayout";
 import {
   getClientes,
   getContratos,
-  criarBoleto,
+  
 } from "../../services/boletoService";
-
+import { gerarBoletoPDF } from "../../utils/boletoPdf";
 /* =========================================================
    FORMATAÇÃO
 ========================================================= */
@@ -94,7 +94,100 @@ function today() {
 
   return `${year}-${month}-${day}`;
 }
+function generateFakeNumber(length = 10) {
+  return Array.from(
+    { length },
+    () => Math.floor(Math.random() * 10)
+  ).join("");
+}
 
+function generateFakeBarcode() {
+  return generateFakeNumber(44);
+}
+
+function generateFakeDigitableLine() {
+  const numbers = generateFakeNumber(47);
+
+  return `${numbers.slice(0, 5)}.${numbers.slice(5, 10)} ` +
+    `${numbers.slice(10, 15)}.${numbers.slice(15, 20)} ` +
+    `${numbers.slice(20, 25)}.${numbers.slice(25, 30)} ` +
+    `${numbers.slice(30, 31)} ` +
+    `${numbers.slice(31)}`;
+}
+
+function createFakeBoleto(payload, cliente, contrato) {
+  const now = new Date();
+
+  const id = `bol-${Date.now()}`;
+
+  return {
+    id,
+
+    // Identificação
+    status: "OPEN",
+    type: "BOLETO",
+
+    nosso_numero: generateFakeNumber(8),
+    numero_documento: generateFakeNumber(10),
+
+    barcode: generateFakeBarcode(),
+    linha_digitavel: generateFakeDigitableLine(),
+
+    // Cliente
+    client_id: payload.client_id,
+    client: cliente
+      ? {
+          id: cliente.id,
+          name: cliente.name || cliente.nome,
+          document: cliente.document || cliente.cpf || cliente.cnpj,
+          email: cliente.email || null,
+          phone: cliente.phone || cliente.telefone || null,
+        }
+      : null,
+
+    // Contrato
+    contract_id: payload.contract_id,
+    contract: contrato
+      ? {
+          id: contrato.id,
+          number:
+            contrato.number ||
+            contrato.numero ||
+            contrato.contract_number ||
+            contrato.id,
+        }
+      : null,
+
+    // Cobrança
+    amount: payload.amount,
+    due_date: payload.due_date,
+    description: payload.description,
+
+    discount: payload.discount,
+    interest: payload.interest,
+    fine: payload.fine,
+
+    instructions: payload.instructions,
+
+    // Banco fake para apresentação
+    bank: {
+      code: "001",
+      name: "BANCO DEMONSTRAÇÃO",
+      agency: "0001",
+      account: "123456-7",
+    },
+
+    created_at: now.toISOString(),
+
+    // Campos auxiliares para exibição
+    formatted_amount: payload.amount.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }),
+
+    formatted_due_date: formatDate(payload.due_date),
+  };
+}
 /* =========================================================
    COMPONENTE
 ========================================================= */
@@ -143,76 +236,76 @@ export default function GerarBoleto({
      CARREGAR CLIENTES E CONTRATOS
   ========================================================= */
 
-  useEffect(() => {
-    let mounted = true;
+ useEffect(() => {
+  let mounted = true;
 
-    async function loadData() {
-      /*
-       * Se o componente já recebeu os dados por props,
-       * não precisa buscar novamente.
-       */
-
-      if (
-        clientesProp?.length > 0 &&
-        contratosProp?.length > 0
-      ) {
-        return;
-      }
-
-      try {
-        setLoadingData(true);
-
-        const [clientesResponse, contratosResponse] =
-          await Promise.all([
-            clientesProp?.length > 0
-              ? Promise.resolve(clientesProp)
-              : getClientes(),
-
-            contratosProp?.length > 0
-              ? Promise.resolve(contratosProp)
-              : getContratos(),
-          ]);
-
-        if (!mounted) return;
-
-        setClientes(
-          Array.isArray(clientesResponse)
-            ? clientesResponse
-            : [],
-        );
-
-        setContratos(
-          Array.isArray(contratosResponse)
-            ? contratosResponse
-            : [],
-        );
-      } catch (error) {
-        console.error(
-          "Erro ao carregar dados do boleto:",
-          error,
-        );
-
-        if (mounted) {
-          setErrors((current) => ({
-            ...current,
-            geral:
-              "Não foi possível carregar os clientes e contratos.",
-          }));
-        }
-      } finally {
-        if (mounted) {
-          setLoadingData(false);
-        }
-      }
+  async function loadData() {
+    // Se já recebeu os dados pelo componente pai,
+    // usa diretamente e não faz nenhuma chamada.
+    if (clientesProp?.length > 0 && contratosProp?.length > 0) {
+      setClientes(clientesProp);
+      setContratos(contratosProp);
+      return;
     }
 
-    loadData();
+    try {
+      setLoadingData(true);
 
-    return () => {
-      mounted = false;
-    };
-  }, [clientesProp, contratosProp]);
+      const [clientesResponse, contratosResponse] =
+        await Promise.all([
+          clientesProp?.length > 0
+            ? Promise.resolve(clientesProp)
+            : getClientes(),
 
+          contratosProp?.length > 0
+            ? Promise.resolve(contratosProp)
+            : getContratos(),
+        ]);
+
+      if (!mounted) return;
+
+      setClientes(
+        Array.isArray(clientesResponse)
+          ? clientesResponse
+          : []
+      );
+
+      setContratos(
+        Array.isArray(contratosResponse)
+          ? contratosResponse
+          : []
+      );
+    } catch (error) {
+      console.error(
+        "Erro ao carregar dados do boleto:",
+        error
+      );
+
+      if (mounted) {
+        setErrors((current) => ({
+          ...current,
+          geral:
+            "Não foi possível carregar os clientes e contratos.",
+        }));
+      }
+    } finally {
+      if (mounted) {
+        setLoadingData(false);
+      }
+    }
+  }
+
+  loadData();
+
+  return () => {
+    mounted = false;
+  };
+
+  // IMPORTANTE:
+  // executar somente na montagem do componente.
+  // Isso evita o loop de carregamento causado pelas props.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
   /* =========================================================
      LOADING FINAL
   ========================================================= */
@@ -492,119 +585,133 @@ export default function GerarBoleto({
      SUBMIT
   ========================================================= */
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+ async function handleSubmit(event) {
+  event.preventDefault();
 
-    if (!validate()) {
-      return;
-    }
-
-    const valorNumerico =
-      parseCurrency(valor);
-
-    const payload = {
-      client_id: clienteId,
-      contract_id: contratoId,
-
-      amount: valorNumerico,
-
-      due_date: vencimento,
-
-      description:
-        descricao.trim() || null,
-
-      discount:
-        tipoDesconto === "NONE"
-          ? null
-          : {
-              type: tipoDesconto,
-
-              value:
-                tipoDesconto ===
-                "PERCENTAGE"
-                  ? parsePercentage(
-                      desconto,
-                    )
-                  : parseCurrency(
-                      desconto,
-                    ),
-            },
-
-      interest:
-        juros !== ""
-          ? Number(juros)
-          : 0,
-
-      fine:
-        multa !== ""
-          ? Number(multa)
-          : 0,
-
-      instructions:
-        instructions.trim() || null,
-    };
-
-    try {
-      setSubmitting(true);
-
-      /*
-       * =====================================================
-       * CONEXÃO COM BOLETO SERVICE
-       * =====================================================
-       *
-       * Aqui acontece a chamada centralizada.
-       *
-       * Atualmente o service devolve um boleto mockado.
-       * Depois ele poderá chamar a API real.
-       */
-
-      const boletoCriado =
-        await criarBoleto(payload);
-
-      console.log(
-        "Boleto criado:",
-        boletoCriado,
-      );
-
-      /*
-       * Mantém compatibilidade com quem
-       * já utiliza onSubmit no componente.
-       */
-
-      if (
-        typeof onSubmit === "function"
-      ) {
-        await onSubmit(
-          payload,
-          boletoCriado,
-        );
-      }
-
-      /*
-       * Callback específico após criação.
-       */
-
-      if (
-        typeof onSuccess === "function"
-      ) {
-        onSuccess(boletoCriado);
-      }
-    } catch (error) {
-      console.error(
-        "Erro ao gerar boleto:",
-        error,
-      );
-
-      setErrors((current) => ({
-        ...current,
-        geral:
-          error?.message ||
-          "Não foi possível gerar o boleto.",
-      }));
-    } finally {
-      setSubmitting(false);
-    }
+  if (!validate()) {
+    return;
   }
+
+  const valorNumerico = parseCurrency(valor);
+
+  const payload = {
+    client_id: clienteId,
+    contract_id: contratoId,
+
+    amount: valorNumerico,
+
+    due_date: vencimento,
+
+    description:
+      descricao.trim() || null,
+
+    discount:
+      tipoDesconto === "NONE"
+        ? null
+        : {
+            type: tipoDesconto,
+
+            value:
+              tipoDesconto === "PERCENTAGE"
+                ? parsePercentage(desconto)
+                : parseCurrency(desconto),
+          },
+
+    interest:
+      juros !== ""
+        ? Number(juros)
+        : 0,
+
+    fine:
+      multa !== ""
+        ? Number(multa)
+        : 0,
+
+    instructions:
+      instructions.trim() || null,
+  };
+
+  try {
+    setSubmitting(true);
+
+    /*
+     * =====================================================
+     * BOLETO FAKE PARA APRESENTAÇÃO
+     * =====================================================
+     */
+
+    const boletoCriado = createFakeBoleto(
+      payload,
+      clienteSelecionado,
+      contratoSelecionado
+    );
+
+    console.log(
+      "BOLETO FAKE GERADO:",
+      boletoCriado
+    );
+gerarBoletoPDF(boletoCriado);
+    /*
+     * =====================================================
+     * SALVA NO LOCALSTORAGE
+     * =====================================================
+     */
+
+    const boletosSalvos =
+      JSON.parse(
+        localStorage.getItem(
+          "@oportuniza_pay_boletos_mock"
+        ) || "[]"
+      );
+
+    boletosSalvos.unshift(
+      boletoCriado
+    );
+
+    localStorage.setItem(
+      "@oportuniza_pay_boletos_mock",
+      JSON.stringify(boletosSalvos)
+    );
+
+    /*
+     * =====================================================
+     * COMPATIBILIDADE COM onSubmit
+     * =====================================================
+     */
+
+    if (typeof onSubmit === "function") {
+      await onSubmit(
+        payload,
+        boletoCriado
+      );
+    }
+
+    /*
+     * =====================================================
+     * SUCESSO
+     * =====================================================
+     */
+
+    if (typeof onSuccess === "function") {
+      onSuccess(boletoCriado);
+    }
+
+  } catch (error) {
+    console.error(
+      "Erro ao gerar boleto fake:",
+      error
+    );
+
+    setErrors((current) => ({
+      ...current,
+      geral:
+        "Não foi possível gerar o boleto.",
+    }));
+
+  } finally {
+    setSubmitting(false);
+  }
+}
 
   /* =========================================================
      LABEL DO CONTRATO

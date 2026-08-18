@@ -1,6 +1,6 @@
 export default {
     credito: false,
     cartão: false,
-    filtroExtrato: false,
-    boleto: false
+    filtroExtrato: true,
+    boleto: true
 }
