@@ -30,7 +30,7 @@ function getHeaders() {
 |--------------------------------------------------------------------------
 */
 
-const MOCK_CLIENTES = [
+let MOCK_CLIENTES = [
   {
     id: "cli-001",
     name: "João da Silva",
@@ -492,6 +492,78 @@ function createMockBoleto(data = {}) {
 | CLIENTES
 |--------------------------------------------------------------------------
 */
+
+/*
+|--------------------------------------------------------------------------
+| POST /partner/v1/payers
+| MOCK - CRIAR CLIENTE
+|--------------------------------------------------------------------------
+*/
+
+export async function criarCliente(payload) {
+  if (USE_MOCK) {
+    await delay(700);
+
+    const cliente = {
+      id: `cli-${uuidv4()}`,
+
+      name: payload.name,
+
+      document: payload.document_number,
+
+      document_number: payload.document_number,
+
+      document_type:
+        payload.document_type || "CPF",
+
+      person_type:
+        payload.person_type || "PF",
+
+      email: payload.email || "",
+
+      phone: payload.phone || "",
+
+      external_id:
+        payload.external_id || uuidv4(),
+
+      metadata:
+        payload.metadata || {},
+
+      contracts: [],
+
+      boletos: [],
+
+      overdue_count: 0,
+
+      created_at:
+        new Date().toISOString(),
+
+      updated_at:
+        new Date().toISOString(),
+    };
+
+    MOCK_CLIENTES.unshift(cliente);
+
+    return {
+      ...cliente,
+    };
+  }
+
+  const response = await api.post(
+    "/partner/v1/payers",
+    payload,
+    {
+      headers: {
+        ...getHeaders(),
+
+        "Idempotency-Key":
+          payload.external_id || uuidv4(),
+      },
+    }
+  );
+
+  return response.data;
+}
 
 export async function getClientes() {
   if (USE_MOCK) {
@@ -1180,6 +1252,7 @@ export default {
   obterBoletoPorNossoNumero,
 
   criarBoleto,
+  criarCliente,
 
   listarPagamentosBoleto,
   listarTarifasBoleto,

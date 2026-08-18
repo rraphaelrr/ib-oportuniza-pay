@@ -251,7 +251,7 @@ export function AuthProvider({ children }) {
    * mais de 5 minutos, também podemos deslogar.
    */
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!user) {
       return;
     }
@@ -272,7 +272,7 @@ export function AuthProvider({ children }) {
     return () => {
       clearTimeout(timeout);
     };
-  }, [user]);
+  }, [user]); */
 
   /*
    * =========================================================

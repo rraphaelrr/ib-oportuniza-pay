@@ -4,8 +4,13 @@ import { v4 as uuidv4 } from "uuid";
 import ClienteCard from "../../components/boletos/ClienteCard";
 import DashboardLayout from "../../layout/DashboardLayout";
 
+import { criarCliente } from "../../services/boletoService";
 
 import "./Clientes.css";
+
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
 
 function normalize(value) {
   return String(value || "")
@@ -72,6 +77,10 @@ function onlyNumbers(value) {
   return String(value || "").replace(/\D/g, "");
 }
 
+/* =========================================================
+   MÁSCARAS
+========================================================= */
+
 function formatCpf(value) {
   const numbers = onlyNumbers(value).slice(0, 11);
 
@@ -84,13 +93,16 @@ function formatCpf(value) {
   }
 
   if (numbers.length <= 9) {
-    return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`;
+    return `${numbers.slice(0, 3)}.${numbers.slice(
+      3,
+      6
+    )}.${numbers.slice(6)}`;
   }
 
-  return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(
-    6,
-    9
-  )}-${numbers.slice(9)}`;
+  return `${numbers.slice(0, 3)}.${numbers.slice(
+    3,
+    6
+  )}.${numbers.slice(6, 9)}-${numbers.slice(9)}`;
 }
 
 function formatCnpj(value) {
@@ -105,22 +117,26 @@ function formatCnpj(value) {
   }
 
   if (numbers.length <= 8) {
-    return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(
+    return `${numbers.slice(0, 2)}.${numbers.slice(
+      2,
       5
-    )}`;
+    )}.${numbers.slice(5)}`;
   }
 
   if (numbers.length <= 12) {
-    return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(
-      5,
-      8
-    )}/${numbers.slice(8)}`;
+    return `${numbers.slice(0, 2)}.${numbers.slice(
+      2,
+      5
+    )}.${numbers.slice(5, 8)}/${numbers.slice(8)}`;
   }
 
-  return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(
-    5,
-    8
-  )}/${numbers.slice(8, 12)}-${numbers.slice(12)}`;
+  return `${numbers.slice(0, 2)}.${numbers.slice(
+    2,
+    5
+  )}.${numbers.slice(5, 8)}/${numbers.slice(
+    8,
+    12
+  )}-${numbers.slice(12)}`;
 }
 
 function formatPhone(value) {
@@ -147,6 +163,10 @@ function formatPhone(value) {
   )}-${numbers.slice(7)}`;
 }
 
+/* =========================================================
+   COMPONENTE
+========================================================= */
+
 export default function Clientes({
   clientes = [],
   loading = false,
@@ -160,13 +180,27 @@ export default function Clientes({
   const [status, setStatus] = useState("ALL");
   const [sort, setSort] = useState("NAME");
 
-  // =====================================================
-  // MODAL / CADASTRO DE PAGADOR
-  // =====================================================
+  /*
+   * Clientes criados somente para a apresentação.
+   *
+   * Eles ficam no estado do componente e são adicionados
+   * imediatamente à lista.
+   */
+  const [mockClientesCriados, setMockClientesCriados] =
+    useState([]);
 
-  const [showPayerModal, setShowPayerModal] = useState(false);
-  const [creatingPayer, setCreatingPayer] = useState(false);
-  const [payerError, setPayerError] = useState("");
+  /* =======================================================
+     MODAL / CADASTRO
+  ======================================================= */
+
+  const [showPayerModal, setShowPayerModal] =
+    useState(false);
+
+  const [creatingPayer, setCreatingPayer] =
+    useState(false);
+
+  const [payerError, setPayerError] =
+    useState("");
 
   const [payerForm, setPayerForm] = useState({
     name: "",
@@ -179,40 +213,70 @@ export default function Clientes({
     phone: "",
   });
 
-  // =====================================================
-  // FILTROS
-  // =====================================================
+  /* =======================================================
+     CLIENTES DA LISTA
+  ======================================================= */
+
+  const todosClientes = useMemo(() => {
+    return [
+      ...mockClientesCriados,
+      ...clientes,
+    ];
+  }, [clientes, mockClientesCriados]);
+
+  /* =======================================================
+     FILTROS
+  ======================================================= */
 
   const filteredClientes = useMemo(() => {
-    let result = [...clientes];
-
-    // =====================================================
-    // BUSCA
-    // =====================================================
+    let result = [...todosClientes];
 
     const normalizedSearch = normalize(search);
 
+    /* -------------------------------------------------------
+       BUSCA
+    ------------------------------------------------------- */
+
     if (normalizedSearch) {
       result = result.filter((cliente) => {
-        const name = normalize(getClientName(cliente));
-        const document = normalize(getClientDocument(cliente));
-        const email = normalize(cliente.email);
-        const id = normalize(cliente.id);
+        const name = normalize(
+          getClientName(cliente)
+        );
 
-        return [name, document, email, id].some((value) =>
+        const document = normalize(
+          getClientDocument(cliente)
+        );
+
+        const email = normalize(
+          cliente.email
+        );
+
+        const id = normalize(
+          cliente.id
+        );
+
+        return [
+          name,
+          document,
+          email,
+          id,
+        ].some((value) =>
           value.includes(normalizedSearch)
         );
       });
     }
 
-    // =====================================================
-    // STATUS
-    // =====================================================
+    /* -------------------------------------------------------
+       STATUS
+    ------------------------------------------------------- */
 
     if (status !== "ALL") {
       result = result.filter((cliente) => {
-        const overdue = getClientOverdue(cliente);
-        const activeContracts = getActiveContracts(cliente);
+        const overdue =
+          getClientOverdue(cliente);
+
+        const activeContracts =
+          getActiveContracts(cliente);
 
         if (status === "OVERDUE") {
           return overdue > 0;
@@ -230,9 +294,9 @@ export default function Clientes({
       });
     }
 
-    // =====================================================
-    // ORDENAÇÃO
-    // =====================================================
+    /* -------------------------------------------------------
+       ORDENAÇÃO
+    ------------------------------------------------------- */
 
     result.sort((a, b) => {
       if (sort === "NAME") {
@@ -246,7 +310,10 @@ export default function Clientes({
       }
 
       if (sort === "OVERDUE") {
-        return getClientOverdue(b) - getClientOverdue(a);
+        return (
+          getClientOverdue(b) -
+          getClientOverdue(a)
+        );
       }
 
       if (sort === "CONTRACTS") {
@@ -260,26 +327,35 @@ export default function Clientes({
     });
 
     return result;
-  }, [clientes, search, status, sort]);
+  }, [
+    todosClientes,
+    search,
+    status,
+    sort,
+  ]);
 
-  // =====================================================
-  // INDICADORES
-  // =====================================================
+  /* =======================================================
+     INDICADORES
+  ======================================================= */
 
-  const totalClientes = clientes.length;
+  const totalClientes =
+    todosClientes.length;
 
-  const totalInadimplentes = clientes.filter(
-    (cliente) => getClientOverdue(cliente) > 0
-  ).length;
+  const totalInadimplentes =
+    todosClientes.filter(
+      (cliente) =>
+        getClientOverdue(cliente) > 0
+    ).length;
 
   const totalRegulares = Math.max(
-    totalClientes - totalInadimplentes,
+    totalClientes -
+      totalInadimplentes,
     0
   );
 
-  // =====================================================
-  // AÇÕES
-  // =====================================================
+  /* =======================================================
+     AÇÕES
+  ======================================================= */
 
   function handleClear() {
     setSearch("");
@@ -291,9 +367,9 @@ export default function Clientes({
     onViewClient?.(cliente);
   }
 
-  // =====================================================
-  // MODAL PAGADOR
-  // =====================================================
+  /* =======================================================
+     MODAL
+  ======================================================= */
 
   function handleOpenPayerModal() {
     setPayerError("");
@@ -321,8 +397,15 @@ export default function Clientes({
     setPayerError("");
   }
 
+  /* =======================================================
+     FORM
+  ======================================================= */
+
   function handlePayerChange(event) {
-    const { name, value } = event.target;
+    const {
+      name,
+      value,
+    } = event.target;
 
     setPayerForm((previous) => ({
       ...previous,
@@ -330,34 +413,53 @@ export default function Clientes({
     }));
   }
 
-  function handlePayerPersonTypeChange(event) {
-    const personType = event.target.value;
+  function handlePayerPersonTypeChange(
+    event
+  ) {
+    const personType =
+      event.target.value;
 
     setPayerForm((previous) => ({
       ...previous,
-      person_type: personType,
+
+      person_type:
+        personType,
+
       document_type:
-        personType === "PF" ? "CPF" : "CNPJ",
+        personType === "PF"
+          ? "CPF"
+          : "CNPJ",
+
       document_number: "",
     }));
   }
 
-  function handlePayerDocumentChange(event) {
-    const value = event.target.value;
+  function handlePayerDocumentChange(
+    event
+  ) {
+    const value =
+      event.target.value;
 
     const formatted =
-      payerForm.document_type === "CPF"
+      payerForm.document_type ===
+      "CPF"
         ? formatCpf(value)
         : formatCnpj(value);
 
     setPayerForm((previous) => ({
       ...previous,
-      document_number: formatted,
+      document_number:
+        formatted,
     }));
   }
 
-  function handlePayerPhoneChange(event) {
-    const value = formatPhone(event.target.value);
+  function handlePayerPhoneChange(
+    event
+  ) {
+    const value =
+      formatPhone(
+        event.target.value
+      );
 
     setPayerForm((previous) => ({
       ...previous,
@@ -365,7 +467,13 @@ export default function Clientes({
     }));
   }
 
-  async function handleSubmitPayer(event) {
+  /* =======================================================
+     CADASTRAR CLIENTE
+  ======================================================= */
+
+  async function handleSubmitPayer(
+    event
+  ) {
     event.preventDefault();
 
     if (creatingPayer) {
@@ -378,21 +486,131 @@ export default function Clientes({
       setCreatingPayer(true);
 
       const payload = {
-        document_number: onlyNumbers(
-          payerForm.document_number
-        ),
-        document_type: payerForm.document_type,
-        email: payerForm.email.trim(),
-        external_id: uuidv4(),
+        document_number:
+          onlyNumbers(
+            payerForm.document_number
+          ),
+
+        document_type:
+          payerForm.document_type,
+
+        email:
+          payerForm.email.trim(),
+
+        external_id:
+          uuidv4(),
+
         metadata: {},
-        name: payerForm.name.trim(),
-        person_type: payerForm.person_type,
-        phone: onlyNumbers(payerForm.phone),
+
+        name:
+          payerForm.name.trim(),
+
+        person_type:
+          payerForm.person_type,
+
+        phone:
+          onlyNumbers(
+            payerForm.phone
+          ),
       };
 
-      /* await cadastrarPagador(payload); */
+      /*
+       * =====================================================
+       * MOCK
+       * =====================================================
+       *
+       * O service cria o cliente mockado.
+       *
+       * Não existe chamada de API porque
+       * USE_MOCK = true.
+       */
+      const novoCliente =
+        await criarCliente(
+          payload
+        );
+
+      /*
+       * =====================================================
+       * GARANTE OS DADOS USADOS PELA TELA
+       * =====================================================
+       */
+
+      const clienteParaLista = {
+        ...novoCliente,
+
+        id:
+          novoCliente?.id ||
+          `cli-${uuidv4()}`,
+
+        name:
+          novoCliente?.name ||
+          payload.name,
+
+        document:
+          novoCliente?.document ||
+          payload.document_number,
+
+        document_number:
+          novoCliente?.document_number ||
+          payload.document_number,
+
+        document_type:
+          novoCliente?.document_type ||
+          payload.document_type,
+
+        person_type:
+          novoCliente?.person_type ||
+          payload.person_type,
+
+        email:
+          novoCliente?.email ||
+          payload.email,
+
+        phone:
+          novoCliente?.phone ||
+          payload.phone,
+
+        contracts:
+          novoCliente?.contracts ||
+          [],
+
+        boletos:
+          novoCliente?.boletos ||
+          [],
+
+        overdue_count:
+          Number(
+            novoCliente?.overdue_count ||
+            0
+          ),
+      };
+
+      /*
+       * =====================================================
+       * ADICIONA IMEDIATAMENTE NA LISTA
+       * =====================================================
+       */
+
+      setMockClientesCriados(
+        (previous) => [
+          clienteParaLista,
+          ...previous,
+        ]
+      );
+
+      /*
+       * =====================================================
+       * FECHA MODAL
+       * =====================================================
+       */
 
       setShowPayerModal(false);
+
+      /*
+       * =====================================================
+       * LIMPA FORMULÁRIO
+       * =====================================================
+       */
 
       setPayerForm({
         name: "",
@@ -405,7 +623,14 @@ export default function Clientes({
         phone: "",
       });
 
+      /*
+       * =====================================================
+       * SE EXISTIR RELOAD EXTERNO, EXECUTA
+       * =====================================================
+       */
+
       await onReloadClientes?.();
+
     } catch (error) {
       console.error(
         "Erro ao cadastrar pagador:",
@@ -415,13 +640,19 @@ export default function Clientes({
       const message =
         error?.response?.data?.message ||
         error?.response?.data?.error ||
+        error?.message ||
         "Não foi possível cadastrar o pagador.";
 
       setPayerError(message);
+
     } finally {
       setCreatingPayer(false);
     }
   }
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
 
   return (
     <DashboardLayout>
@@ -432,6 +663,7 @@ export default function Clientes({
         ================================================= */}
 
         <header className="clientes-header">
+
           <div className="clientes-header-left">
 
             {onBack && (
@@ -462,8 +694,8 @@ export default function Clientes({
               <h1>Clientes</h1>
 
               <p>
-                Consulte clientes, contratos, cobranças e
-                situação financeira.
+                Consulte clientes, contratos,
+                cobranças e situação financeira.
               </p>
             </div>
 
@@ -472,7 +704,9 @@ export default function Clientes({
           <button
             type="button"
             className="clientes-add-button"
-            onClick={handleOpenPayerModal}
+            onClick={
+              handleOpenPayerModal
+            }
           >
             <svg
               width="18"
@@ -490,6 +724,7 @@ export default function Clientes({
 
             Adicionar pagador
           </button>
+
         </header>
 
         {/* =================================================
@@ -499,21 +734,33 @@ export default function Clientes({
         <section className="clientes-summary">
 
           <div className="clientes-summary-card">
-            <span>Total de clientes</span>
+            <span>
+              Total de clientes
+            </span>
 
-            <strong>{totalClientes}</strong>
+            <strong>
+              {totalClientes}
+            </strong>
           </div>
 
           <div className="clientes-summary-card">
-            <span>Clientes regulares</span>
+            <span>
+              Clientes regulares
+            </span>
 
-            <strong>{totalRegulares}</strong>
+            <strong>
+              {totalRegulares}
+            </strong>
           </div>
 
           <div className="clientes-summary-card clientes-summary-card-warning">
-            <span>Com inadimplência</span>
+            <span>
+              Com inadimplência
+            </span>
 
-            <strong>{totalInadimplentes}</strong>
+            <strong>
+              {totalInadimplentes}
+            </strong>
           </div>
 
         </section>
@@ -523,8 +770,6 @@ export default function Clientes({
         ================================================= */}
 
         <section className="clientes-filters">
-
-          {/* BUSCA */}
 
           <div className="clientes-search">
 
@@ -552,7 +797,9 @@ export default function Clientes({
               placeholder="Buscar por nome, CPF/CNPJ, e-mail..."
               value={search}
               onChange={(event) =>
-                setSearch(event.target.value)
+                setSearch(
+                  event.target.value
+                )
               }
               aria-label="Buscar clientes"
             />
@@ -560,7 +807,9 @@ export default function Clientes({
             {search && (
               <button
                 type="button"
-                onClick={() => setSearch("")}
+                onClick={() =>
+                  setSearch("")
+                }
                 aria-label="Limpar busca"
                 title="Limpar busca"
               >
@@ -569,8 +818,6 @@ export default function Clientes({
             )}
 
           </div>
-
-          {/* SITUAÇÃO */}
 
           <div className="clientes-filter-group">
 
@@ -582,7 +829,9 @@ export default function Clientes({
               id="cliente-status"
               value={status}
               onChange={(event) =>
-                setStatus(event.target.value)
+                setStatus(
+                  event.target.value
+                )
               }
             >
               <option value="ALL">
@@ -604,8 +853,6 @@ export default function Clientes({
 
           </div>
 
-          {/* ORDENAÇÃO */}
-
           <div className="clientes-filter-group">
 
             <label htmlFor="cliente-sort">
@@ -616,7 +863,9 @@ export default function Clientes({
               id="cliente-sort"
               value={sort}
               onChange={(event) =>
-                setSort(event.target.value)
+                setSort(
+                  event.target.value
+                )
               }
             >
               <option value="NAME">
@@ -633,8 +882,6 @@ export default function Clientes({
             </select>
 
           </div>
-
-          {/* LIMPAR */}
 
           {(search ||
             status !== "ALL" ||
@@ -669,11 +916,13 @@ export default function Clientes({
 
         {loading && (
           <div className="clientes-loading">
+
             <div className="clientes-spinner" />
 
             <span>
               Carregando clientes...
             </span>
+
           </div>
         )}
 
@@ -721,7 +970,8 @@ export default function Clientes({
                 realizar uma nova busca.
               </p>
 
-              {(search || status !== "ALL") && (
+              {(search ||
+                status !== "ALL") && (
                 <button
                   type="button"
                   onClick={handleClear}
@@ -741,88 +991,93 @@ export default function Clientes({
           filteredClientes.length > 0 && (
             <section className="clientes-list">
 
-              {filteredClientes.map((cliente) => (
-                <div
-                  className="cliente-list-item"
-                  key={cliente.id}
-                >
+              {filteredClientes.map(
+                (cliente) => (
+                  <div
+                    className="cliente-list-item"
+                    key={cliente.id}
+                  >
 
-                  <ClienteCard
-                    cliente={cliente}
-                    onClick={() =>
-                      handleViewClient(cliente)
-                    }
-                  />
-
-                  <div className="cliente-list-meta">
-
-                    <div>
-                      <span>
-                        Contratos
-                      </span>
-
-                      <strong>
-                        {
-                          getClientContracts(
-                            cliente
-                          ).length
-                        }
-                      </strong>
-                    </div>
-
-                    <div>
-                      <span>
-                        Inadimplência
-                      </span>
-
-                      <strong
-                        className={
-                          getClientOverdue(
-                            cliente
-                          ) > 0
-                            ? "cliente-list-overdue"
-                            : ""
-                        }
-                      >
-                        {
-                          getClientOverdue(
-                            cliente
-                          )
-                        }
-                      </strong>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="cliente-list-details"
+                    <ClienteCard
+                      cliente={cliente}
                       onClick={() =>
                         handleViewClient(
                           cliente
                         )
                       }
-                    >
-                      Ver detalhes
+                    />
 
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                    <div className="cliente-list-meta">
+
+                      <div>
+                        <span>
+                          Contratos
+                        </span>
+
+                        <strong>
+                          {
+                            getClientContracts(
+                              cliente
+                            ).length
+                          }
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>
+                          Inadimplência
+                        </span>
+
+                        <strong
+                          className={
+                            getClientOverdue(
+                              cliente
+                            ) > 0
+                              ? "cliente-list-overdue"
+                              : ""
+                          }
+                        >
+                          {
+                            getClientOverdue(
+                              cliente
+                            )
+                          }
+                        </strong>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="cliente-list-details"
+                        onClick={() =>
+                          handleViewClient(
+                            cliente
+                          )
+                        }
                       >
-                        <path d="M5 12h14" />
+                        Ver detalhes
 
-                        <path d="m13 6 6 6-6 6" />
-                      </svg>
-                    </button>
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M5 12h14" />
+
+                          <path d="m13 6 6 6-6 6" />
+                        </svg>
+
+                      </button>
+
+                    </div>
 
                   </div>
-
-                </div>
-              ))}
+                )
+              )}
 
             </section>
           )}
@@ -836,13 +1091,15 @@ export default function Clientes({
             className="payer-modal-overlay"
             onMouseDown={(event) => {
               if (
-                event.target === event.currentTarget &&
+                event.target ===
+                  event.currentTarget &&
                 !creatingPayer
               ) {
                 handleClosePayerModal();
               }
             }}
           >
+
             <div
               className="payer-modal"
               role="dialog"
@@ -850,11 +1107,12 @@ export default function Clientes({
               aria-labelledby="payer-modal-title"
             >
 
-              {/* HEADER DO MODAL */}
+              {/* HEADER */}
 
               <div className="payer-modal-header">
 
                 <div>
+
                   <h2 id="payer-modal-title">
                     Novo pagador
                   </h2>
@@ -862,12 +1120,15 @@ export default function Clientes({
                   <p>
                     Preencha os dados do pagador.
                   </p>
+
                 </div>
 
                 <button
                   type="button"
                   className="payer-modal-close"
-                  onClick={handleClosePayerModal}
+                  onClick={
+                    handleClosePayerModal
+                  }
                   disabled={creatingPayer}
                   aria-label="Fechar"
                   title="Fechar"
@@ -877,10 +1138,12 @@ export default function Clientes({
 
               </div>
 
-              {/* FORMULÁRIO */}
+              {/* FORM */}
 
               <form
-                onSubmit={handleSubmitPayer}
+                onSubmit={
+                  handleSubmitPayer
+                }
               >
 
                 <div className="payer-modal-body">
@@ -894,6 +1157,7 @@ export default function Clientes({
                   {/* NOME */}
 
                   <div className="payer-form-group">
+
                     <label htmlFor="payer-name">
                       Nome
                     </label>
@@ -902,12 +1166,19 @@ export default function Clientes({
                       id="payer-name"
                       name="name"
                       type="text"
-                      value={payerForm.name}
-                      onChange={handlePayerChange}
+                      value={
+                        payerForm.name
+                      }
+                      onChange={
+                        handlePayerChange
+                      }
                       placeholder="Nome completo ou razão social"
                       required
-                      disabled={creatingPayer}
+                      disabled={
+                        creatingPayer
+                      }
                     />
+
                   </div>
 
                   {/* TIPO DE PESSOA / DOCUMENTO */}
@@ -915,6 +1186,7 @@ export default function Clientes({
                   <div className="payer-form-row">
 
                     <div className="payer-form-group">
+
                       <label htmlFor="payer-person-type">
                         Tipo de pessoa
                       </label>
@@ -922,12 +1194,16 @@ export default function Clientes({
                       <select
                         id="payer-person-type"
                         name="person_type"
-                        value={payerForm.person_type}
+                        value={
+                          payerForm.person_type
+                        }
                         onChange={
                           handlePayerPersonTypeChange
                         }
                         required
-                        disabled={creatingPayer}
+                        disabled={
+                          creatingPayer
+                        }
                       >
                         <option value="PF">
                           Pessoa Física
@@ -937,9 +1213,11 @@ export default function Clientes({
                           Pessoa Jurídica
                         </option>
                       </select>
+
                     </div>
 
                     <div className="payer-form-group">
+
                       <label htmlFor="payer-document-type">
                         Tipo de documento
                       </label>
@@ -947,10 +1225,16 @@ export default function Clientes({
                       <select
                         id="payer-document-type"
                         name="document_type"
-                        value={payerForm.document_type}
-                        onChange={handlePayerChange}
+                        value={
+                          payerForm.document_type
+                        }
+                        onChange={
+                          handlePayerChange
+                        }
                         required
-                        disabled={creatingPayer}
+                        disabled={
+                          creatingPayer
+                        }
                       >
                         <option value="CPF">
                           CPF
@@ -960,6 +1244,7 @@ export default function Clientes({
                           CNPJ
                         </option>
                       </select>
+
                     </div>
 
                   </div>
@@ -984,17 +1269,21 @@ export default function Clientes({
                         handlePayerDocumentChange
                       }
                       placeholder={
-                        payerForm.document_type === "CPF"
+                        payerForm.document_type ===
+                        "CPF"
                           ? "000.000.000-00"
                           : "00.000.000/0000-00"
                       }
                       maxLength={
-                        payerForm.document_type === "CPF"
+                        payerForm.document_type ===
+                        "CPF"
                           ? 14
                           : 18
                       }
                       required
-                      disabled={creatingPayer}
+                      disabled={
+                        creatingPayer
+                      }
                     />
 
                   </div>
@@ -1013,11 +1302,17 @@ export default function Clientes({
                         id="payer-email"
                         name="email"
                         type="email"
-                        value={payerForm.email}
-                        onChange={handlePayerChange}
+                        value={
+                          payerForm.email
+                        }
+                        onChange={
+                          handlePayerChange
+                        }
                         placeholder="email@exemplo.com"
                         required
-                        disabled={creatingPayer}
+                        disabled={
+                          creatingPayer
+                        }
                       />
 
                     </div>
@@ -1033,14 +1328,18 @@ export default function Clientes({
                         name="phone"
                         type="tel"
                         inputMode="numeric"
-                        value={payerForm.phone}
+                        value={
+                          payerForm.phone
+                        }
                         onChange={
                           handlePayerPhoneChange
                         }
                         placeholder="(00) 00000-0000"
                         maxLength={15}
                         required
-                        disabled={creatingPayer}
+                        disabled={
+                          creatingPayer
+                        }
                       />
 
                     </div>
@@ -1056,8 +1355,12 @@ export default function Clientes({
                   <button
                     type="button"
                     className="payer-modal-cancel"
-                    onClick={handleClosePayerModal}
-                    disabled={creatingPayer}
+                    onClick={
+                      handleClosePayerModal
+                    }
+                    disabled={
+                      creatingPayer
+                    }
                   >
                     Cancelar
                   </button>
@@ -1065,11 +1368,15 @@ export default function Clientes({
                   <button
                     type="submit"
                     className="payer-modal-submit"
-                    disabled={creatingPayer}
+                    disabled={
+                      creatingPayer
+                    }
                   >
+
                     {creatingPayer ? (
                       <>
                         <span className="payer-button-spinner" />
+
                         Cadastrando...
                       </>
                     ) : (
@@ -1091,6 +1398,7 @@ export default function Clientes({
                         Cadastrar pagador
                       </>
                     )}
+
                   </button>
 
                 </div>
@@ -1098,6 +1406,7 @@ export default function Clientes({
               </form>
 
             </div>
+
           </div>
         )}
 
