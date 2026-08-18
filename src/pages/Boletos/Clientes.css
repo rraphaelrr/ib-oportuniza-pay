@@ -1232,3 +1232,41 @@
     width: 100%;
   }
 }
+
+/* =========================================================
+   BOTÃO ADICIONAR CONTRATO
+========================================================= */
+
+.cliente-list-contract {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  border: 1px solid #dbe2ea;
+  background: #ffffff;
+  color: #334155;
+
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.cliente-list-contract:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.cliente-list-contract svg {
+  flex-shrink: 0;
+}

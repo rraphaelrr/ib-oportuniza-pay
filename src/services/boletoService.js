@@ -66,7 +66,7 @@ let MOCK_CLIENTES = [
 |--------------------------------------------------------------------------
 */
 
-const MOCK_CONTRATOS = [
+let MOCK_CONTRATOS = [
   {
     id: "ctr-001",
     client_id: "cli-001",
@@ -569,7 +569,32 @@ export async function getClientes() {
   if (USE_MOCK) {
     await delay();
 
-    return [...MOCK_CLIENTES];
+    return MOCK_CLIENTES.map((cliente) => ({
+      ...cliente,
+
+      contracts: MOCK_CONTRATOS.filter(
+        (contrato) =>
+          String(contrato.client_id) ===
+          String(cliente.id)
+      ),
+
+      boletos: MOCK_BOLETOS.filter(
+        (boleto) =>
+          String(
+            boleto.metadata?.client_id
+          ) === String(cliente.id)
+      ),
+
+      overdue_count:
+        MOCK_BOLETOS.filter(
+          (boleto) =>
+            String(
+              boleto.metadata?.client_id
+            ) === String(cliente.id) &&
+            String(boleto.status).toLowerCase() ===
+              "overdue"
+        ).length,
+    }));
   }
 
   const response = await api.get(
@@ -607,6 +632,98 @@ export async function getContratos() {
   return Array.isArray(response.data)
     ? response.data
     : response.data?.data || [];
+}
+export async function criarContrato(payload) {
+  if (USE_MOCK) {
+    await delay(500);
+
+    const cliente = MOCK_CLIENTES.find(
+      (item) =>
+        String(item.id) === String(payload.client_id)
+    );
+
+    if (!cliente) {
+      throw new Error(
+        "Cliente não encontrado para criação do contrato."
+      );
+    }
+
+    const contrato = {
+      id: `ctr-${uuidv4()}`,
+
+      client_id: cliente.id,
+
+      number:
+        payload.number ||
+        `CTR-${new Date().getFullYear()}-${String(
+          MOCK_CONTRATOS.length + 1
+        ).padStart(3, "0")}`,
+
+      description:
+        payload.description ||
+        "Contrato de prestação de serviço",
+
+      status: payload.status || "active",
+
+      start_date:
+        payload.start_date ||
+        new Date().toISOString().substring(0, 10),
+
+      end_date:
+        payload.end_date || null,
+
+      created_at:
+        new Date().toISOString(),
+
+      updated_at:
+        new Date().toISOString(),
+    };
+
+    MOCK_CONTRATOS.unshift(contrato);
+
+    /*
+     * Mantém o cliente sincronizado.
+     */
+    const clienteIndex =
+      MOCK_CLIENTES.findIndex(
+        (item) =>
+          String(item.id) ===
+          String(cliente.id)
+      );
+
+    if (clienteIndex !== -1) {
+      const clienteAtualizado = {
+        ...MOCK_CLIENTES[clienteIndex],
+
+        contracts: [
+          ...(MOCK_CLIENTES[clienteIndex].contracts || []),
+          contrato,
+        ],
+      };
+
+      MOCK_CLIENTES[clienteIndex] =
+        clienteAtualizado;
+    }
+
+    return {
+      ...contrato,
+    };
+  }
+
+  const response = await api.post(
+    "/partner/v1/contracts",
+    payload,
+    {
+      headers: {
+        ...getHeaders(),
+
+        "Idempotency-Key":
+          payload.external_id || uuidv4(),
+      },
+    }
+  );
+
+  return response.data;
 }
 
 /*
@@ -1256,6 +1373,6 @@ export default {
 
   listarPagamentosBoleto,
   listarTarifasBoleto,
-
+criarContrato,
   getDashboard,
 };
