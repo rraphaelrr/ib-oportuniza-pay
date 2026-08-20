@@ -1,4 +1,6 @@
+
 import React, { useState } from "react";
+
 import { v4 as uuidv4 } from "uuid";
 
 import Stepper from "../../components/Stepper";
@@ -24,8 +26,7 @@ import {
    STORAGE DA TENTATIVA DE CADASTRO
 ========================================================= */
 
-const ONBOARDING_STORAGE_KEY =
-  "op_onboarding_identity";
+const ONBOARDING_STORAGE_KEY = "op_onboarding_identity";
 
 /* =========================================================
    CRIA OU RECUPERA A IDENTIDADE DA TENTATIVA
@@ -100,12 +101,13 @@ export default function Cadastro() {
   /*
    * IMPORTANTE:
    *
-   * Essa identidade representa UMA tentativa de abertura
-   * de conta.
+   * Essa identidade representa UMA tentativa
+   * de abertura de conta.
    *
-   * Ela não deve mudar enquanto o cadastro estiver sendo
-   * tentado novamente.
+   * Ela não deve mudar enquanto o cadastro
+   * estiver sendo tentado novamente.
    */
+
   const [onboardingIdentity] = useState(
     getOnboardingIdentity
   );
@@ -176,6 +178,12 @@ export default function Cadastro() {
     documentoFrente: null,
     documentoVerso: null,
     selfie: null,
+
+    // NOVO:
+    // Comprovante obrigatório para PF e PJ
+    comprovanteResidencia: null,
+
+    // Exclusivo para PJ
     cartaoCNPJ: null,
 
     // =====================================================
@@ -362,10 +370,8 @@ export default function Cadastro() {
   async function handleSubmit() {
     /*
      * Impede múltiplos submits.
-     *
-     * Mesmo que o usuário clique várias vezes,
-     * somente a primeira requisição será iniciada.
      */
+
     if (loading) {
       return;
     }
@@ -398,10 +404,8 @@ export default function Cadastro() {
 
     /*
      * Criamos uma cópia do formulário.
-     *
-     * O e-mail enviado para a API será exatamente
-     * o e-mail normalizado.
      */
+
     const submitForm = {
       ...form,
       email: normalizedEmail,
@@ -410,6 +414,7 @@ export default function Cadastro() {
     /*
      * Mantém também o estado React sincronizado.
      */
+
     setForm((old) => ({
       ...old,
       email: normalizedEmail,
@@ -433,13 +438,12 @@ export default function Cadastro() {
       );
 
       /*
-       * IMPORTANTE:
-       *
        * NÃO gerar UUID aqui.
        *
        * A mesma identidade será utilizada caso
        * o usuário precise tentar novamente.
        */
+
       const response = await createAccount(
         submitForm,
         onboardingIdentity
@@ -462,7 +466,9 @@ export default function Cadastro() {
 
       const attachments = [];
 
-      /* Documento frente */
+      /* ===================================================
+         DOCUMENTO FRENTE
+      =================================================== */
 
       if (form.documentoFrente) {
         attachments.push({
@@ -476,7 +482,9 @@ export default function Cadastro() {
         });
       }
 
-      /* Documento verso */
+      /* ===================================================
+         DOCUMENTO VERSO
+      =================================================== */
 
       if (form.documentoVerso) {
         attachments.push({
@@ -490,24 +498,51 @@ export default function Cadastro() {
         });
       }
 
-      /* Selfie */
+      /* ===================================================
+         SELFIE
+      =================================================== */
 
       if (form.selfie) {
         attachments.push({
           file: form.selfie,
 
-          attachmentType: "selfie",
+          attachmentType:
+            "selfie",
 
           description:
             "selfie_with_document",
         });
       }
 
-      /* Cartão CNPJ */
+      /* ===================================================
+         COMPROVANTE DE RESIDÊNCIA
+         
+         OBRIGATÓRIO PARA PF E PJ
+      =================================================== */
+
+      if (form.comprovanteResidencia) {
+        attachments.push({
+          file:
+            form.comprovanteResidencia,
+
+          attachmentType:
+            "proof_of_address",
+
+          description:
+            "proof_of_residence",
+        });
+      }
+
+      /* ===================================================
+         CARTÃO CNPJ
+         
+         SOMENTE PARA PJ
+      =================================================== */
 
       if (form.cartaoCNPJ) {
         attachments.push({
-          file: form.cartaoCNPJ,
+          file:
+            form.cartaoCNPJ,
 
           attachmentType:
             "company_document",
@@ -549,6 +584,7 @@ export default function Cadastro() {
        * não precisamos mais manter a identidade
        * dessa tentativa.
        */
+
       clearOnboardingIdentity();
 
       /* ===================================================
@@ -558,6 +594,7 @@ export default function Cadastro() {
       setStep(
         steps.length - 1
       );
+
     } catch (error) {
       console.error(
         "Erro ao criar conta:",
@@ -631,8 +668,6 @@ export default function Cadastro() {
       alert(message);
 
       /*
-       * IMPORTANTE:
-       *
        * NÃO fazemos:
        *
        * clearOnboardingIdentity();
@@ -643,6 +678,7 @@ export default function Cadastro() {
        * novamente usando a MESMA Idempotency-Key
        * e o MESMO external_id.
        */
+
     } finally {
       setLoading(false);
     }
@@ -657,6 +693,7 @@ export default function Cadastro() {
      * Se o usuário decidiu abandonar o cadastro,
      * podemos descartar a identidade da tentativa.
      */
+
     clearOnboardingIdentity();
 
     window.location.href = "/login";
@@ -668,6 +705,7 @@ export default function Cadastro() {
 
   return (
     <div className="cadastro">
+
       <div className="cadastro-card">
 
         {/* =================================================
@@ -675,6 +713,7 @@ export default function Cadastro() {
         ================================================= */}
 
         <div className="cadastro-header">
+
           <h1>
             Abertura de Conta
           </h1>
@@ -683,6 +722,7 @@ export default function Cadastro() {
             Preencha seus dados para abrir
             sua conta digital.
           </p>
+
         </div>
 
         {/* =================================================
@@ -699,6 +739,7 @@ export default function Cadastro() {
         ================================================= */}
 
         <div className="cadastro-body">
+
           {CurrentStep && (
             <CurrentStep
               values={form}
@@ -730,8 +771,12 @@ export default function Cadastro() {
               }
             />
           )}
+
         </div>
+
       </div>
+
     </div>
   );
 }
+

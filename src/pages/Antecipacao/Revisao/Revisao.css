@@ -1,0 +1,617 @@
+.revisao-container {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e8eaed;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.revisao-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 24px 28px;
+
+  border-bottom: 1px solid #eef0f2;
+}
+
+.revisao-eyebrow {
+  display: block;
+  margin-bottom: 6px;
+
+  color: #667085;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.revisao-header h2 {
+  margin: 0;
+
+  color: #101828;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.revisao-header p {
+  margin: 6px 0 0;
+
+  color: #667085;
+  font-size: 13px;
+}
+
+.revisao-header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+
+  color: #344054;
+  background: #f9fafb;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.revisao-content {
+  padding: 24px 28px;
+}
+
+.revisao-section {
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+
+  border-bottom: 1px solid #eef0f2;
+}
+
+.revisao-section:last-of-type {
+  margin-bottom: 20px;
+}
+
+.revisao-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  margin-bottom: 16px;
+}
+
+.revisao-section-title h3 {
+  margin: 0;
+
+  color: #101828;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.revisao-section-title p {
+  margin: 5px 0 0;
+
+  color: #667085;
+  font-size: 12px;
+}
+
+.revisao-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+
+  border-radius: 999px;
+
+  color: #344054;
+  background: #f2f4f7;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.revisao-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.revisao-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  min-width: 0;
+
+  padding: 14px;
+
+  border: 1px solid #eaecf0;
+  border-radius: 11px;
+
+  background: #fcfcfd;
+}
+
+.revisao-summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 36px;
+  height: 36px;
+
+  border-radius: 9px;
+
+  color: #475467;
+  background: #f2f4f7;
+}
+
+.revisao-summary-card div:last-child {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.revisao-summary-card span {
+  color: #667085;
+  font-size: 11px;
+}
+
+.revisao-summary-card strong {
+  overflow: hidden;
+
+  color: #101828;
+  font-size: 14px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   DATA
+========================================================= */
+
+.revisao-data-card {
+  border: 1px solid #eaecf0;
+  border-radius: 11px;
+
+  overflow: hidden;
+}
+
+.revisao-data-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  min-height: 46px;
+  padding: 11px 14px;
+
+  border-bottom: 1px solid #f2f4f7;
+}
+
+.revisao-data-row:last-child {
+  border-bottom: 0;
+}
+
+.revisao-data-row span {
+  color: #667085;
+  font-size: 12px;
+}
+
+.revisao-data-row strong {
+  color: #344054;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.revisao-data-row-column {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* =========================================================
+   RECEIVABLES
+========================================================= */
+
+.revisao-receivables {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.revisao-receivable {
+  display: grid;
+  grid-template-columns: auto minmax(160px, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+
+  padding: 13px 14px;
+
+  border: 1px solid #eaecf0;
+  border-radius: 11px;
+}
+
+.revisao-receivable-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  border-radius: 9px;
+
+  color: #475467;
+  background: #f2f4f7;
+}
+
+.revisao-receivable-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.revisao-receivable-info strong {
+  overflow: hidden;
+
+  color: #344054;
+  font-size: 12px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.revisao-receivable-info span {
+  color: #98a2b3;
+  font-size: 11px;
+}
+
+.revisao-receivable-details,
+.revisao-receivable-value {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  text-align: right;
+}
+
+.revisao-receivable-details span,
+.revisao-receivable-value span {
+  color: #98a2b3;
+  font-size: 10px;
+}
+
+.revisao-receivable-details strong,
+.revisao-receivable-value strong {
+  color: #344054;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.revisao-receivable-value strong {
+  color: #101828;
+}
+
+/* =========================================================
+   DOCUMENTS
+========================================================= */
+
+.revisao-documents {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.revisao-document {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  padding: 11px 13px;
+
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+}
+
+.revisao-document-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 8px;
+
+  color: #475467;
+  background: #f2f4f7;
+}
+
+.revisao-document > div:nth-child(2) {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.revisao-document strong {
+  overflow: hidden;
+
+  color: #344054;
+  font-size: 12px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.revisao-document span {
+  color: #98a2b3;
+  font-size: 10px;
+}
+
+.revisao-document-check {
+  flex-shrink: 0;
+
+  color: #12b76a;
+}
+
+/* =========================================================
+   SIMULATION
+========================================================= */
+
+.revisao-simulation {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+
+  overflow: hidden;
+
+  border: 1px solid #eaecf0;
+  border-radius: 11px;
+
+  background: #eaecf0;
+}
+
+.revisao-simulation > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  padding: 15px;
+
+  background: #ffffff;
+}
+
+.revisao-simulation span {
+  color: #667085;
+  font-size: 10px;
+}
+
+.revisao-simulation strong {
+  color: #101828;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.revisao-empty {
+  padding: 20px;
+
+  border: 1px dashed #d0d5dd;
+  border-radius: 10px;
+
+  color: #98a2b3;
+  font-size: 12px;
+
+  text-align: center;
+}
+
+/* =========================================================
+   NOTICE
+========================================================= */
+
+.revisao-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+
+  margin-bottom: 20px;
+  padding: 13px 14px;
+
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+
+  background: #f9fafb;
+}
+
+.revisao-notice > svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+
+  color: #12b76a;
+}
+
+.revisao-notice strong {
+  display: block;
+
+  color: #344054;
+  font-size: 12px;
+}
+
+.revisao-notice p {
+  margin: 4px 0 0;
+
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.revisao-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.revisao-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 42px;
+  padding: 0 17px;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.revisao-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.revisao-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.revisao-button-secondary {
+  border: 1px solid #d0d5dd;
+
+  color: #344054;
+  background: #ffffff;
+}
+
+.revisao-button-secondary:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #98a2b3;
+}
+
+.revisao-button-primary {
+  border: 1px solid #101828;
+
+  color: #ffffff;
+  background: #101828;
+}
+
+.revisao-button-primary:hover:not(:disabled) {
+  background: #1d2939;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+  .revisao-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .revisao-simulation {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .revisao-header {
+    padding: 20px;
+  }
+
+  .revisao-content {
+    padding: 20px;
+  }
+
+  .revisao-receivable {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .revisao-receivable-details,
+  .revisao-receivable-value {
+    text-align: left;
+  }
+
+  .revisao-receivable-value {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 560px) {
+  .revisao-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .revisao-simulation {
+    grid-template-columns: 1fr;
+  }
+
+  .revisao-actions {
+    flex-direction: column-reverse;
+  }
+
+  .revisao-button {
+    width: 100%;
+  }
+
+  .revisao-header-icon {
+    display: none;
+  }
+
+  .revisao-data-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .revisao-data-row strong {
+    text-align: left;
+  }
+}

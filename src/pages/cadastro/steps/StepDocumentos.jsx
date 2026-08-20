@@ -27,6 +27,7 @@ export default function StepDocumentos({
 
       <div className="form-grid">
 
+        {/* DOCUMENTO - FRENTE */}
         <UploadCard
           title="Documento (Frente)"
           value={values.documentoFrente}
@@ -37,6 +38,7 @@ export default function StepDocumentos({
           accept="image/*,.pdf"
         />
 
+        {/* DOCUMENTO - VERSO */}
         <UploadCard
           title="Documento (Verso)"
           value={values.documentoVerso}
@@ -47,6 +49,7 @@ export default function StepDocumentos({
           accept="image/*,.pdf"
         />
 
+        {/* SELFIE */}
         <UploadCard
           title="Selfie"
           value={values.selfie}
@@ -57,6 +60,20 @@ export default function StepDocumentos({
           accept="image/*"
         />
 
+        {/* COMPROVANTE DE RESIDÊNCIA
+            OBRIGATÓRIO PARA PF E PJ */}
+        <UploadCard
+          title="Comprovante de Residência"
+          value={values.comprovanteResidencia}
+          onChange={(file) =>
+            handleFile("comprovanteResidencia", file)
+          }
+          error={errors.comprovanteResidencia}
+          accept="image/*,.pdf"
+        />
+
+        {/* CARTÃO CNPJ
+            EXCLUSIVO PARA PJ */}
         {values.tipoConta === "pj" && (
           <UploadCard
             title="Cartão CNPJ"
@@ -75,19 +92,38 @@ export default function StepDocumentos({
         <h4>Dicas para aprovação</h4>
 
         <ul>
-          <li>Utilize ambiente bem iluminado.</li>
-          <li>Fotografe o documento inteiro.</li>
-          <li>Evite reflexos.</li>
-          <li>A selfie deve mostrar todo o rosto.</li>
+          <li>
+            Utilize um ambiente bem iluminado.
+          </li>
+
+          <li>
+            Fotografe o documento inteiro.
+          </li>
+
+          <li>
+            Evite reflexos e sombras.
+          </li>
+
+          <li>
+            A selfie deve mostrar todo o rosto.
+          </li>
+
+          <li>
+            Envie um comprovante de residência
+            recente e legível.
+          </li>
 
           {values.tipoConta === "pj" && (
-            <li>Envie um Cartão CNPJ atualizado.</li>
+            <li>
+              Envie um Cartão CNPJ atualizado.
+            </li>
           )}
         </ul>
       </div>
 
       <div className="step-buttons">
         <button
+          type="button"
           className="btn btn-secondary"
           onClick={back}
         >
@@ -95,6 +131,7 @@ export default function StepDocumentos({
         </button>
 
         <button
+          type="button"
           className="btn btn-primary"
           onClick={next}
         >
@@ -104,3 +141,4 @@ export default function StepDocumentos({
     </div>
   );
 }
+

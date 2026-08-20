@@ -1,0 +1,544 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.simulacao-page {
+  width: 100%;
+  min-height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.simulacao-header {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.simulacao-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  border: 0;
+  background: transparent;
+
+  color: #64748b;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  padding: 4px 0;
+  margin-bottom: 18px;
+
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.simulacao-back-button:hover {
+  color: #0f172a;
+}
+
+.simulacao-back-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.simulacao-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.simulacao-icon {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: #f1f5f9;
+  color: #334155;
+
+  flex-shrink: 0;
+}
+
+.simulacao-title-wrapper h1 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+.simulacao-title-wrapper p {
+  margin: 6px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.simulacao-content {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.simulacao-form-card {
+  width: 100%;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03);
+
+  overflow: hidden;
+}
+
+.simulacao-card-header {
+  padding: 22px 24px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.simulacao-card-header h2 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.simulacao-card-header p {
+  margin: 5px 0 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.simulacao-form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+
+  padding: 24px;
+}
+
+.simulacao-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.simulacao-field-full {
+  grid-column: 1 / -1;
+}
+
+.simulacao-field label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.optional-label {
+  color: #94a3b8;
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.simulacao-field input,
+.simulacao-field select {
+  width: 100%;
+  height: 44px;
+
+  box-sizing: border-box;
+
+  padding: 0 13px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #0f172a;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.simulacao-field input::placeholder {
+  color: #94a3b8;
+}
+
+.simulacao-field input:focus,
+.simulacao-field select:focus {
+  border-color: #64748b;
+
+  box-shadow:
+    0 0 0 3px rgba(100, 116, 139, 0.1);
+}
+
+.simulacao-field input:disabled,
+.simulacao-field select:disabled {
+  background: #f8fafc;
+  color: #94a3b8;
+
+  cursor: not-allowed;
+}
+
+.simulacao-field small {
+  color: #94a3b8;
+
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   CURRENCY INPUT
+========================================================= */
+
+.simulacao-input-prefix {
+  position: relative;
+}
+
+.simulacao-input-prefix span {
+  position: absolute;
+
+  left: 13px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #64748b;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  pointer-events: none;
+}
+
+.simulacao-input-prefix input {
+  padding-left: 40px;
+}
+
+/* =========================================================
+   SUFFIX
+========================================================= */
+
+.simulacao-input-suffix {
+  position: relative;
+}
+
+.simulacao-input-suffix input {
+  padding-right: 58px;
+}
+
+.simulacao-input-suffix span {
+  position: absolute;
+
+  right: 13px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #64748b;
+
+  font-size: 13px;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.simulacao-error {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin: 0 24px 20px;
+  padding: 13px 15px;
+
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+
+  background: #fef2f2;
+
+  color: #991b1b;
+}
+
+.simulacao-error strong {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.simulacao-error span {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.simulacao-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 18px 24px;
+
+  border-top: 1px solid #e2e8f0;
+
+  background: #fafafa;
+}
+
+.simulacao-security-info {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+.simulacao-security-info svg {
+  color: #16a34a;
+
+  flex-shrink: 0;
+}
+
+.simulacao-submit-button,
+.simulacao-primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 42px;
+
+  padding: 0 18px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: #0f172a;
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease,
+    opacity 0.2s ease;
+}
+
+.simulacao-submit-button:hover,
+.simulacao-primary-button:hover {
+  background: #1e293b;
+}
+
+.simulacao-submit-button:active,
+.simulacao-primary-button:active {
+  transform: translateY(1px);
+}
+
+.simulacao-submit-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.simulacao-loading-icon {
+  animation: simulacao-spin 0.9s linear infinite;
+}
+
+@keyframes simulacao-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+.simulacao-result-wrapper {
+  width: 100%;
+}
+
+.simulacao-result-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+.simulacao-secondary-button {
+  min-height: 42px;
+
+  padding: 0 18px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #334155;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.simulacao-secondary-button:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+  .simulacao-page {
+    padding: 16px;
+  }
+
+  .simulacao-title-wrapper {
+    align-items: flex-start;
+  }
+
+  .simulacao-title-wrapper h1 {
+    font-size: 20px;
+  }
+
+  .simulacao-form-grid {
+    grid-template-columns: 1fr;
+
+    padding: 18px;
+    gap: 17px;
+  }
+
+  .simulacao-field-full {
+    grid-column: auto;
+  }
+
+  .simulacao-form-footer {
+    flex-direction: column;
+    align-items: stretch;
+
+    padding: 16px 18px;
+  }
+
+  .simulacao-security-info {
+    align-items: flex-start;
+  }
+
+  .simulacao-submit-button {
+    width: 100%;
+  }
+
+  .simulacao-result-actions {
+    flex-direction: column-reverse;
+  }
+
+  .simulacao-secondary-button,
+  .simulacao-primary-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .simulacao-page {
+    padding: 12px;
+  }
+
+  .simulacao-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .simulacao-title-wrapper {
+    gap: 10px;
+  }
+
+  .simulacao-title-wrapper h1 {
+    font-size: 18px;
+  }
+
+  .simulacao-title-wrapper p {
+    font-size: 12px;
+  }
+
+  .simulacao-card-header {
+    padding: 18px;
+  }
+}

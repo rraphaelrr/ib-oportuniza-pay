@@ -38,9 +38,23 @@ import ContratoDetalhes from "../pages/Boletos/ContratoDetalhes";
 import Inadimplencia from "../pages/Boletos/Inadimplencia";
 import Pagamentos from "../pages/Boletos/Pagamentos";
 
+// =========================================================
+// ANTECIPAÇÃO DE RECEBÍVEIS
+// =========================================================
+
+import Antecipacao from "../pages/Antecipacao/Antecipacao";
+
+import Simulacao from "../pages/Antecipacao/Simulacao/Simulacao";
+import Solicitar from "../pages/Antecipacao/Solicitar/Solicitar";
+import Recebiveis from "../pages/Antecipacao/Recebiveis/Recebiveis";
+import Documentos from "../pages/Antecipacao/Documentos/Documentos";
+import Revisao from "../pages/Antecipacao/Revisao/Revisao";
+import Ofertas from "../pages/Antecipacao/Ofertas/Ofertas";
+
 export default function AppRoutes() {
   return (
     <Routes>
+
       {/* =====================================================
           RAIZ
       ===================================================== */}
@@ -120,8 +134,6 @@ export default function AppRoutes() {
           BOLETOS
       ===================================================== */}
 
-      {/* Dashboard */}
-
       <Route
         path="/boletos"
         element={
@@ -130,8 +142,6 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
-      {/* Lista */}
 
       <Route
         path="/boletos/lista"
@@ -170,13 +180,6 @@ export default function AppRoutes() {
 
       {/* =====================================================
           COMPATIBILIDADE
-          
-          Se algum componente antigo ainda usar:
-          
-          /boletos/emitir
-          /boletos/lote
-          
-          não vai mais quebrar.
       ===================================================== */}
 
       <Route
@@ -262,21 +265,6 @@ export default function AppRoutes() {
 
       {/* =====================================================
           DETALHES DO BOLETO
-          
-          IMPORTANTE:
-          Essa rota deve ficar DEPOIS das rotas específicas.
-          
-          Exemplo:
-          
-          /boletos/lista
-          /boletos/clientes
-          /boletos/pagamentos
-          
-          são específicas e já foram declaradas acima.
-          
-          Só depois usamos:
-          
-          /boletos/:id
       ===================================================== */}
 
       <Route
@@ -284,6 +272,101 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <BoletoDetalhes />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* =====================================================
+          ANTECIPAÇÃO DE RECEBÍVEIS
+      ===================================================== */}
+
+      {/* -----------------------------------------------------
+          Dashboard / entrada do produto
+      ----------------------------------------------------- */}
+
+      <Route
+        path="/antecipacao"
+        element={
+          <ProtectedRoute>
+            <Antecipacao />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* -----------------------------------------------------
+          Simulação
+      ----------------------------------------------------- */}
+
+      <Route
+        path="/antecipacao/simulacao"
+        element={
+          <ProtectedRoute>
+            <Simulacao />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* -----------------------------------------------------
+          Nova solicitação
+      ----------------------------------------------------- */}
+
+      <Route
+        path="/antecipacao/solicitar"
+        element={
+          <ProtectedRoute>
+            <Solicitar />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* -----------------------------------------------------
+          Recebíveis
+      ----------------------------------------------------- */}
+
+      <Route
+        path="/antecipacao/recebiveis"
+        element={
+          <ProtectedRoute>
+            <Recebiveis />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* -----------------------------------------------------
+          Documentos
+      ----------------------------------------------------- */}
+
+      <Route
+        path="/antecipacao/documentos"
+        element={
+          <ProtectedRoute>
+            <Documentos />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* -----------------------------------------------------
+          Revisão da solicitação
+      ----------------------------------------------------- */}
+
+      <Route
+        path="/antecipacao/revisao"
+        element={
+          <ProtectedRoute>
+            <Revisao />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* -----------------------------------------------------
+          Ofertas dos fundos
+      ----------------------------------------------------- */}
+
+      <Route
+        path="/antecipacao/ofertas"
+        element={
+          <ProtectedRoute>
+            <Ofertas />
           </ProtectedRoute>
         }
       />
@@ -301,6 +384,7 @@ export default function AppRoutes() {
           />
         }
       />
+
     </Routes>
   );
 }

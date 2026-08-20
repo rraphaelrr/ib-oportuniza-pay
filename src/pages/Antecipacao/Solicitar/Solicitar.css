@@ -1,0 +1,645 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.solicitar-page {
+  width: 100%;
+  min-height: 100%;
+
+  padding: 24px;
+
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.solicitar-header {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.solicitar-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 4px 0;
+  margin-bottom: 18px;
+
+  border: 0;
+  background: transparent;
+
+  color: #64748b;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.solicitar-back-button:hover {
+  color: #0f172a;
+}
+
+.solicitar-back-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.solicitar-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.solicitar-icon {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.solicitar-title-wrapper h1 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+.solicitar-title-wrapper p {
+  margin: 6px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.solicitar-content {
+  width: 100%;
+  max-width: 980px;
+
+  margin: 0 auto;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.solicitar-form-card {
+  width: 100%;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.solicitar-card-header {
+  padding: 22px 24px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.solicitar-card-header h2 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.solicitar-card-header p {
+  margin: 5px 0 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.solicitar-form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+
+  padding: 24px;
+}
+
+.solicitar-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.solicitar-field-full {
+  grid-column: 1 / -1;
+}
+
+.solicitar-field label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.solicitar-optional {
+  color: #94a3b8;
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.solicitar-field input,
+.solicitar-field select,
+.solicitar-field textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #0f172a;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.solicitar-field input,
+.solicitar-field select {
+  height: 44px;
+
+  padding: 0 13px;
+}
+
+.solicitar-field textarea {
+  min-height: 100px;
+
+  padding: 12px 13px;
+
+  resize: vertical;
+
+  line-height: 1.5;
+}
+
+.solicitar-field input::placeholder,
+.solicitar-field textarea::placeholder {
+  color: #94a3b8;
+}
+
+.solicitar-field input:focus,
+.solicitar-field select:focus,
+.solicitar-field textarea:focus {
+  border-color: #64748b;
+
+  box-shadow:
+    0 0 0 3px rgba(100, 116, 139, 0.1);
+}
+
+.solicitar-field input:disabled,
+.solicitar-field select:disabled,
+.solicitar-field textarea:disabled {
+  background: #f8fafc;
+
+  color: #94a3b8;
+
+  cursor: not-allowed;
+}
+
+.solicitar-field small {
+  color: #94a3b8;
+
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   CURRENCY
+========================================================= */
+
+.solicitar-input-prefix {
+  position: relative;
+}
+
+.solicitar-input-prefix span {
+  position: absolute;
+
+  top: 50%;
+  left: 13px;
+
+  transform: translateY(-50%);
+
+  color: #64748b;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  pointer-events: none;
+}
+
+.solicitar-input-prefix input {
+  padding-left: 40px;
+}
+
+/* =========================================================
+   SUFFIX
+========================================================= */
+
+.solicitar-input-suffix {
+  position: relative;
+}
+
+.solicitar-input-suffix input {
+  padding-right: 58px;
+}
+
+.solicitar-input-suffix span {
+  position: absolute;
+
+  top: 50%;
+  right: 13px;
+
+  transform: translateY(-50%);
+
+  color: #64748b;
+
+  font-size: 13px;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.solicitar-error {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin: 0 24px 20px;
+  padding: 13px 15px;
+
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+
+  background: #fef2f2;
+
+  color: #991b1b;
+}
+
+.solicitar-error strong {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.solicitar-error span {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.solicitar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 18px 24px;
+
+  border-top: 1px solid #e2e8f0;
+
+  background: #fafafa;
+}
+
+.solicitar-info {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+.solicitar-info svg {
+  flex-shrink: 0;
+
+  color: #16a34a;
+}
+
+.solicitar-submit-button,
+.solicitar-primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 42px;
+
+  padding: 0 18px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: #0f172a;
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease,
+    opacity 0.2s ease;
+}
+
+.solicitar-submit-button:hover,
+.solicitar-primary-button:hover {
+  background: #1e293b;
+}
+
+.solicitar-submit-button:active,
+.solicitar-primary-button:active {
+  transform: translateY(1px);
+}
+
+.solicitar-submit-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.solicitar-loading {
+  animation: solicitar-spin 0.9s linear infinite;
+}
+
+@keyframes solicitar-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   SUCCESS
+========================================================= */
+
+.solicitar-success {
+  width: 100%;
+  max-width: 620px;
+
+  margin: 60px auto;
+  padding: 36px;
+
+  box-sizing: border-box;
+
+  text-align: center;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.solicitar-success-icon {
+  width: 64px;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 18px;
+
+  border-radius: 50%;
+
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.solicitar-success h1 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.solicitar-success > p {
+  max-width: 500px;
+
+  margin: 10px auto 24px;
+
+  color: #64748b;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.solicitar-success-id {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  margin-top: 10px;
+  padding: 12px 14px;
+
+  text-align: left;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+
+  background: #f8fafc;
+}
+
+.solicitar-success-id span {
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+.solicitar-success-id strong {
+  color: #0f172a;
+
+  font-size: 13px;
+
+  word-break: break-all;
+}
+
+.solicitar-success-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+
+  margin-top: 26px;
+}
+
+.solicitar-secondary-button {
+  min-height: 42px;
+
+  padding: 0 18px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #334155;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.solicitar-secondary-button:hover {
+  background: #f8fafc;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+  .solicitar-page {
+    padding: 16px;
+  }
+
+  .solicitar-title-wrapper {
+    align-items: flex-start;
+  }
+
+  .solicitar-title-wrapper h1 {
+    font-size: 20px;
+  }
+
+  .solicitar-form-grid {
+    grid-template-columns: 1fr;
+
+    padding: 18px;
+    gap: 17px;
+  }
+
+  .solicitar-field-full {
+    grid-column: auto;
+  }
+
+  .solicitar-footer {
+    flex-direction: column;
+    align-items: stretch;
+
+    padding: 16px 18px;
+  }
+
+  .solicitar-info {
+    align-items: flex-start;
+  }
+
+  .solicitar-submit-button {
+    width: 100%;
+  }
+
+  .solicitar-success {
+    margin: 30px auto;
+    padding: 28px 20px;
+  }
+
+  .solicitar-success-actions {
+    flex-direction: column-reverse;
+  }
+
+  .solicitar-secondary-button,
+  .solicitar-primary-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .solicitar-page {
+    padding: 12px;
+  }
+
+  .solicitar-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .solicitar-title-wrapper {
+    gap: 10px;
+  }
+
+  .solicitar-title-wrapper h1 {
+    font-size: 18px;
+  }
+
+  .solicitar-title-wrapper p {
+    font-size: 12px;
+  }
+
+  .solicitar-card-header {
+    padding: 18px;
+  }
+}

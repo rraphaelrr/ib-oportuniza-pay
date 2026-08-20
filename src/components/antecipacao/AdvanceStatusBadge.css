@@ -1,0 +1,127 @@
+/* =========================================================
+   ADVANCE STATUS BADGE
+========================================================= */
+
+.advance-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 28px;
+  padding: 5px 10px;
+
+  border: 1px solid transparent;
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+.advance-status-badge__dot {
+  width: 6px;
+  height: 6px;
+
+  flex: 0 0 6px;
+
+  border-radius: 50%;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.advance-status-badge--draft {
+  color: #475569;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.advance-status-badge--draft .advance-status-badge__dot {
+  background: #64748b;
+}
+
+.advance-status-badge--submitted {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #dbeafe;
+}
+
+.advance-status-badge--submitted .advance-status-badge__dot {
+  background: #2563eb;
+}
+
+.advance-status-badge--analysis {
+  color: #92400e;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.advance-status-badge--analysis .advance-status-badge__dot {
+  background: #f59e0b;
+}
+
+.advance-status-badge--offered {
+  color: #6d28d9;
+  background: #f5f3ff;
+  border-color: #ede9fe;
+}
+
+.advance-status-badge--offered .advance-status-badge__dot {
+  background: #7c3aed;
+}
+
+.advance-status-badge--accepted {
+  color: #166534;
+  background: #f0fdf4;
+  border-color: #dcfce7;
+}
+
+.advance-status-badge--accepted .advance-status-badge__dot {
+  background: #16a34a;
+}
+
+.advance-status-badge--completed {
+  color: #166534;
+  background: #f0fdf4;
+  border-color: #dcfce7;
+}
+
+.advance-status-badge--completed .advance-status-badge__dot {
+  background: #16a34a;
+}
+
+.advance-status-badge--rejected,
+.advance-status-badge--cancelled {
+  color: #991b1b;
+  background: #fef2f2;
+  border-color: #fee2e2;
+}
+
+.advance-status-badge--rejected .advance-status-badge__dot,
+.advance-status-badge--cancelled .advance-status-badge__dot {
+  background: #dc2626;
+}
+
+.advance-status-badge--expired {
+  color: #64748b;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.advance-status-badge--expired .advance-status-badge__dot {
+  background: #94a3b8;
+}
+
+.advance-status-badge--unknown {
+  color: #475569;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.advance-status-badge--unknown .advance-status-badge__dot {
+  background: #94a3b8;
+}

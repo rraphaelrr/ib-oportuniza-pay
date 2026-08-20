@@ -1,0 +1,656 @@
+.documentos-page {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 28px 40px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   TOPO
+========================================================= */
+
+.documentos-topbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.documentos-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  border: 0;
+  background: transparent;
+
+  color: #475467;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  padding: 8px 10px;
+  border-radius: 8px;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.documentos-back-button:hover {
+  background: #f2f4f7;
+  color: #101828;
+}
+
+.documentos-back-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.documentos-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  padding: 26px 28px;
+
+  background: #ffffff;
+
+  border: 1px solid #eaecf0;
+  border-radius: 14px;
+
+  margin-bottom: 20px;
+}
+
+.documentos-header-content {
+  min-width: 0;
+}
+
+.documentos-eyebrow {
+  display: block;
+
+  margin-bottom: 6px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+
+  color: #667085;
+}
+
+.documentos-header h1 {
+  margin: 0;
+
+  color: #101828;
+
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.documentos-header p {
+  margin: 8px 0 0;
+
+  color: #667085;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.documentos-reference {
+  display: inline-flex;
+
+  margin-top: 14px;
+  padding: 6px 10px;
+
+  background: #f9fafb;
+  border: 1px solid #eaecf0;
+
+  border-radius: 7px;
+
+  color: #667085;
+
+  font-size: 12px;
+}
+
+.documentos-reference strong {
+  margin-left: 4px;
+  color: #344054;
+}
+
+.documentos-header-icon {
+  width: 48px;
+  height: 48px;
+
+  flex: 0 0 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f2f4f7;
+
+  color: #344054;
+
+  border-radius: 10px;
+}
+
+/* =========================================================
+   ALERTAS
+========================================================= */
+
+.documentos-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 14px;
+
+  margin-bottom: 20px;
+
+  border-radius: 9px;
+
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.documentos-alert-error {
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+  color: #b42318;
+}
+
+.documentos-alert-success {
+  background: #ecfdf3;
+  border: 1px solid #abefc6;
+  color: #067647;
+}
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.documentos-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.documentos-form,
+.documentos-list-section {
+  background: #ffffff;
+
+  border: 1px solid #eaecf0;
+
+  border-radius: 14px;
+}
+
+/* =========================================================
+   TÍTULOS
+========================================================= */
+
+.documentos-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 22px 24px;
+
+  border-bottom: 1px solid #eaecf0;
+}
+
+.documentos-section-title h2 {
+  margin: 0;
+
+  color: #101828;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.documentos-section-title p {
+  margin: 5px 0 0;
+
+  color: #667085;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   FORMULÁRIO
+========================================================= */
+
+.documentos-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+
+  padding: 24px;
+}
+
+.documentos-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.documentos-field-full {
+  grid-column: 1 / -1;
+}
+
+.documentos-field label {
+  color: #344054;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.documentos-field label span {
+  margin-left: 3px;
+
+  color: #d92d20;
+}
+
+.documentos-field input,
+.documentos-field select {
+  width: 100%;
+  height: 42px;
+
+  box-sizing: border-box;
+
+  padding: 0 12px;
+
+  background: #ffffff;
+
+  border: 1px solid #d0d5dd;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  color: #101828;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.documentos-field input::placeholder {
+  color: #98a2b3;
+}
+
+.documentos-field input:focus,
+.documentos-field select:focus {
+  border-color: #667085;
+
+  box-shadow: 0 0 0 3px rgba(16, 24, 40, 0.06);
+}
+
+.documentos-field input:disabled,
+.documentos-field select:disabled {
+  background: #f9fafb;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   RODAPÉ FORM
+========================================================= */
+
+.documentos-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 18px 24px;
+
+  border-top: 1px solid #eaecf0;
+}
+
+.documentos-form-helper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #667085;
+
+  font-size: 12px;
+}
+
+.documentos-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  min-height: 40px;
+
+  padding: 0 16px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: #101828;
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.documentos-submit:hover:not(:disabled) {
+  background: #1d2939;
+}
+
+.documentos-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   CONTADOR
+========================================================= */
+
+.documentos-count {
+  min-width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 8px;
+
+  box-sizing: border-box;
+
+  border-radius: 14px;
+
+  background: #f2f4f7;
+
+  color: #344054;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.documentos-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 220px;
+
+  padding: 32px 24px;
+
+  text-align: center;
+}
+
+.documentos-empty-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 12px;
+
+  border-radius: 50%;
+
+  background: #f2f4f7;
+
+  color: #667085;
+}
+
+.documentos-empty strong {
+  color: #344054;
+
+  font-size: 14px;
+}
+
+.documentos-empty p {
+  max-width: 420px;
+
+  margin: 6px 0 0;
+
+  color: #667085;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   LISTA
+========================================================= */
+
+.documentos-list {
+  display: flex;
+  flex-direction: column;
+
+  padding: 8px 24px 24px;
+}
+
+.documento-item {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 16px 0;
+
+  border-bottom: 1px solid #f2f4f7;
+}
+
+.documento-item:last-child {
+  border-bottom: 0;
+}
+
+.documento-icon {
+  width: 40px;
+  height: 40px;
+
+  flex: 0 0 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #f2f4f7;
+
+  color: #475467;
+}
+
+.documento-info {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.documento-title-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  min-width: 0;
+}
+
+.documento-title-row strong {
+  overflow: hidden;
+
+  color: #101828;
+
+  font-size: 14px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.documento-success-icon {
+  flex: 0 0 auto;
+
+  color: #12b76a;
+}
+
+.documento-type {
+  color: #667085;
+
+  font-size: 12px;
+}
+
+.documento-info small {
+  overflow: hidden;
+
+  color: #98a2b3;
+
+  font-size: 11px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.documento-reference-text {
+  color: #667085 !important;
+}
+
+.documento-remove {
+  width: 36px;
+  height: 36px;
+
+  flex: 0 0 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #98a2b3;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.documento-remove:hover:not(:disabled) {
+  background: #fef3f2;
+  color: #d92d20;
+}
+
+.documento-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 800px) {
+  .documentos-page {
+    padding: 18px 16px 30px;
+  }
+
+  .documentos-header {
+    padding: 20px;
+  }
+
+  .documentos-header h1 {
+    font-size: 20px;
+  }
+
+  .documentos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .documentos-field-full {
+    grid-column: auto;
+  }
+
+  .documentos-form-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .documentos-submit {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .documentos-header {
+    align-items: flex-start;
+  }
+
+  .documentos-header-icon {
+    display: none;
+  }
+
+  .documentos-section-title {
+    padding: 18px;
+  }
+
+  .documentos-grid {
+    padding: 18px;
+  }
+
+  .documentos-form-footer {
+    padding: 16px 18px;
+  }
+
+  .documentos-list {
+    padding: 4px 18px 18px;
+  }
+
+  .documento-item {
+    gap: 10px;
+  }
+
+  .documento-icon {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+}

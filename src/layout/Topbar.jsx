@@ -12,7 +12,11 @@ export default function Topbar({ onMenuClick }) {
     localStorage.getItem("user") || "{}"
   );
 
-  const user = storedUser.user || {};
+  const user = storedUser?.user || storedUser || {};
+
+  // =========================================================
+  // TÍTULOS DAS PÁGINAS
+  // =========================================================
 
   const pageTitles = {
     "/home": "Início",
@@ -23,15 +27,43 @@ export default function Topbar({ onMenuClick }) {
     "/investimentos": "Investimentos",
     "/configuracoes": "Configurações",
     "/perfil": "Perfil",
+
+    // =======================================================
+    // ANTECIPAÇÃO DE RECEBÍVEIS
+    // =======================================================
+
+    "/antecipacao": "Antecipação de Recebíveis",
+    "/antecipacao/simulacao": "Simulação",
+    "/antecipacao/solicitar": "Solicitar Antecipação",
+    "/antecipacao/recebiveis": "Recebíveis",
+    "/antecipacao/documentos": "Documentos",
+    "/antecipacao/revisao": "Revisão",
+    "/antecipacao/ofertas": "Ofertas",
   };
+
+  // =========================================================
+  // TÍTULO DA PÁGINA
+  // =========================================================
 
   const pageTitle =
     pageTitles[location.pathname] || "Painel";
 
-  const userName = user?.name || "Usuário";
+  // =========================================================
+  // NOME DO USUÁRIO
+  // =========================================================
+
+  const userName =
+    user?.name ||
+    user?.full_name ||
+    user?.nome ||
+    "Usuário";
+
+  // =========================================================
+  // INICIAIS
+  // =========================================================
 
   const getInitials = (value = "") => {
-    const name = value
+    const name = String(value)
       .split("@")[0]
       .replace(/[._-]/g, " ")
       .trim();
@@ -59,9 +91,9 @@ export default function Topbar({ onMenuClick }) {
   return (
     <header className="topbar">
 
-      {/* =========================
+      {/* =====================================================
           ESQUERDA
-      ========================= */}
+      ===================================================== */}
 
       <div className="topbar-left">
 
@@ -77,18 +109,22 @@ export default function Topbar({ onMenuClick }) {
         </button>
 
         <div className="topbar-info">
-          <h1>{pageTitle}</h1>
+
+          <h1>
+            {pageTitle}
+          </h1>
 
           <p>
             Bem-vindo de volta, {userName}
           </p>
+
         </div>
 
       </div>
 
-      {/* =========================
+      {/* =====================================================
           PERFIL
-      ========================= */}
+      ===================================================== */}
 
       <div className="topbar-actions">
 
@@ -99,9 +135,11 @@ export default function Topbar({ onMenuClick }) {
           </div>
 
           <div className="profile-info">
+
             <strong>
               {userName}
             </strong>
+
           </div>
 
         </div>

@@ -1,0 +1,761 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.recebiveis-page {
+  width: 100%;
+  min-height: 100%;
+
+  padding: 24px;
+
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.recebiveis-header {
+  max-width: 1100px;
+
+  margin: 0 auto 24px;
+}
+
+.recebiveis-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 4px 0;
+  margin-bottom: 18px;
+
+  border: 0;
+  background: transparent;
+
+  color: #64748b;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.recebiveis-back-button:hover {
+  color: #0f172a;
+}
+
+.recebiveis-back-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.recebiveis-header h1 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.recebiveis-header p {
+  margin: 6px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.recebiveis-summary {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  max-width: 1100px;
+
+  margin: 0 auto 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  overflow: hidden;
+}
+
+.recebiveis-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  padding: 18px 20px;
+
+  border-right: 1px solid #e2e8f0;
+}
+
+.recebiveis-summary-item:last-child {
+  border-right: 0;
+}
+
+.recebiveis-summary-item span {
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+.recebiveis-summary-item strong {
+  color: #0f172a;
+
+  font-size: 17px;
+  font-weight: 650;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.recebiveis-error {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  max-width: 1100px;
+
+  margin: 0 auto 20px;
+  padding: 13px 15px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+
+  background: #fef2f2;
+
+  color: #991b1b;
+}
+
+.recebiveis-error strong {
+  font-size: 13px;
+}
+
+.recebiveis-error span {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.recebiveis-section,
+.recebiveis-form-section {
+  max-width: 1100px;
+
+  margin: 0 auto 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 15px;
+
+  overflow: hidden;
+}
+
+.recebiveis-section-header,
+.recebiveis-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 20px 22px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.recebiveis-section-header h2,
+.recebiveis-form-header h2 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.recebiveis-section-header p,
+.recebiveis-form-header p {
+  margin: 5px 0 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
+.recebiveis-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 40px;
+
+  padding: 0 15px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: #0f172a;
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.recebiveis-add-button:hover {
+  background: #1e293b;
+}
+
+.recebiveis-add-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.recebiveis-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 55px 25px;
+
+  text-align: center;
+}
+
+.recebiveis-empty-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 15px;
+
+  border-radius: 13px;
+
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.recebiveis-empty h3 {
+  margin: 0;
+
+  color: #334155;
+
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.recebiveis-empty p {
+  max-width: 440px;
+
+  margin: 7px 0 18px;
+
+  color: #94a3b8;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.recebiveis-empty button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  min-height: 39px;
+
+  padding: 0 15px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #334155;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.recebiveis-empty button:hover {
+  background: #f8fafc;
+}
+
+/* =========================================================
+   LIST
+========================================================= */
+
+.recebiveis-list {
+  display: flex;
+  flex-direction: column;
+
+  padding: 16px;
+  gap: 12px;
+}
+
+.recebiveis-list-item {
+  position: relative;
+}
+
+.recebiveis-remove-button {
+  position: absolute;
+
+  top: 14px;
+  right: 14px;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #dc2626;
+
+  cursor: pointer;
+
+  z-index: 2;
+}
+
+.recebiveis-remove-button:hover {
+  background: #fef2f2;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.recebiveis-form {
+  display: flex;
+  flex-direction: column;
+
+  padding: 22px;
+}
+
+.recebiveis-form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+.recebiveis-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.recebiveis-field-full {
+  grid-column: 1 / -1;
+}
+
+.recebiveis-field label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.recebiveis-field label span {
+  color: #94a3b8;
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.recebiveis-field input,
+.recebiveis-field select {
+  width: 100%;
+  height: 43px;
+
+  box-sizing: border-box;
+
+  padding: 0 12px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: #ffffff;
+  color: #0f172a;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.recebiveis-field input::placeholder {
+  color: #94a3b8;
+}
+
+.recebiveis-field input:focus,
+.recebiveis-field select:focus {
+  border-color: #64748b;
+
+  box-shadow:
+    0 0 0 3px rgba(100, 116, 139, 0.1);
+}
+
+.recebiveis-field input:disabled,
+.recebiveis-field select:disabled {
+  background: #f8fafc;
+
+  color: #94a3b8;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   CURRENCY
+========================================================= */
+
+.recebiveis-currency {
+  position: relative;
+}
+
+.recebiveis-currency span {
+  position: absolute;
+
+  left: 12px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #64748b;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  pointer-events: none;
+}
+
+.recebiveis-currency input {
+  padding-left: 38px;
+}
+
+/* =========================================================
+   SPECIFIC DATA
+========================================================= */
+
+.recebiveis-specific {
+  margin-top: 22px;
+  padding: 18px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  background: #f8fafc;
+}
+
+.recebiveis-specific-header {
+  margin-bottom: 18px;
+}
+
+.recebiveis-specific-header h3 {
+  margin: 0;
+
+  color: #334155;
+
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.recebiveis-specific-header p {
+  margin: 5px 0 0;
+
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.recebiveis-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 24px;
+  padding-top: 18px;
+
+  border-top: 1px solid #e2e8f0;
+}
+
+.recebiveis-cancel-button,
+.recebiveis-close-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+
+  padding: 0 15px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #475569;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.recebiveis-cancel-button:hover,
+.recebiveis-close-button:hover {
+  background: #f8fafc;
+}
+
+.recebiveis-save-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 40px;
+
+  padding: 0 17px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: #0f172a;
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.recebiveis-save-button:hover {
+  background: #1e293b;
+}
+
+.recebiveis-save-button:disabled,
+.recebiveis-cancel-button:disabled,
+.recebiveis-close-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.recebiveis-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  max-width: 1100px;
+
+  margin: 0 auto;
+
+  padding: 18px 0;
+}
+
+.recebiveis-footer-info {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+.recebiveis-footer-info svg {
+  flex-shrink: 0;
+
+  color: #16a34a;
+}
+
+.recebiveis-continue-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 42px;
+
+  padding: 0 19px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: #0f172a;
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.recebiveis-continue-button:hover:not(:disabled) {
+  background: #1e293b;
+}
+
+.recebiveis-continue-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   SPINNER
+========================================================= */
+
+.recebiveis-spinner {
+  animation: recebiveis-spin 0.9s linear infinite;
+}
+
+@keyframes recebiveis-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+  .recebiveis-page {
+    padding: 16px;
+  }
+
+  .recebiveis-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .recebiveis-summary-item {
+    border-right: 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .recebiveis-summary-item:last-child {
+    border-bottom: 0;
+  }
+
+  .recebiveis-section-header,
+  .recebiveis-form-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .recebiveis-add-button {
+    width: 100%;
+  }
+
+  .recebiveis-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recebiveis-field-full {
+    grid-column: auto;
+  }
+
+  .recebiveis-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .recebiveis-continue-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .recebiveis-page {
+    padding: 12px;
+  }
+
+  .recebiveis-header h1 {
+    font-size: 20px;
+  }
+
+  .recebiveis-section-header,
+  .recebiveis-form-header {
+    padding: 17px;
+  }
+
+  .recebiveis-form {
+    padding: 17px;
+  }
+
+  .recebiveis-specific {
+    padding: 14px;
+  }
+
+  .recebiveis-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .recebiveis-cancel-button,
+  .recebiveis-save-button {
+    width: 100%;
+  }
+}

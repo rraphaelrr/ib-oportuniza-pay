@@ -1,0 +1,422 @@
+/* =========================================================
+   RECEIVABLE CARD
+========================================================= */
+
+.receivable-card {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 18px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.receivable-card--interactive {
+  cursor: pointer;
+}
+
+.receivable-card--interactive:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.06);
+}
+
+.receivable-card--selected {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.08);
+}
+
+.receivable-card--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.receivable-card--interactive:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.receivable-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.receivable-card__title-area {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.receivable-card__type {
+  display: block;
+  margin-bottom: 4px;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.receivable-card__title {
+  margin: 0;
+
+  overflow: hidden;
+
+  color: #0f172a;
+
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.receivable-card__checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 19px;
+  height: 19px;
+
+  flex: 0 0 19px;
+
+  margin-top: 1px;
+
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+}
+
+.receivable-card__checkbox--selected {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.receivable-card__checkbox-check {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.receivable-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.receivable-card__status-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+}
+
+.receivable-card__status--eligible {
+  color: #166534;
+  background: #f0fdf4;
+}
+
+.receivable-card__status--eligible .receivable-card__status-dot {
+  background: #16a34a;
+}
+
+.receivable-card__status--pending {
+  color: #92400e;
+  background: #fffbeb;
+}
+
+.receivable-card__status--pending .receivable-card__status-dot {
+  background: #f59e0b;
+}
+
+.receivable-card__status--accepted {
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+.receivable-card__status--accepted .receivable-card__status-dot {
+  background: #2563eb;
+}
+
+.receivable-card__status--rejected,
+.receivable-card__status--ineligible,
+.receivable-card__status--cancelled {
+  color: #991b1b;
+  background: #fef2f2;
+}
+
+.receivable-card__status--rejected .receivable-card__status-dot,
+.receivable-card__status--ineligible .receivable-card__status-dot,
+.receivable-card__status--cancelled .receivable-card__status-dot {
+  background: #dc2626;
+}
+
+.receivable-card__status--settled {
+  color: #166534;
+  background: #f0fdf4;
+}
+
+.receivable-card__status--settled .receivable-card__status-dot {
+  background: #16a34a;
+}
+
+.receivable-card__status--unknown {
+  color: #64748b;
+  background: #f1f5f9;
+}
+
+.receivable-card__status--unknown .receivable-card__status-dot {
+  background: #94a3b8;
+}
+
+/* =========================================================
+   DEBTOR
+========================================================= */
+
+.receivable-card__debtor {
+  margin-top: 18px;
+}
+
+.receivable-card__label {
+  display: block;
+  margin-bottom: 4px;
+
+  color: #64748b;
+  font-size: 11px;
+}
+
+.receivable-card__debtor-name {
+  display: block;
+
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   VALUES
+========================================================= */
+
+.receivable-card__values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+
+  margin-top: 18px;
+}
+
+.receivable-card__value {
+  padding: 12px;
+
+  background: #f8fafc;
+  border-radius: 9px;
+}
+
+.receivable-card__value span {
+  display: block;
+  margin-bottom: 4px;
+
+  color: #64748b;
+  font-size: 10px;
+}
+
+.receivable-card__value strong {
+  display: block;
+
+  color: #334155;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.receivable-card__value--highlight {
+  background: #eff6ff;
+}
+
+.receivable-card__value--highlight strong {
+  color: #1d4ed8;
+}
+
+/* =========================================================
+   DETAILS
+========================================================= */
+
+.receivable-card__details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+
+  margin-top: 16px;
+  padding-top: 15px;
+
+  border-top: 1px solid #f1f5f9;
+}
+
+.receivable-card__detail span {
+  display: block;
+  margin-bottom: 4px;
+
+  color: #64748b;
+  font-size: 10px;
+}
+
+.receivable-card__detail strong {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   VERIFICATION
+========================================================= */
+
+.receivable-card__verification--verified {
+  color: #16a34a !important;
+}
+
+.receivable-card__verification--pending {
+  color: #d97706 !important;
+}
+
+.receivable-card__verification--rejected {
+  color: #dc2626 !important;
+}
+
+.receivable-card__verification--unknown {
+  color: #64748b !important;
+}
+
+/* =========================================================
+   METADATA
+========================================================= */
+
+.receivable-card__metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+
+  margin-top: 16px;
+  padding-top: 14px;
+
+  border-top: 1px solid #f1f5f9;
+}
+
+.receivable-card__metadata-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+.receivable-card__metadata-item strong {
+  color: #64748b;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.receivable-card__footer {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 15px;
+  padding-top: 14px;
+
+  border-top: 1px solid #f1f5f9;
+}
+
+.receivable-card__selection-text,
+.receivable-card__view-action {
+  color: #2563eb;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.receivable-card__view-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.receivable-card__view-action span {
+  font-size: 14px;
+}
+
+/* =========================================================
+   COMPACT
+========================================================= */
+
+.receivable-card--compact {
+  padding: 14px;
+}
+
+.receivable-card--compact .receivable-card__metadata {
+  display: none;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 640px) {
+  .receivable-card {
+    padding: 15px;
+  }
+
+  .receivable-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .receivable-card__values,
+  .receivable-card__details {
+    grid-template-columns: 1fr;
+  }
+}

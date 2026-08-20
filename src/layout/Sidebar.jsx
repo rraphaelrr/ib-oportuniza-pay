@@ -18,6 +18,11 @@ import {
   FaPlus,
   FaLayerGroup,
   FaChevronDown,
+  FaCalculator,
+  FaFileInvoiceDollar,
+  FaFileLines,
+  FaListCheck,
+  FaHandHoldingDollar,
 } from "react-icons/fa6";
 
 import { useLocation, useNavigate } from "react-router-dom";
@@ -37,9 +42,22 @@ export default function Sidebar({
 
   const { logout } = useAuth();
 
+  // =========================================================
+  // ESTADOS DOS SUBMENUS
+  // =========================================================
+
   const [boletosOpen, setBoletosOpen] = useState(
     location.pathname.startsWith("/boletos")
   );
+
+  const [antecipacaoOpen, setAntecipacaoOpen] =
+    useState(
+      location.pathname.startsWith("/antecipacao")
+    );
+
+  // =========================================================
+  // MENUS
+  // =========================================================
 
   const menus = [
     {
@@ -79,6 +97,10 @@ export default function Sidebar({
         },
       ],
     },
+
+    // =======================================================
+    // COBRANÇA
+    // =======================================================
 
     {
       title: "COBRANÇA",
@@ -132,23 +154,70 @@ export default function Sidebar({
       ],
     },
 
+    // =======================================================
+    // CRÉDITO & ATIVOS
+    // =======================================================
+
     {
       title: "CRÉDITO & ATIVOS",
-      show: false,
+
+      // Temporariamente habilitado.
+      // Depois podemos controlar por Produtos.antecipacao.
+      show: true,
 
       items: [
         {
           label: "Antecipação",
           icon: <FaDollarSign />,
           path: "/antecipacao",
-          show: false,
+          show: true,
+
+          submenu: [
+            {
+              label: "Visão geral",
+              icon: <FaChartLine />,
+              path: "/antecipacao",
+            },
+            {
+              label: "Simular",
+              icon: <FaCalculator />,
+              path: "/antecipacao/simulacao",
+            },
+            {
+              label: "Solicitar antecipação",
+              icon: <FaHandHoldingDollar />,
+              path: "/antecipacao/solicitar",
+            },
+            {
+              label: "Recebíveis",
+              icon: <FaFileInvoiceDollar />,
+              path: "/antecipacao/recebiveis",
+            },
+            {
+              label: "Documentos",
+              icon: <FaFileLines />,
+              path: "/antecipacao/documentos",
+            },
+            {
+              label: "Revisão",
+              icon: <FaListCheck />,
+              path: "/antecipacao/revisao",
+            },
+            {
+              label: "Ofertas",
+              icon: <FaDollarSign />,
+              path: "/antecipacao/ofertas",
+            },
+          ],
         },
+
         {
           label: "Consórcio",
           icon: <FaClock />,
           path: "/consorcio",
           show: false,
         },
+
         {
           label: "Investimentos",
           icon: <FaChartLine />,
@@ -159,12 +228,23 @@ export default function Sidebar({
     },
   ];
 
+  // =========================================================
+  // ACTIVE
+  // =========================================================
+
   const isActive = (path) => {
     return location.pathname === path;
   };
 
   const isBoletosActive =
     location.pathname.startsWith("/boletos");
+
+  const isAntecipacaoActive =
+    location.pathname.startsWith("/antecipacao");
+
+  // =========================================================
+  // BOLETOS
+  // =========================================================
 
   function handleBoletosClick() {
     if (collapsed) {
@@ -176,6 +256,24 @@ export default function Sidebar({
     setBoletosOpen((current) => !current);
   }
 
+  // =========================================================
+  // ANTECIPAÇÃO
+  // =========================================================
+
+  function handleAntecipacaoClick() {
+    if (collapsed) {
+      navigate("/antecipacao");
+      onClose?.();
+      return;
+    }
+
+    setAntecipacaoOpen((current) => !current);
+  }
+
+  // =========================================================
+  // NAVEGAÇÃO
+  // =========================================================
+
   function handleNavigation(path) {
     navigate(path);
     onClose?.();
@@ -186,14 +284,25 @@ export default function Sidebar({
     onClose?.();
   }
 
+  // =========================================================
+  // LOGOUT
+  // =========================================================
+
   function handleLogout() {
     logout();
     onClose?.();
   }
 
+  // =========================================================
+  // RENDER
+  // =========================================================
+
   return (
     <>
-      {/* OVERLAY MOBILE */}
+      {/* =====================================================
+          OVERLAY MOBILE
+      ===================================================== */}
+
       {mobileOpen && (
         <div
           className="sidebar-overlay"
@@ -208,9 +317,9 @@ export default function Sidebar({
           ${mobileOpen ? "mobile-open" : ""}
         `}
       >
-        {/* =========================
+        {/* ===================================================
             LOGO
-        ========================= */}
+        =================================================== */}
 
         <div className="sidebar-logo">
           <strong>
@@ -220,20 +329,24 @@ export default function Sidebar({
           {!collapsed && <small>PAY</small>}
         </div>
 
-        {/* =========================
+        {/* ===================================================
             MENU
-        ========================= */}
+        =================================================== */}
 
         <nav>
           {menus
-            .filter((group) => group.show !== false)
+            .filter(
+              (group) => group.show !== false
+            )
             .map((group, index) => (
               <div
                 className="menu-group"
                 key={index}
               >
                 {!collapsed && (
-                  <h4>{group.title}</h4>
+                  <h4>
+                    {group.title}
+                  </h4>
                 )}
 
                 {group.items
@@ -248,14 +361,33 @@ export default function Sidebar({
                       ) &&
                       item.submenu.length > 0;
 
-                    const active = hasSubmenu
-                      ? isBoletosActive
-                      : isActive(item.path);
+                    let active = false;
+
+                    if (
+                      item.path ===
+                      "/boletos"
+                    ) {
+                      active =
+                        isBoletosActive;
+                    } else if (
+                      item.path ===
+                      "/antecipacao"
+                    ) {
+                      active =
+                        isAntecipacaoActive;
+                    } else {
+                      active =
+                        isActive(item.path);
+                    }
 
                     return (
                       <React.Fragment
                         key={i}
                       >
+                        {/* =================================================
+                            ITEM PRINCIPAL
+                        ================================================= */}
+
                         <button
                           type="button"
                           className={
@@ -264,8 +396,19 @@ export default function Sidebar({
                               : ""
                           }
                           onClick={() => {
-                            if (hasSubmenu) {
+                            if (
+                              item.path ===
+                              "/boletos"
+                            ) {
                               handleBoletosClick();
+                              return;
+                            }
+
+                            if (
+                              item.path ===
+                              "/antecipacao"
+                            ) {
+                              handleAntecipacaoClick();
                               return;
                             }
 
@@ -294,8 +437,16 @@ export default function Sidebar({
                                   className={`
                                     submenu-chevron
                                     ${
-                                      boletosOpen
-                                        ? "open"
+                                      item.path ===
+                                      "/boletos"
+                                        ? boletosOpen
+                                          ? "open"
+                                          : ""
+                                        : item.path ===
+                                          "/antecipacao"
+                                        ? antecipacaoOpen
+                                          ? "open"
+                                          : ""
                                         : ""
                                     }
                                   `}
@@ -305,11 +456,21 @@ export default function Sidebar({
                           )}
                         </button>
 
-                        {/* SUBMENU */}
+                        {/* =================================================
+                            SUBMENU
+                        ================================================= */}
 
                         {hasSubmenu &&
                           !collapsed &&
-                          boletosOpen && (
+                          (
+                            item.path ===
+                            "/boletos"
+                              ? boletosOpen
+                              : item.path ===
+                                "/antecipacao"
+                              ? antecipacaoOpen
+                              : false
+                          ) && (
                             <div className="sidebar-submenu">
                               {item.submenu.map(
                                 (subItem) => {
@@ -359,9 +520,9 @@ export default function Sidebar({
             ))}
         </nav>
 
-        {/* =========================
+        {/* ===================================================
             FOOTER
-        ========================= */}
+        =================================================== */}
 
         <div className="sidebar-footer">
           <button
@@ -388,7 +549,9 @@ export default function Sidebar({
             <FaArrowRightFromBracket />
 
             {!collapsed && (
-              <span>Sair</span>
+              <span>
+                Sair
+              </span>
             )}
           </button>
         </div>
